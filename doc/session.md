@@ -1,7 +1,7 @@
 # 📘 CKAD – 100 Esercizi e Soluzioni
 
 
-- [Esercizi 0-20](./zero-venti.md)
+- [Esercizi 1-20](./zero-venti.md)
 
 - [Esercizi 21-40](./venti-quaranta.md)
 
