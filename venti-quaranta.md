@@ -13,7 +13,7 @@ kubectl get pods -n test-ns
 </details>
 <details>
   <summary>Teoria</summary>
-In Kubernetes (Kubernetes), i namespace servono per isolare risorse logicamente nello stesso cluster.
+In Kubernetes, i namespace servono per isolare risorse logicamente nello stesso cluster.
 
 Se non specifichi -n, il Pod viene creato nel namespace default.
 
