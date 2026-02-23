@@ -20,6 +20,15 @@ k run redis-pod --image=redis:7
 
 <details>
   <summary>Teoria</summary>
+  In Kubernetes il Pod è l’unità minima deployabile.
+
+kubectl run crea un Pod (nelle versioni moderne, senza --restart, crea un Pod semplice).
+
+Il Pod contiene uno o più container.
+
+redis:7 specifica il tag dell’immagine → importante per controllo versione.
+
+ Best practice: specificare sempre il tag, evitare latest.
 </details>
 
 ---
@@ -42,6 +51,15 @@ kubectl get pods
 
 <details>
   <summary>Teoria</summary>
+  Un Deployment:
+
+Gestisce ReplicaSet
+
+Garantisce numero desiderato di Pod
+
+Supporta rolling update e rollback
+
+Con --replicas=3 Kubernetes mantiene sempre 3 Pod attivi (self-healing).
 </details>
 
 
@@ -64,6 +82,13 @@ kubectl get pods
 
 <details>
   <summary>Teoria</summary>
+  Lo scaling modifica:
+
+spec.replicas
+
+Il ReplicaSet crea o elimina Pod per raggiungere lo stato desiderato.
+
+È scaling manuale (diverso da HPA).
 </details>
 
 
@@ -86,6 +111,15 @@ kubectl rollout status deployment api
 
 <details>
   <summary>Teoria</summary>
+  Aggiornare l’immagine modifica il template del Pod → genera nuovo ReplicaSet → parte una Rolling Update.
+
+Rolling update:
+
+crea nuovi Pod
+
+termina gradualmente i vecchi
+
+zero downtime (di default)
 </details>
 
 
@@ -108,6 +142,17 @@ kubectl rollout status deployment api
 
 <details>
   <summary>Teoria</summary>
+  Il Deployment mantiene una revision history.
+
+Rollback:
+
+Ripristina ReplicaSet precedente
+
+Utile se nuova versione fallisce
+
+Puoi vedere revisioni con:
+
+kubectl rollout history deployment api
 </details>
 
 
@@ -129,6 +174,19 @@ kubectl expose deployment api --port=80 --type=ClusterIP
 
 <details>
   <summary>Teoria</summary>
+  Un Service ClusterIP:
+
+Espone internamente nel cluster
+
+Crea IP virtuale stabile
+
+Usa label selector per trovare Pod
+
+Flusso:
+
+Pod → Service → Pod target
+
+Il selector deve combaciare con le label del Deployment.
 </details>
 
 
@@ -150,6 +208,17 @@ kubectl create configmap app-config --from-literal=MODE=prod
 
 <details>
   <summary>Teoria</summary>
+  Una ConfigMap contiene configurazione non sensibile.
+
+Può essere montata come:
+
+variabile ambiente
+
+volume
+
+file di configurazione
+
+Permette di separare config dal container image.
 </details>
 
 
@@ -171,6 +240,13 @@ kubectl create secret generic db-secret --from-literal=password=mypass
 
 <details>
   <summary>Teoria</summary>
+  Un Secret è simile a ConfigMap ma per dati sensibili.
+
+Base64 encoded (non cifrato di default)
+
+Può essere montato come env o volume
+
+Può essere cifrato at-rest con configurazione cluster
 </details>
 
 
@@ -204,6 +280,15 @@ kubectl apply -f api.yaml
 
 <details>
   <summary>Teoria</summary>
+  valueFrom permette di leggere dinamicamente valori.
+
+Vantaggi:
+
+Nessuna modifica immagine
+
+Cambio config senza rebuild
+
+Ambiente separato (dev/prod)
 </details>
 
 
@@ -229,6 +314,17 @@ livenessProbe:
 
 <details>
   <summary>Teoria</summary>
+  La Liveness Probe controlla se l’app è viva.
+
+Se fallisce:
+
+Il container viene riavviato
+
+Diversa dalla Readiness:
+
+Liveness → restart
+
+Readiness → rimozione dal Service
 </details>
 
 
@@ -255,6 +351,17 @@ resources:
 
 <details>
   <summary>Teoria</summary>
+  requests → scheduler decide dove mettere il Pod
+
+limits → massimo utilizzabile
+
+Se supera:
+
+CPU → throttling
+
+Memory → OOMKill
+
+Fondamentale in ambienti multi-tenant.
 </details>
 
 
@@ -278,6 +385,21 @@ initContainers:
 
 <details>
   <summary>Teoria</summary>
+  Gli initContainers:
+
+Eseguono prima dei container principali
+
+Devono completare con successo
+
+Eseguono in ordine
+
+Utili per:
+
+Migrazioni DB
+
+Check dipendenze
+
+Setup iniziale
 </details>
 
 
@@ -303,6 +425,17 @@ containers:
 
 <details>
   <summary>Teoria</summary>
+  Pattern Sidecar:
+
+Container principale → app
+
+Sidecar → logging, proxy, monitoring
+
+Condividono:
+
+Network namespace
+
+Storage (volumi)
 </details>
 
 
@@ -337,6 +470,19 @@ kubectl apply -f pvc.yaml
 
 <details>
   <summary>Teoria</summary>
+  Un PersistentVolumeClaim:
+
+Richiede storage
+
+Si lega a un PersistentVolume
+
+Astrarre storage dal Pod
+
+Access modes:
+
+RWO → un nodo alla volta
+
+RWX → multi nodo
 </details>
 
 
@@ -366,6 +512,14 @@ containers:
 
 <details>
   <summary>Teoria</summary>
+  Il PVC viene montato come volume nel Pod.
+
+Separazione chiave:
+
+PVC → richiesta storage
+Pod → utilizzo storage
+
+Se il Pod muore, i dati restano.
 </details>
 
 
@@ -385,6 +539,13 @@ kubectl create job hello-job --image=busybox -- echo hello
 
 <details>
   <summary>Teoria</summary>
+  Un Job esegue task batch fino a completamento.
+
+Diverso da Deployment:
+
+Non mantiene Pod sempre attivi
+
+Si considera completato quando successo
 </details>
 
 
@@ -406,7 +567,15 @@ kubectl create cronjob hello-cron \
 
 <details>
   <summary>Teoria</summary>
+  Un CronJob crea Job su schedule cron.
+
+Formato cron:
+
+* * * * *
+| | | | |
+m h dom mon dow
 </details>
+
 
 
 ---
@@ -426,6 +595,11 @@ securityContext:
 
 <details>
   <summary>Teoria</summary>
+  SecurityContext controlla privilegi container.
+
+runAsUser → evita root
+
+allowPrivilegeEscalation: false → blocca escalation
 </details>
 
 
@@ -445,6 +619,13 @@ kubectl create deployment nginx --image=nginx -n dev
 
 <details>
   <summary>Teoria</summary>
+  Namespace:
+
+Isolamento logico
+
+Quote e policy separate
+
+Evita conflitti nomi
 </details>
 
 
@@ -476,5 +657,15 @@ spec:
 
 <details>
   <summary>Teoria</summary>
+  Una NetworkPolicy:
+
+È deny-all implicito se presente
+
+Filtra traffico tra Pod
+
+Richiede CNI compatibile
+
+podSelector seleziona i Pod protetti
+from definisce chi può entrare
 </details>
 
