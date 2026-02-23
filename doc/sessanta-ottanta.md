@@ -2,7 +2,7 @@
 
 ---
 
-### 81
+### 61
 **Esercizio:** 
 <details>
 <summary>Soluzione</summary>
@@ -18,7 +18,7 @@ kubectl get pod one-shot
 
 ---
 
-### 82
+### 62
 **Esercizio:** 
 <details>
 <summary>Soluzione</summary>
