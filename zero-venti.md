@@ -18,6 +18,10 @@ k run redis-pod --image=redis:7
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
 ---
 
 
@@ -36,6 +40,11 @@ kubectl get pods
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -52,6 +61,11 @@ kubectl scale deployment api --replicas=5
 kubectl get pods
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -70,6 +84,11 @@ kubectl rollout status deployment api
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -87,6 +106,11 @@ kubectl rollout status deployment api
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -103,6 +127,11 @@ kubectl expose deployment api --port=80 --type=ClusterIP
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -118,6 +147,12 @@ kubectl create configmap app-config --from-literal=MODE=prod
 ```
 </details>
 
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -132,6 +167,12 @@ kubectl create secret generic db-secret --from-literal=password=mypass
 
 ```
 </details>
+
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -161,6 +202,11 @@ kubectl apply -f api.yaml
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -180,6 +226,11 @@ livenessProbe:
   periodSeconds: 10
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -202,6 +253,11 @@ resources:
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -219,6 +275,11 @@ initContainers:
   command: ['sh','-c','echo init']
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -239,6 +300,11 @@ containers:
   command: ['sh','-c','sleep 3600']
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -269,6 +335,11 @@ kubectl apply -f pvc.yaml
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -293,6 +364,11 @@ containers:
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -306,6 +382,11 @@ containers:
 kubectl create job hello-job --image=busybox -- echo hello
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -323,6 +404,11 @@ kubectl create cronjob hello-cron \
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -338,6 +424,11 @@ securityContext:
 ```
 </details>
 
+<details>
+  <summary>Teoria</summary>
+</details>
+
+
 ---
 
 
@@ -351,6 +442,11 @@ kubectl create ns dev
 kubectl create deployment nginx --image=nginx -n dev
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
 
 ---
 
@@ -377,3 +473,8 @@ spec:
           app: frontend
 ```
 </details>
+
+<details>
+  <summary>Teoria</summary>
+</details>
+
