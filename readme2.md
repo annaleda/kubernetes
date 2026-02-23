@@ -4,7 +4,7 @@
 
 Ogni argomento ha una pagina dedicata con teoria ed esercizi.
 
-### 0. [Kubernates - Kind](./readme.md)
+### 0. [Kubernates - Kind](./readme0.md)
 
 ## 🔗 1 Argomenti CKAD
 
