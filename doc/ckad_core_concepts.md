@@ -32,11 +32,14 @@
 * È la risorsa principale per applicazioni stateless.
 
 ---
+<img width="1051" height="460" alt="Immagine 2026-02-24 120518" src="https://github.com/user-attachments/assets/7b9f6bb1-ae95-4f42-a38b-233093224345" />
 
 ## Namespace
 * Isolamento logico delle risorse.
 * Permette ambienti separati (dev, test, prod).
 * Namespace di default: `default`.
+
+<img width="1184" height="619" alt="Immagine 2026-02-24 120951" src="https://github.com/user-attachments/assets/eacae482-2964-497c-a5bc-2c058a7157e5" />
 
 ---
 
