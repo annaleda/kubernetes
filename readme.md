@@ -15,7 +15,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
    - (ConfigMap,Secret,Environment Variables,Resource Requests e Limits,Image Configuration)
      
 ### 1.3 [Multi-Container Pods](./doc/ckad_multicontainer_pods.md)
-   - (Init Container,Sidecar Container,emptyDir)
+   - (Patterns, Init Container,Sidecar Container)
      
 ### 1.4 [Services & Networking](./doc/ckad_services_networking.md)
    - (Service,Type of Service,Port,Ingress,Network Policies)
