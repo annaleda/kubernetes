@@ -20,7 +20,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
 ### 1.4 [Services & Networking](./doc/ckad_services_networking.md)
    - (Service,Type of Service,Port,Ingress)
      
-### 1.5 [Storage](./doc/ckad_storage.md)
+### 1.5 [Storage (State Persistence)](./doc/ckad_storage.md)
    - (Volumes,Type of volumes,StorageClass)
      
 ### 1.6 [Observability](./doc/ckad_observability.md)
