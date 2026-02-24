@@ -19,7 +19,9 @@ Un volume è definito nel Pod e montato nei container.
 
 ---
 
-## Tipi di Volume Comuni (CKAD Focus)
+## Condivisione Storage
+
+I container possono condividere volumi definiti nel Pod.
 
 ### emptyDir
 
@@ -37,6 +39,16 @@ volumes:
   - name: temp-storage
     emptyDir: {}
 ```
+
+Montaggio nei container:
+
+```yaml
+volumeMounts:
+  - name: shared-data
+    mountPath: /data
+```
+
+---
 
 ---
 
