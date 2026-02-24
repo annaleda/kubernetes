@@ -12,6 +12,8 @@
   * Storage (volumi)
 * I pod sono effimeri.
 * In produzione si usano tramite Deployment.
+  
+<img width="1207" height="476" alt="Immagine 2026-02-24 121543" src="https://github.com/user-attachments/assets/39e0ef6d-923e-4ec3-90ba-4924dda03b48" />
 
 ---
 
@@ -20,6 +22,8 @@
 * Se un pod muore, viene ricreato.
 * Usa label selector per identificare i pod.
 * Non gestisce aggiornamenti (lo fa il Deployment).
+
+<img width="619" height="648" alt="Immagine 2026-02-24 121319" src="https://github.com/user-attachments/assets/cacac28c-97af-4a3a-bcf1-153ce1984123" />
 
 ---
 
@@ -30,6 +34,9 @@
   * Rollback
   * Scaling
 * È la risorsa principale per applicazioni stateless.
+
+<img width="1237" height="672" alt="image" src="https://github.com/user-attachments/assets/bdb8e63a-a03f-44fb-a39f-18fdc5c45c24" />
+
 
 ---
 <img width="1051" height="460" alt="Immagine 2026-02-24 120518" src="https://github.com/user-attachments/assets/7b9f6bb1-ae95-4f42-a38b-233093224345" />
