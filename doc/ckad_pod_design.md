@@ -48,6 +48,21 @@ spec:
         image: busybox
         command: ["echo", "Hello CKAD"]
 ```
+<img width="1215" height="555" alt="Immagine 2026-02-24 232748" src="https://github.com/user-attachments/assets/167ceb03-ba61-4f0c-9289-04e20e78e0f9" />
+
+## Parametri principali
+
+- `completions`
+    Numero totale di esecuzioni completate con successo richieste.
+    ```yaml
+    completions: 5
+    ```
+- `parallelism`
+    Numero massimo di Pod che possono essere eseguiti contemporaneamente.
+    ```yaml
+    parallelism: 2
+    ```
+<img width="1266" height="663" alt="Immagine 2026-02-24 233018" src="https://github.com/user-attachments/assets/68553adf-adb6-4466-9ccf-e6fb025f0d31" />
 
 ---
 
@@ -91,6 +106,8 @@ Parametri utili:
 - `successfulJobsHistoryLimit`
 - `failedJobsHistoryLimit`
 - `startingDeadlineSeconds`
+
+<img width="1217" height="654" alt="Immagine 2026-02-24 233613" src="https://github.com/user-attachments/assets/094ffc80-aeed-45bd-9e28-f7d531969b31" />
 
 ---
 
