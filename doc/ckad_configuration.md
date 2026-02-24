@@ -39,6 +39,15 @@
   - Come volume
 - Buona pratica: evitare segreti hardcoded nei manifest
 
+| | |
+|---|---|
+|<img width="100%"  alt="Immagine 2026-02-24 130303" src="https://github.com/user-attachments/assets/3572c504-bc45-42cc-9788-2758a162289f" /> |<img width="100%" alt="Immagine 2026-02-24 130303" src="https://github.com/user-attachments/assets/74986ffe-5b11-481b-b828-b560e5ee8bdd" /> |
+
+<img width="1040" height="587" alt="Immagine 2026-02-24 130426" src="https://github.com/user-attachments/assets/e14f6f3a-1400-47ed-a86e-08d11c3d4188" />
+<img width="1040" height="587" alt="Immagine 2026-02-24 130603" src="https://github.com/user-attachments/assets/3045e84b-ea98-42fb-a37d-993a070d9c83" />
+<img width="1040" height="446" alt="Immagine 2026-02-24 130634" src="https://github.com/user-attachments/assets/f8fd589f-9e1c-46f1-9a93-7d54a9b229ca" />
+
+
 ---
 
 ## Environment Variables
