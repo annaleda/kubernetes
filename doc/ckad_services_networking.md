@@ -19,6 +19,8 @@ Il Service crea un IP virtuale stabile (ClusterIP).
 
 ## Tipi di Service
 
+<img width="1159" height="577" alt="Immagine 2026-02-24 122325" src="https://github.com/user-attachments/assets/74725b98-3bd5-49da-b0a0-6fa81c2a0e45" />
+
 ### ClusterIP (default)
 
 - Accessibile solo **all’interno del cluster**
@@ -43,6 +45,8 @@ spec:
 ```
 
 - Range porte default: 30000–32767
+
+<img width="1248" height="577" alt="Immagine 2026-02-24 122659" src="https://github.com/user-attachments/assets/e0fdd392-a7b3-48b8-a947-5c43e33fe149" />
 
 Esempio:
 ```yaml
