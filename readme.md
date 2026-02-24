@@ -18,7 +18,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
    - (Init Container,Sidecar Container,emptyDir)
      
 ### 1.4 [Services & Networking](./doc/ckad_services_networking.md)
-   - (Service,Type of Service,Port,Ingress)
+   - (Service,Type of Service,Port,Ingress,Network Policies)
      
 ### 1.5 [Storage (State Persistence)](./doc/ckad_storage.md)
    - (Volumes,Type of volumes,StorageClass)
@@ -30,7 +30,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
    - (Workload,Job,Rollback,Scaling)
      
 ### 1.8 [Security](./doc/ckad_security.md)
-   - (Pod Securiity,ServiceAccount,RBAC,SecurityContext,Network Policies)
+   - (Pod Securiity,ServiceAccount,RBAC,SecurityContext)
 
 ### 1.9 [Taint and Toleration/ Affinity](./doc/ckad_t_t_affinity.md)
    - (Taint and Toleration, Affinity)
