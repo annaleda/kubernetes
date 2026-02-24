@@ -192,6 +192,9 @@ Se esiste una NetworkPolicy, il traffico non permesso viene bloccato.
 
 <img width="1078" height="605" alt="Immagine 2026-02-24 152156" src="https://github.com/user-attachments/assets/afd85c25-31ea-49dd-88df-35990a86b79b" />
 
+
+<img width="1059" height="558" alt="Immagine 2026-02-24 152327" src="https://github.com/user-attachments/assets/1e3038a6-2307-4dfc-aeab-48a893a6da1d" />
+
 ---
 
 ## Comunicazione tra Pod
