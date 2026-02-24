@@ -16,6 +16,13 @@ Nel CKAD la sicurezza è principalmente a livello di:
 
 ---
 
+# Pod Security
+
+<img width="919" height="544" alt="Immagine 2026-02-24 132005" src="https://github.com/user-attachments/assets/d7dd8edb-119d-4303-93f0-d88b8779dde6" />
+
+
+---
+
 # ServiceAccount
 
 Ogni Pod usa un ServiceAccount per autenticarsi verso l’API Server.
