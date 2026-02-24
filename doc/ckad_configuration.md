@@ -102,22 +102,39 @@ volumeMounts:
 Ogni chiave diventa un file nella directory montata.
 
 ---
-
 ## Resource Requests & Limits
 
-Permettono di controllare uso CPU e memoria.
+Permettono di controllare l’uso di **CPU** e **Memoria** nei container.
+
+Sono fondamentali per:
+
+- Scheduling corretto
+- Stabilità del cluster
+- Controllo delle risorse
+- Classificazione QoS
+
+---
 
 ### Requests
-- Risorse minime garantite
-- Usate dallo scheduler per decidere il nodo
+
+Le **requests** sono le risorse minime garantite al container.
+
+- Usate dallo scheduler per decidere su quale nodo posizionare il Pod
+- Il nodo deve avere almeno quelle risorse disponibili
+
+Esempio:
+
+```yaml
+requests:
+  cpu: "100m"
+  memory: "128Mi"
+```
 
 ### Limits
-- Massimo utilizzabile dal container
-- Se supera:
-  - CPU → throttling
-  - Memory → OOMKilled
-
-### Esempio
+Massimo utilizzabile dal container
+Se il container supera il limite:
+  - CPU → viene applicato throttling
+  - Memory → il container viene terminato (OOMKilled)
 
 ```yaml
 resources:
@@ -131,11 +148,110 @@ resources:
 
 ---
 
+### QoS Classes (Quality of Service)
+
+Kubernetes assegna automaticamente una classe QoS al Pod in base a requests e limits.
+
+Esistono 3 classi:
+- Guaranteed (massima priorità)
+
+  - Condizioni:
+    
+    - Requests = Limits
+    - Per CPU e memoria
+    - Per tutti i container del Pod
+    - Più protetto in caso di pressione memoria
+    - Ultimo ad essere terminato
+      
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: guaranteed-pod
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"
+    ```
+
+- Burstable
+
+  - Condizioni:
+
+    - Ha almeno una request
+    - Requests ≠ Limits (oppure limits mancanti)
+    - Può usare più risorse
+    - Può essere terminato prima dei Guaranteed
+
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: burstable-pod
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+      ```
+
+
+- BestEffort (priorità più bassa)
+
+  - Condizione:
+    
+    - Nessuna request
+    - Nessun limit
+    - Primo ad essere terminato in caso di pressione memoria
+      
+    ```yaml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: besteffort-pod
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+    ```
+
 ## LimitRange
 
 - Definisce limiti min/max in un namespace
 - Può impostare default requests/limits per i container
 
+```yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: container-limits
+  namespace: demo
+spec:
+  limits:
+  - type: Container
+    default:
+      cpu: "500m"
+      memory: "256Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
+    min:
+      cpu: "50m"
+      memory: "64Mi"
+    max:
+      cpu: "1"
+      memory: "512Mi"
+```
 ---
 
 ## ResourceQuota
@@ -146,6 +262,94 @@ resources:
   - CPU totale
   - Memoria totale
   - Numero di ConfigMap o Secret
+> “Questo namespace può usare massimo 4 CPU e 8Gi di RAM”
+
+```yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: namespace-quota
+  namespace: demo
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 8Gi
+    limits.cpu: "6"
+    limits.memory: 12Gi
+    pods: "10"
+    configmaps: "5"
+    persistentvolumeclaims: "4"
+```
+
+---
+
+| Concetto       | Serve a                          |
+|---------------|-----------------------------------|
+| Requests      | Scheduling                        |
+| Limits        | Controllo massimo utilizzo        |
+| QoS           | Priorità in caso di pressione     |
+| LimitRange    | Regole per singolo container      |
+| ResourceQuota | Limite globale del namespace      |
+
+## Unità di misura (CPU e Memoria)
+
+Kubernetes usa unità specifiche per CPU e memoria.
+
+---
+
+### CPU
+
+La CPU si misura in **core** o **millicore (m)**.
+
+| Valore | Significato |
+|--------|------------|
+| `1`    | 1 core CPU |
+| `500m` | 0.5 core (mezzo core) |
+| `100m` | 0.1 core |
+| `250m` | 0.25 core |
+
+`1000m = 1 core`
+
+La CPU è **compressibile** → se supera il limit viene applicato throttling.
+
+---
+
+### Memoria
+
+La memoria si misura in byte.
+
+| Valore | Significato |
+|--------|------------|
+| `128Mi` | 128 Mebibyte |
+| `1Gi`   | 1 Gibibyte |
+| `512Mi` | 0.5 Gi |
+| `100M`  | 100 Megabyte (decimale) |
+
+---
+
+### Differenza tra Mi e M
+
+| Unità | Tipo | Base |
+|-------|------|------|
+| `Mi`, `Gi` | Binaria | 1024 |
+| `M`, `G`   | Decimale | 1000 |
+
+Esempio:
+
+- `1Gi = 1024Mi`
+- `1G = 1000M`
+
+⚠ In Kubernetes si usa quasi sempre `Mi` e `Gi`.
+
+---
+
+## Da ricordare per CKAD
+
+- CPU → `m` = millicore
+- 1000m = 1 core
+- Memoria → meglio usare `Mi` e `Gi`
+- CPU supera limit → throttling
+- Memoria supera limit → OOMKilled
 
 ---
 
