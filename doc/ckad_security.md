@@ -178,26 +178,6 @@ Container-level sovrascrive quello del Pod.
 
 ---
 
-# Image Pull Secrets
-
-Per immagini private:
-
-```
-kubectl create secret docker-registry my-secret \
-  --docker-username=user \
-  --docker-password=pass \
-  --docker-email=email@example.com
-```
-
-Nel Pod:
-
-```yaml
-imagePullSecrets:
-- name: my-secret
-```
-
----
-
 # Verifica Permessi
 
 Testare accesso:
