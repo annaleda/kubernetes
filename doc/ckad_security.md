@@ -12,7 +12,6 @@ Nel CKAD la sicurezza è principalmente a livello di:
 - ServiceAccount
 - RBAC
 - SecurityContext
-- Network Policies (base)
 
 ---
 
@@ -74,6 +73,8 @@ Componenti principali:
 - ClusterRole (cluster-wide)
 - RoleBinding
 - ClusterRoleBinding
+  
+<img width="1094" height="621" alt="Immagine 2026-02-24 234057" src="https://github.com/user-attachments/assets/579f16a2-14ac-407b-853e-ca1a22996055" />
 
 ---
 
@@ -124,6 +125,7 @@ Esempio CLI:
 kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
 kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceaccount=default:my-sa
 ```
+<img width="1080" height="630" alt="Immagine 2026-02-24 234616" src="https://github.com/user-attachments/assets/7be97a1a-de0d-4a2f-b0e0-b98bcb42b2c6" />
 
 ---
 
@@ -196,36 +198,6 @@ imagePullSecrets:
 
 ---
 
-# Network Policies (CKAD Base)
-
-Controllano traffico tra Pod.
-
-Senza NetworkPolicy:
-- Tutto il traffico è permesso.
-
-Con NetworkPolicy:
-- Il traffico è negato per default se policy applicata.
-
-Esempio base:
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-nginx
-spec:
-  podSelector:
-    matchLabels:
-      app: nginx
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: frontend
-```
-
----
-
 # Verifica Permessi
 
 Testare accesso:
@@ -234,6 +206,7 @@ Testare accesso:
 kubectl auth can-i get pods
 kubectl auth can-i create deployments --as=system:serviceaccount:default:my-sa
 ```
+<img width="732" height="607" alt="Immagine 2026-02-24 234344" src="https://github.com/user-attachments/assets/5fe65618-af91-46e8-8397-2452f06710b8" />
 
 ---
 
