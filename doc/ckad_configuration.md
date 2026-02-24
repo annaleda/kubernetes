@@ -17,8 +17,12 @@
   - Come file montato in un volume
 - Se aggiornata, i Pod **non si aggiornano automaticamente** (serve restart o rollout)
 
-<img width="518" height="657" alt="Immagine 2026-02-24 124207" src="https://github.com/user-attachments/assets/44d5176e-2c0d-435b-bad8-932ef174ae81" />
-<img width="520" height="668" alt="Immagine 2026-02-24 124305" src="https://github.com/user-attachments/assets/2520bfae-95a9-492c-a333-228c7f2e673c" />
+| | |
+|---|---|
+|<img width="100%" alt="Immagine 2026-02-24 124207" src="https://github.com/user-attachments/assets/44d5176e-2c0d-435b-bad8-932ef174ae81" /> |<img width="100%" alt="Immagine 2026-02-24 124305" src="https://github.com/user-attachments/assets/2520bfae-95a9-492c-a333-228c7f2e673c" />|
+
+<img width="1040" height="587" alt="Immagine 2026-02-24 124744" src="https://github.com/user-attachments/assets/4d5ee76f-7407-42b4-aaec-46a197043e8b" />
+<img width="1040" height="446" alt="Immagine 2026-02-24 124919" src="https://github.com/user-attachments/assets/bcf22e1d-5580-4b95-837c-5bf020134bb9" />
 
 ---
 
