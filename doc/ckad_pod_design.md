@@ -98,6 +98,9 @@ Parametri utili:
 
 Gestisce applicazioni stateless.
 
+<img width="1135" height="661" alt="Immagine 2026-02-24 150103" src="https://github.com/user-attachments/assets/91e15fac-5bbf-489a-bee8-267e82e27d58" />
+
+
 Funzionalità principali:
 - ReplicaSet automatici
 - Rolling update
@@ -107,8 +110,25 @@ Funzionalità principali:
 
 ---
 
-## Rolling Updates
+## Strategies: Recreate and Rolling Updates
 
+<img width="1645" height="771" alt="Immagine 2026-02-24 150224" src="https://github.com/user-attachments/assets/988dd560-33e2-4204-bacc-25c2f149d009" />
+
+### Recreate
+
+La strategia **Recreate** termina tutti i Pod esistenti prima di creare quelli nuovi.
+
+Funzionamento:
+
+1. Vengono eliminati tutti i Pod della versione corrente
+2. Solo dopo vengono creati i Pod della nuova versione
+
+```yaml
+strategy:
+  type: Recreate
+```
+
+###  Rolling Updates
 Aggiornamento progressivo dei Pod senza downtime.
 
 Parametri chiave:
@@ -137,6 +157,7 @@ kubectl rollout history deployment <name>
 kubectl rollout undo deployment <name>
 kubectl rollout status deployment <name>
 ```
+<img width="770" height="478" alt="Immagine 2026-02-24 145707" src="https://github.com/user-attachments/assets/fe49f26b-b902-466b-896d-632e59fd5dd3" />
 
 Rollback a revisione specifica:
 
