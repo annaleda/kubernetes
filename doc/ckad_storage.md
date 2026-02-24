@@ -124,6 +124,8 @@ Access Modes comuni:
 - `ReadOnlyMany` (ROX)
 - `ReadWriteMany` (RWX)
 
+<img width="993" height="612" alt="Immagine 2026-02-24 230354" src="https://github.com/user-attachments/assets/02a863db-ad09-4675-b0b0-62ff8a98969b" />
+
 ---
 
 ## PersistentVolumeClaim (PVC)
@@ -148,6 +150,7 @@ spec:
     requests:
       storage: 1Gi
 ```
+<img width="1090" height="500" alt="Immagine 2026-02-24 230559" src="https://github.com/user-attachments/assets/5718d328-02aa-4a59-87ef-23ca3a19efd4" />
 
 ---
 
@@ -167,6 +170,7 @@ volumeMounts:
   - mountPath: /data
     name: my-storage
 ```
+<img width="1223" height="610" alt="Immagine 2026-02-24 231025" src="https://github.com/user-attachments/assets/20163d66-dbf4-4445-b638-b0b284a6ee51" />
 
 ---
 
@@ -179,6 +183,8 @@ volumeMounts:
   - Parametri del provisioner
 
 Se un PVC specifica una StorageClass, il PV viene creato automaticamente.
+
+<img width="1229" height="638" alt="Immagine 2026-02-24 231300" src="https://github.com/user-attachments/assets/e68d5ca8-59a7-48b3-9cc5-a88ba6f404cb" />
 
 ---
 
@@ -195,6 +201,8 @@ Se un PVC specifica una StorageClass, il PV viene creato automaticamente.
 ## Reclaim Policy
 
 Definisce cosa succede al PV quando il PVC viene eliminato:
+
+`persistentVolumeReclaimPolicy`
 
 - `Retain` → mantiene i dati
 - `Delete` → elimina volume
@@ -219,6 +227,98 @@ Per applicazioni con stato si usa spesso:
 - StatefulSet
 - PVC dedicato per ogni replica
 - Headless Service
+
+<img width="1207" height="703" alt="Immagine 2026-02-24 231557" src="https://github.com/user-attachments/assets/e813e89a-3f31-43f3-81d3-63d6b0926e29" />
+<img width="1093" height="713" alt="Immagine 2026-02-24 231756" src="https://github.com/user-attachments/assets/5acbad8b-dffe-40be-87c3-a87b9c770358" />
+
+---
+
+## volumeClaimTemplates (StatefulSet)
+
+Nel caso degli **StatefulSet**, i volumi devono essere:
+
+- Persistenti
+- Unici per ogni replica
+- Associati stabilmente al Pod
+
+Per questo si usa `volumeClaimTemplates`.
+
+---
+
+### Cos’è volumeClaimTemplates?
+
+È un template di **PersistentVolumeClaim** definito dentro lo StatefulSet.
+
+Per ogni replica viene creato automaticamente:
+
+- Un PVC dedicato
+- Un PV associato (dinamicamente se c'è una StorageClass)
+
+Ogni Pod ottiene quindi il **proprio volume persistente**.
+
+---
+
+### Perché è importante?
+
+A differenza dei Deployment:
+
+- Le repliche di uno StatefulSet **non condividono lo stesso volume**
+- Ogni Pod mantiene il proprio storage anche se viene riavviato
+
+Esempio:
+- `web-0` → PVC `data-web-0`
+- `web-1` → PVC `data-web-1`
+- `web-2` → PVC `data-web-2`
+
+Se `web-1` viene ricreato, riutilizza il **suo stesso volume**.
+
+---
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: "web"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: standard
+```
+Cosa succede dietro le quinte?
+
+Lo StatefulSet crea il Pod web-0
+
+Viene creato automaticamente il PVC data-web-0
+
+La StorageClass crea il PV
+
+Il volume viene montato nel container
+
+Questo processo si ripete per ogni replica.
+
+<img width="1262" height="702" alt="Immagine 2026-02-24 232040" src="https://github.com/user-attachments/assets/f00959ba-d64d-4a39-b3b5-b8170a8cf04e" />
 
 ---
 
