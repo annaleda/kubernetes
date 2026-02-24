@@ -57,11 +57,18 @@
   * ReplicaSet ↔ Pod
   * Deployment ↔ Pod
 
+<img width="727" height="536" alt="Immagine 2026-02-24 144906" src="https://github.com/user-attachments/assets/65cd2545-ab2f-43e3-8faa-be6440d5454c" />
+<img width="727" height="222" alt="Immagine 2026-02-24 145048" src="https://github.com/user-attachments/assets/cf3cc83d-fd76-4ebf-8996-ea0276350fdd" />
+<img width="723" height="527" alt="Immagine 2026-02-24 145312" src="https://github.com/user-attachments/assets/32f12be6-f2f5-4043-914f-0cc9d2231d40" />
+
 ---
+
 
 ## Annotations
 * Metadati non usati per selezione.
 * Informazioni descrittive o per tool esterni.
+
+<img width="604" height="598" alt="Immagine 2026-02-24 145429" src="https://github.com/user-attachments/assets/cec38abc-1bbc-483b-b597-594812a101ba" />
 
 ---
 
