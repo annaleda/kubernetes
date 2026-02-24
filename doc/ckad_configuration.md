@@ -149,26 +149,6 @@ resources:
 
 ---
 
-## Security Context (Base)
-
-Permette di controllare privilegi del container.
-
-Esempi di opzioni:
-- `runAsUser`
-- `runAsNonRoot`
-- `readOnlyRootFilesystem`
-- `allowPrivilegeEscalation`
-
-### Esempio
-
-```yaml
-securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-```
-
----
-
 ## Image Configuration
 
 ### imagePullPolicy
