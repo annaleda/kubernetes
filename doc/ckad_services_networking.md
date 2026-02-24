@@ -124,6 +124,16 @@ ports:
     targetPort: 8080
     nodePort: 30007
 ```
+## Ingress(entrata) and Egress(uscita)
+
+Ci sono due tipi di traffico: in entrata e in uscita.
+
+Le NetworkPolicies permettono:
+  - Ingress rules
+  - Egress rules
+
+
+<img width="722" height="524" alt="Immagine 2026-02-24 151606" src="https://github.com/user-attachments/assets/d2c0f223-a871-44eb-9246-92268c09e755" />
 
 ---
 
@@ -176,6 +186,8 @@ Permettono di controllare il traffico tra Pod.
   - Egress rules
 
 Se esiste una NetworkPolicy, il traffico non permesso viene bloccato.
+
+<img width="551" height="612" alt="Immagine 2026-02-24 151906" src="https://github.com/user-attachments/assets/32ccc5ce-8222-456a-844b-1ee6822b379a" />
 
 ---
 
