@@ -136,16 +136,13 @@ Definisce privilegi a livello di:
 - Pod
 - Container
 
----
+Serve per controllare:
 
-## Run as non-root
-
-```yaml
-securityContext:
-  runAsUser: 1000
-  runAsNonRoot: true
-```
-
+- Utente e gruppo di esecuzione
+- Privilegi Linux
+- Accesso al filesystem
+- Capabilities del kernel
+  
 ---
 
 ## Impostare privilegi container
@@ -155,6 +152,24 @@ securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
 ```
+
+- `allowPrivilegeEscalation: false` → impedisce al processo di ottenere privilegi più elevati (es. tramite setuid)
+
+- `readOnlyRootFilesystem`  →  Rende il filesystem root del container in sola lettura
+
+---
+
+## Run as non-root
+
+Best practice: non eseguire container come root.
+
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+
+- `runAsUser: 1000` → il container gira con UID 1000
+
+- `runAsNonRoot: true` → impedisce l’avvio se l’immagine prova a usare root
 
 ---
 
@@ -166,7 +181,9 @@ securityContext:
     add: ["NET_ADMIN"]
     drop: ["ALL"]
 ```
+- `drop: ["ALL"]` → rimuove tutte le capability
 
+- `add: ["NET_ADMIN"]` → aggiunge solo quella necessaria
 ---
 
 # Pod-level vs Container-level SecurityContext
@@ -176,6 +193,24 @@ securityContext:
 
 Container-level sovrascrive quello del Pod.
 
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+```
 ---
 
 # Verifica Permessi
