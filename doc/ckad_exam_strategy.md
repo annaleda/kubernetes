@@ -97,5 +97,21 @@ notepad $PROFILE
 
 
 > Se puoi farlo in un comando, fallo in un comando.  
+
 > Se serve YAML, genera con `--dry-run=client -o yaml` e applica.
 
+---
+
+> `--dry-run` → non crea la risorsa
+
+> `-o yaml` → stampa il manifest
+
+>  `kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > deployment.yaml`  →  salva su file
+
+Workflow ideale:
+
+> Genera YAML
+
+> Modifica resources, probes, securityContext
+
+> Applica con: kubectl apply -f file.yaml
