@@ -30,6 +30,41 @@ Dove `effect` può essere:
 <img width="873" height="325" alt="Immagine 2026-02-24 135344" src="https://github.com/user-attachments/assets/5844af51-a8d6-4184-8f00-619add76c89e" />
 
 ---
+## NodeSelector
+
+In Kubernetes il **nodeSelector** è il modo più semplice per dire allo scheduler:
+
+> “Esegui questo Pod solo su nodi che hanno una certa label.”
+
+---
+
+<img width="1138" height="589" alt="Immagine 2026-02-24 140157" src="https://github.com/user-attachments/assets/ad9d9562-7614-4529-aceb-d7ef5aaf9523" />
+
+Ogni nodo può avere delle **label**, ad esempio:
+
+- `disktype=ssd`
+- `environment=prod`
+- `gpu=true`
+
+Con `nodeSelector`, il Pod verrà schedulato **solo** su nodi che matchano esattamente quelle label.
+
+Se nessun nodo soddisfa la condizione → il Pod rimane in **Pending**.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  nodeSelector:
+    disktype: ssd
+  containers:
+  - name: nginx
+    image: nginx
+```
+<img width="1115" height="590" alt="Immagine 2026-02-24 140305" src="https://github.com/user-attachments/assets/34ec0ae2-2451-44fb-a77b-360c78edfec8" />
+
+---
 
 ## Affinity
 
@@ -40,6 +75,8 @@ Esistono due grandi categorie:
 ### Node Affinity
 
 Permette di scegliere nodi con determinate **label**.
+
+<img width="1079" height="580" alt="Immagine 2026-02-24 140843" src="https://github.com/user-attachments/assets/5b80fc47-aa2d-44be-a44f-6549b77cc6b9" />
 
 Esempio concettuale:
 
