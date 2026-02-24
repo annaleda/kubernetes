@@ -15,9 +15,24 @@ Un Pod può contenere più container che:
 
 I container all’interno di un Pod devono collaborare strettamente.
 
+<img width="804" height="502" alt="Immagine 2026-02-24 142447" src="https://github.com/user-attachments/assets/cd2dd5e1-c588-4831-801d-93ae863eca3e" />
+
+---
+## Design Patterns
+
+
+<img width="1002" height="586" alt="Immagine 2026-02-24 142632" src="https://github.com/user-attachments/assets/3602289e-5f11-4b11-8c53-569868f93d5b" />
+
 ---
 
-## Sidecar Pattern
+## Co-located Containers
+
+<img width="951" height="521" alt="Immagine 2026-02-24 142844" src="https://github.com/user-attachments/assets/f43f931f-7205-455a-abc2-ddca8d19669d" />
+
+
+---
+
+## Sidecar Containers
 
 - Container secondario che estende il container principale.
 - Esegue in parallelo al container principale.
@@ -32,6 +47,8 @@ I container all’interno di un Pod devono collaborare strettamente.
 Esempio concettuale:
 - Container principale → applicazione web
 - Sidecar → scrive log su volume condiviso
+
+<img width="943" height="513" alt="Immagine 2026-02-24 143209" src="https://github.com/user-attachments/assets/e167bdd4-feee-4562-a935-00da81562185" />
 
 ---
 
@@ -56,6 +73,7 @@ initContainers:
     image: busybox
     command: ["sh", "-c", "echo Init completed"]
 ```
+<img width="938" height="513" alt="Immagine 2026-02-24 143056" src="https://github.com/user-attachments/assets/196903e4-f46f-4388-8bd7-9856e2dee511" />
 
 ---
 
