@@ -32,6 +32,7 @@ Esempio:
 spec:
   type: ClusterIP
 ```
+<img width="1214" height="498" alt="Immagine 2026-02-24 123447" src="https://github.com/user-attachments/assets/7a272354-8bfc-4d97-a209-b29dc30acf18" />
 
 ---
 
