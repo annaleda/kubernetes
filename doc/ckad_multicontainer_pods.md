@@ -97,34 +97,6 @@ Il container adapter legge da un volume condiviso e scrive output trasformato.
 
 ---
 
-## Condivisione Storage
-
-I container possono condividere volumi definiti nel Pod.
-
-### emptyDir
-
-- Creato quando il Pod viene avviato.
-- Eliminato quando il Pod viene distrutto.
-- Usato per scambio dati tra container.
-
-Esempio:
-
-```yaml
-volumes:
-  - name: shared-data
-    emptyDir: {}
-```
-
-Montaggio nei container:
-
-```yaml
-volumeMounts:
-  - name: shared-data
-    mountPath: /data
-```
-
----
-
 ## Comunicazione tra Container
 
 Avviene tramite:
