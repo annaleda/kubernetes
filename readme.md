@@ -33,7 +33,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
    - (Pod Securiity,ServiceAccount,RBAC,SecurityContext,Network Policies)
 
 ### 1.9 [Taint and Toleration/ Affinity](./doc/ckad_t_t_affinity.md)
-   - (Taint and Toleration/ Affinity)
+   - (Taint and Toleration, Affinity)
      
 ---
 
