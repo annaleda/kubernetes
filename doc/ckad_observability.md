@@ -39,6 +39,8 @@ Tipi di probe supportati:
 - Se fallisce → Kubernetes riavvia il container.
 - Usata per rilevare deadlock o crash interni.
 
+<img width="1193" height="386" alt="image" src="https://github.com/user-attachments/assets/339927db-3e24-4cc3-872e-9f0d7ddd5aec" />
+
 Esempio:
 
 ```yaml
@@ -57,6 +59,9 @@ livenessProbe:
 - Verifica se il container è pronto a ricevere traffico.
 - Se fallisce → il Pod viene rimosso dal Service.
 - Non riavvia il container.
+
+<img width="963" height="575" alt="Immagine 2026-02-24 143752" src="https://github.com/user-attachments/assets/78cde84c-d52b-488b-990c-8f6a095b6cf1" />
+
 
 Utile quando:
 - L’app è in fase di inizializzazione
@@ -112,11 +117,15 @@ Per visualizzare log:
 kubectl logs <pod>
 ```
 
+<img width="1107" height="617" alt="Immagine 2026-02-24 144309" src="https://github.com/user-attachments/assets/a1f85930-3208-4c51-9e6a-faf4143ca8eb" />
+
+
 Container specifico:
 
 ```
 kubectl logs <pod> -c <container>
 ```
+<img width="1125" height="502" alt="Immagine 2026-02-24 144513" src="https://github.com/user-attachments/assets/7a3234c5-f734-417b-a32e-305ba532362c" />
 
 Seguire log in tempo reale:
 
