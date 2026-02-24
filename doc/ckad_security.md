@@ -25,6 +25,9 @@ Nel CKAD la sicurezza è principalmente a livello di:
 
 # ServiceAccount
 
+<img width="1191" height="658" alt="Immagine 2026-02-24 132633" src="https://github.com/user-attachments/assets/581af792-8828-4919-aac4-a3b7ecd51a43" />
+
+
 Ogni Pod usa un ServiceAccount per autenticarsi verso l’API Server.
 
 Default:
@@ -50,12 +53,14 @@ spec:
   - name: nginx
     image: nginx
 ```
+<img width="1164" height="721" alt="Immagine 2026-02-24 133108" src="https://github.com/user-attachments/assets/de5f77b3-b58f-40ea-866a-2803f133bec5" />
 
 Disabilitare automount token:
 
 ```yaml
 automountServiceAccountToken: false
 ```
+<img width="625" height="417" alt="Immagine 2026-02-24 133509" src="https://github.com/user-attachments/assets/dc6fa975-673f-4297-84a0-c188f365dccb" />
 
 ---
 
