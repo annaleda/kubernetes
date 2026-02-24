@@ -124,6 +124,16 @@ ports:
     targetPort: 8080
     nodePort: 30007
 ```
+---
+
+## Comunicazione tra Pod
+
+- Pod nello stesso namespace → comunicano tramite Service
+- Container nello stesso Pod → comunicano via `localhost`
+- Namespace diversi → usare FQDN completo
+
+---
+
 ## Ingress(entrata) and Egress(uscita)
 
 Ci sono due tipi di traffico: in entrata e in uscita.
@@ -134,6 +144,28 @@ Le NetworkPolicies permettono:
 
 
 <img width="722" height="524" alt="Immagine 2026-02-24 151606" src="https://github.com/user-attachments/assets/d2c0f223-a871-44eb-9246-92268c09e755" />
+
+---
+
+## Network Policies
+
+Permettono di controllare il traffico tra Pod.
+
+- Agiscono a livello di Pod
+- Basate su label selector
+- Permettono:
+  - Ingress rules
+  - Egress rules
+
+Se esiste una NetworkPolicy, il traffico non permesso viene bloccato.
+
+<img width="551" height="612" alt="Immagine 2026-02-24 151906" src="https://github.com/user-attachments/assets/32ccc5ce-8222-456a-844b-1ee6822b379a" />
+
+
+<img width="1078" height="605" alt="Immagine 2026-02-24 152156" src="https://github.com/user-attachments/assets/afd85c25-31ea-49dd-88df-35990a86b79b" />
+
+
+<img width="1059" height="558" alt="Immagine 2026-02-24 152327" src="https://github.com/user-attachments/assets/1e3038a6-2307-4dfc-aeab-48a893a6da1d" />
 
 ---
 
@@ -162,6 +194,8 @@ spec:
                 port:
                   number: 80
 ```
+<img width="1012" height="657" alt="Immagine 2026-02-24 152804" src="https://github.com/user-attachments/assets/b425ffa4-9258-46f3-8a2b-d7b83a718e08" />
+
 
 ---
 
@@ -172,36 +206,6 @@ spec:
 | Layer 4 (TCP/UDP) | Layer 7 (HTTP/HTTPS) |
 | Espone singolo servizio | Routing multiplo |
 | Tipo ClusterIP/NodePort/LoadBalancer | Richiede Ingress Controller |
-
----
-
-## Network Policies
-
-Permettono di controllare il traffico tra Pod.
-
-- Agiscono a livello di Pod
-- Basate su label selector
-- Permettono:
-  - Ingress rules
-  - Egress rules
-
-Se esiste una NetworkPolicy, il traffico non permesso viene bloccato.
-
-<img width="551" height="612" alt="Immagine 2026-02-24 151906" src="https://github.com/user-attachments/assets/32ccc5ce-8222-456a-844b-1ee6822b379a" />
-
-
-<img width="1078" height="605" alt="Immagine 2026-02-24 152156" src="https://github.com/user-attachments/assets/afd85c25-31ea-49dd-88df-35990a86b79b" />
-
-
-<img width="1059" height="558" alt="Immagine 2026-02-24 152327" src="https://github.com/user-attachments/assets/1e3038a6-2307-4dfc-aeab-48a893a6da1d" />
-
----
-
-## Comunicazione tra Pod
-
-- Pod nello stesso namespace → comunicano tramite Service
-- Container nello stesso Pod → comunicano via `localhost`
-- Namespace diversi → usare FQDN completo
 
 ---
 
