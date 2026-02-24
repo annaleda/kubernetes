@@ -14,6 +14,9 @@ I volumi permettono ai container di:
 
 Un volume è definito nel Pod e montato nei container.
 
+
+<img width="1017" height="600" alt="Immagine 2026-02-24 225608" src="https://github.com/user-attachments/assets/6eca54d4-9e0f-4cda-af3e-6ab86a9defac" />
+
 ---
 
 ## Tipi di Volume Comuni (CKAD Focus)
@@ -35,6 +38,49 @@ volumes:
     emptyDir: {}
 ```
 
+---
+
+### hostPath
+
+Il volume **hostPath** monta un file o una directory **direttamente dal filesystem del nodo** dentro il Pod.
+
+È uno storage a **livello di nodo**, NON a livello di cluster.
+
+Questo significa che:
+- I dati esistono solo su quel nodo
+- Se il Pod viene schedulato su un altro nodo → i dati non saranno presenti
+- Non è una soluzione portabile o cloud-native
+
+---
+
+### Come funziona il mount
+
+1. Il volume viene definito nella sezione `volumes`
+2. Viene montato nel container tramite `volumeMounts`
+3. Il path del nodo viene "collegato" a un path interno al container
+
+---
+
+### Esempio hostPath
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-example
+spec:
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - name: node-storage
+      mountPath: /data
+  volumes:
+  - name: node-storage
+    hostPath:
+      path: /var/data
+      type: Directory
+```
 ---
 
 ### configMap
