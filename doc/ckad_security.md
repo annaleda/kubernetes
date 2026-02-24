@@ -136,6 +136,12 @@ Definisce privilegi a livello di:
 - Pod
 - Container
 
+Esempi di opzioni:
+- `runAsUser`
+- `runAsNonRoot`
+- `readOnlyRootFilesystem`
+- `allowPrivilegeEscalation`
+  
 Serve per controllare:
 
 - Utente e gruppo di esecuzione
