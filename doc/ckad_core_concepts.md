@@ -84,10 +84,23 @@ kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > deploym
 
 ## Labels & Selectors
 * Coppie chiave/valore (`app=nginx`).
-* Usate per:
-  * Collegare Service ↔ Pod
-  * ReplicaSet ↔ Pod
-  * Deployment ↔ Pod
+Le label sono fondamentali in Kubernetes e vengono usate per:
+
+- Collegare **Service ↔ Pod**
+- Collegare **ReplicaSet ↔ Pod**
+- Collegare **Deployment ↔ Pod**
+- Definire regole nelle **NetworkPolicy**
+- Applicare **Affinity / Anti-Affinity**
+- Selezionare risorse con `kubectl`
+
+> Label = etichetta
+
+> Selector = filtro
+
+> Controller / Service / NetworkPolicy usano selector per collegare risorse
+
+> Kubernetes usa label per identificare,
+> selector per scegliere.
 
 <img width="727" height="536" alt="Immagine 2026-02-24 144906" src="https://github.com/user-attachments/assets/65cd2545-ab2f-43e3-8faa-be6440d5454c" />
 <img width="727" height="222" alt="Immagine 2026-02-24 145048" src="https://github.com/user-attachments/assets/cf3cc83d-fd76-4ebf-8996-ea0276350fdd" />
