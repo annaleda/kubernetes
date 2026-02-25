@@ -176,7 +176,7 @@ Permette routing HTTP/HTTPS basato su:
 - Hostname
 - Path
 
-Richiede un **Ingress Controller** (non incluso di default).
+Richiede un **Ingress Controller** (non incluso di default). [Esempio: NGINX]
 
 Esempio di regola:
 
@@ -196,6 +196,19 @@ spec:
 ```
 <img width="1012" height="657" alt="Immagine 2026-02-24 152804" src="https://github.com/user-attachments/assets/b425ffa4-9258-46f3-8a2b-d7b83a718e08" />
 
+Flusso Ingress
+
+```yaml
+Internet
+   ↓
+Ingress Controller (Proxy) [Esempio: NGINX]
+   ↓
+Ingress Resource (Rules)
+   ↓
+Service
+   ↓
+Pod
+```
 
 ---
 
