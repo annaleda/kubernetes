@@ -17,6 +17,14 @@ Nel CKAD la sicurezza è principalmente a livello di:
 
 # Pod Security
 
+La Pod Security serve a limitare i privilegi dei container e ridurre i rischi di sicurezza.
+
+Si controlla:
+  - Esecuzione come root o non-root
+  - Accesso al filesystem
+  - Capability Linux
+  - Escalation di privilegi
+
 <img width="919" height="544" alt="Immagine 2026-02-24 132005" src="https://github.com/user-attachments/assets/d7dd8edb-119d-4303-93f0-d88b8779dde6" />
 
 
@@ -24,14 +32,15 @@ Nel CKAD la sicurezza è principalmente a livello di:
 
 # ServiceAccount
 
-<img width="1191" height="658" alt="Immagine 2026-02-24 132633" src="https://github.com/user-attachments/assets/581af792-8828-4919-aac4-a3b7ecd51a43" />
+Ogni Pod può autenticarsi verso l’API Server usando un ServiceAccount.
+È l’identità del Pod dentro il cluster.
 
+`Default ServiceAccount`
 
-Ogni Pod usa un ServiceAccount per autenticarsi verso l’API Server.
-
-Default:
-- Ogni namespace ha un `default` ServiceAccount.
+- Ogni namespace ha un ServiceAccount di default.
 - Se non specificato, il Pod usa quello.
+
+<img width="1191" height="658" alt="Immagine 2026-02-24 132633" src="https://github.com/user-attachments/assets/581af792-8828-4919-aac4-a3b7ecd51a43" />
 
 Creazione:
 
@@ -54,6 +63,10 @@ spec:
 ```
 <img width="1164" height="721" alt="Immagine 2026-02-24 133108" src="https://github.com/user-attachments/assets/de5f77b3-b58f-40ea-866a-2803f133bec5" />
 
+`Token Automation`
+
+Per default Kubernetes può montare automaticamente il token del ServiceAccount nel Pod.
+
 Disabilitare automount token:
 
 ```yaml
@@ -61,6 +74,28 @@ automountServiceAccountToken: false
 ```
 <img width="625" height="417" alt="Immagine 2026-02-24 133509" src="https://github.com/user-attachments/assets/dc6fa975-673f-4297-84a0-c188f365dccb" />
 
+---
+
+> `ServiceAccount` = identità del Pod dentro Kubernetes
+
+> `SecurityContext` = controllo dei privilegi del container
+
+| Concetto | Serve a |
+|---|---|
+| ServiceAccount | Autenticazione |
+| SecurityContext | Privilegi runtime |
+| Pod Security | Policy di sicurezza |
+
+In Kubernetes:
+
+> `ServiceAccount` → identifica il Pod (autenticazione)
+
+> `RBAC` → decide cosa può fare l’identità autenticata (autorizzazione)
+
+| Concetto | Serve a | Livello |
+|---|---|---|
+| ServiceAccount | Identità del Pod | Autenticazione |
+| RBAC | Permessi su risorse | Autorizzazione |
 ---
 
 # RBAC (Role-Based Access Control)
