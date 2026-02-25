@@ -34,6 +34,8 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
 
 ### 1.9 [Taint and Toleration/ Affinity](./doc/ckad_t_t_affinity.md)
    - (Taint and Toleration, Affinity)
+
+### 1.10 [Kubernates Documentation](https://kubernetes.io/docs/home/)
      
 ---
 
