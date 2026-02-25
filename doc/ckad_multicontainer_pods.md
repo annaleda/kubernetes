@@ -123,7 +123,6 @@ Non serve Service per comunicazione interna al Pod.
 
 1. Creare un Pod con nginx + sidecar busybox che scrive log su volume condiviso.
 2. Aggiungere un initContainer che crea un file prima dell’avvio.
-3. Condividere un volume emptyDir tra container.
 4. Creare un Pod dove un container legge file generati dall’altro.
 5. Implementare un Pod con initContainer che attende la disponibilità di un servizio.
 6. Simulare un adapter che trasforma file di log.
