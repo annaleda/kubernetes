@@ -33,7 +33,7 @@ Ogni argomento ha una pagina dedicata con teoria ed esercizi.
    - (Pod Securiity,ServiceAccount,RBAC,SecurityContext)
 
 ### 1.9 [Node,Taint and Toleration/ Affinity](./doc/ckad_t_t_affinity.md)
-   - (Taint and Toleration, Affinity)
+   - (Node, Taint and Toleration, Affinity)
 
 ### 1.10 [Kubernates Documentation](https://kubernetes.io/docs/home/)
      
