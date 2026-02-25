@@ -352,6 +352,8 @@ Questo processo si ripete per ogni replica.
 5. Eliminare il Pod e verificare che i dati persistano.
 6. Creare una StorageClass (se supportata dal cluster).
 7. Verificare accessModes supportati dal cluster.
+8. Condividere un volume emptyDir tra container.
+
 
 ---
 
