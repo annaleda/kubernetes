@@ -49,6 +49,8 @@ volumeMounts:
 ```
 
 ---
+<img width="722" height="534" alt="Immagine 2026-02-25 130738" src="https://github.com/user-attachments/assets/5bfbf9b4-c795-44b8-8d6b-bf1e5dca7c7d" />
+
 
 ---
 
@@ -229,6 +231,13 @@ Definisce cosa succede al PV quando il PVC viene eliminato:
 - Pod deletion:
   - emptyDir → perso
   - PVC → dati persistono
+
+In Kubernetes, i PersistentVolume (PV) rappresentano storage esterno al Pod e al ciclo di vita del container.
+
+I PV sono risorse di storage indipendenti, spesso supportate da sistemi esterni come NFS, cloud block storage o altri backend, e permettono ai dati di sopravvivere alla distruzione dei Pod.
+
+<img width="1147" height="453" alt="Immagine 2026-02-25 131210" src="https://github.com/user-attachments/assets/ffb1edc1-f986-49d1-aa26-1d3faa8bdb15" />
+
 
 ---
 
