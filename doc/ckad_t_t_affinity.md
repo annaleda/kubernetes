@@ -128,6 +128,8 @@ spec:
 L’**Affinity** serve a dire allo scheduler dove preferisco andare.
 
 Esistono due grandi categorie:
+   - Node Affinity
+   - Pod Affinity / Anti-Affinity
 
 ### Node Affinity
 
