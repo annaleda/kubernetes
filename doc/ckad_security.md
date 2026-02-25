@@ -206,7 +206,7 @@ Esempi di opzioni:
 | runAsNonRoot | ✅ | ✅ | Blocca esecuzione come root |
 | runAsGroup | ✅ | ✅ | GID principale del processo |
 | seccompProfile | ✅ | ✅ | Restrizione system call |
-| fsGroup | ✅ | ❌ | Permette accesso ai volumi montati |
+| fsGroup | ✅ | ❌ | Permette accesso ai volumi montati, importante quando si usano PersistentVolume |
 | supplementalGroups | ✅ | ❌ | Gruppi extra del processo |
 | allowPrivilegeEscalation | ❌ | ✅ | Blocca escalation privilegi |
 | readOnlyRootFilesystem | ❌ | ✅ | Root filesystem in sola lettura |
@@ -282,6 +282,8 @@ spec:
     runAsUser: 1000
     runAsNonRoot: true
     fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
   containers:
   - name: app
     image: nginx
@@ -291,6 +293,25 @@ spec:
       capabilities:
         drop: ["ALL"]
 ```
+---
+### seccompProfile 
+
+Permette di filtrare le system call Linux.
+
+Esempio:
+```yaml
+securityContext:
+  seccompProfile:
+    type: RuntimeDefault
+```
+Valori possibili:
+
+- `RuntimeDefault`
+- `Localhost`
+- `Unconfined`
+
+> Con Pod Security restricted, viene richiesto almeno RuntimeDefault.
+
 ---
 
 ## Aggiungere capability Linux
@@ -312,6 +333,9 @@ Esempi:
 |`NET_ADMIN`|	Modificare configurazione di rete|
 |`SYS_TIME`|	Modificare orario sistema|
 |`NET_RAW`|	Creare raw sockets|
+|`SYS_ADMIN`|	Permessi amministrativi avanzati|
+
+> Le capability si configurano solo a livello container
 ---
 
 # Pod-level vs Container-level SecurityContext
