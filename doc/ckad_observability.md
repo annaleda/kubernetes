@@ -195,7 +195,6 @@ Diagnosi:
 4. Aggiungere una startup probe per simulare avvio lento.
 5. Visualizzare logs di un container specifico.
 6. Usare `kubectl describe` per diagnosticare un errore.
-7. Verificare consumo CPU/memoria con `kubectl top`.
 
 ---
 
