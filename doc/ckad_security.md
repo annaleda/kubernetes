@@ -225,6 +225,14 @@ securityContext:
 - `drop: ["ALL"]` → rimuove tutte le capability
 
 - `add: ["NET_ADMIN"]` → aggiunge solo quella necessaria
+
+Esempi:
+
+|Capability |	Serve a|
+|---|---|
+|`NET_ADMIN`|	Modificare configurazione di rete|
+|`SYS_TIME`|	Modificare orario sistema|
+|`NET_RAW`|	Creare raw sockets|
 ---
 
 # Pod-level vs Container-level SecurityContext
