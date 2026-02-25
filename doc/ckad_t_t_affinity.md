@@ -1,7 +1,64 @@
-# Taints and Tolerations / Affinity
+# Node, Taints and Tolerations / Affinity
 ## Teoria
 
 ---
+## Node
+
+Un **Node** è una macchina (VM o fisica) che esegue i Pod.
+
+Può essere:
+
+- **Worker Node** → esegue i Pod  
+- **Control Plane Node** → gestisce il cluster (API Server, Scheduler, etcd…)
+
+Nel CKAD ti concentri principalmente sui **worker node**.
+
+---
+
+## Componenti principali di un Node
+
+Ogni Node esegue:
+
+- **kubelet** → comunica con l’API Server e avvia i Pod assegnati
+- **container runtime** → esegue i container (es. containerd)
+- **kube-proxy** → gestisce networking e regole dei Service
+
+---
+
+## Scheduling dei Pod
+
+Quando crei un Pod:
+
+1. Lo **Scheduler** sceglie un Node
+2. La scelta si basa su:
+   - Resource requests
+   - Node Selector
+   - Affinity / Anti-affinity
+   - Taints & Tolerations
+3. Il Pod viene assegnato al Node
+4. Il kubelet lo avvia
+
+---
+
+Visualizzare i node:
+
+```bash
+kubectl get nodes
+```
+Dettaglio di un node:
+
+```bash
+kubectl describe node <nome-node>
+```
+Vedere su quale node gira un Pod:
+```bash
+kubectl get pod -o wide
+```
+Aggiungere una label a un Node (utile per nodeSelector):
+```bash
+kubectl label nodes <nome-node> disktype=ssd
+```
+
 In Kubernetes lo scheduler decide su quale nodo eseguire un Pod.
 Per influenzare questa decisione possiamo usare:
 
