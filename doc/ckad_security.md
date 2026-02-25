@@ -27,7 +27,19 @@ Si controlla:
 
 <img width="919" height="544" alt="Immagine 2026-02-24 132005" src="https://github.com/user-attachments/assets/d7dd8edb-119d-4303-93f0-d88b8779dde6" />
 
+## Pod Security Admission (PSA)
 
+Kubernetes utilizza Pod Security Admission per applicare policy di sicurezza a livello namespace.
+
+Tre livelli disponibili:
+
+- `privileged` → nessuna restrizione
+- `baseline` → restrizioni moderate
+- `restricted` → policy più sicura (best practice)
+
+Applicazione tramite label sul namespace:
+
+> kubectl label namespace default pod-security.kubernetes.io/enforce=restricted
 ---
 
 # ServiceAccount
@@ -111,6 +123,11 @@ Componenti principali:
   
 <img width="1094" height="621" alt="Immagine 2026-02-24 234057" src="https://github.com/user-attachments/assets/579f16a2-14ac-407b-853e-ca1a22996055" />
 
+### Nota importante
+
+- Una `Role` è sempre limitata a un namespace.
+- Una `ClusterRole` è cluster-wide.
+- Una `ClusterRole` può essere associata a un singolo namespace usando una `RoleBinding`.
 ---
 
 ## Role
@@ -178,7 +195,22 @@ Esempi di opzioni:
 - `fsGroup` (Pod)
 - `readOnlyRootFilesystem` (Container)
 - `allowPrivilegeEscalation` (Container)
-  
+- `privileged` (Container)
+- `capabilities` (Container)
+
+| Campo | Pod Level | Container Level |
+|-------|-----------|-----------------|
+| runAsUser | ✅ | ✅ |
+| runAsNonRoot | ✅ | ✅ |
+| runAsGroup | ✅ | ✅ |
+| fsGroup | ✅ | ❌ |
+| allowPrivilegeEscalation | ❌ | ✅ |
+| readOnlyRootFilesystem | ❌ | ✅ |
+| capabilities | ❌ | ✅ |
+| privileged | ❌ | ✅ |
+
+> Il container-level sovrascrive il pod-level.
+
 Serve per controllare:
 
 - Utente e gruppo di esecuzione
@@ -200,6 +232,15 @@ securityContext:
 
 - `readOnlyRootFilesystem`  →  Rende il filesystem root del container in sola lettura
 
+## Privileged Container 
+
+```yaml
+securityContext:
+  privileged: true
+```
+
+Permette al container di avere accesso quasi completo al nodo host.
+Da evitare in produzione salvo casi specifici.
 ---
 
 ## Run as non-root
