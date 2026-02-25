@@ -397,6 +397,7 @@ imagePullSecrets:
 5. Creare una ResourceQuota che limiti a 5 pod in un namespace.
 6. Creare un LimitRange con default CPU/memory.
 7. Usare un imagePullSecret per accedere a un registry privato.
+8. Verificare consumo CPU/memoria con kubectl top.
 
 ---
 
