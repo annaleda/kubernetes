@@ -172,10 +172,12 @@ Definisce privilegi a livello di:
 - Container
 
 Esempi di opzioni:
-- `runAsUser`
-- `runAsNonRoot`
-- `readOnlyRootFilesystem`
-- `allowPrivilegeEscalation`
+- `runAsUser` (Pod, Container)
+- `runAsNonRoot` (Pod, Container)
+- `runAsGroup` (Pod, Container)
+- `fsGroup` (Pod)
+- `readOnlyRootFilesystem` (Container)
+- `allowPrivilegeEscalation` (Container)
   
 Serve per controllare:
 
@@ -212,6 +214,36 @@ securityContext:
 
 - `runAsNonRoot: true` → impedisce l’avvio se l’immagine prova a usare root
 
+Esempio con runAsUser, runAsNonRoot, runAsGroup
+
+```yaml
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+```
+
+Esempio con runAsUser, runAsNonRoot, fsGroup
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+    fsGroup: 2000
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+```
 ---
 
 ## Aggiungere capability Linux
