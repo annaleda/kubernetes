@@ -192,24 +192,30 @@ Esempi di opzioni:
 - `runAsUser` (Pod, Container)
 - `runAsNonRoot` (Pod, Container)
 - `runAsGroup` (Pod, Container)
+- `seccompProfile` (Pod, Container)
 - `fsGroup` (Pod)
+- `supplementalGroups` (Pod)
 - `readOnlyRootFilesystem` (Container)
 - `allowPrivilegeEscalation` (Container)
 - `privileged` (Container)
 - `capabilities` (Container)
 
-| Campo | Pod Level | Container Level |
-|-------|-----------|-----------------|
-| runAsUser | ✅ | ✅ |
-| runAsNonRoot | ✅ | ✅ |
-| runAsGroup | ✅ | ✅ |
-| fsGroup | ✅ | ❌ |
-| allowPrivilegeEscalation | ❌ | ✅ |
-| readOnlyRootFilesystem | ❌ | ✅ |
-| capabilities | ❌ | ✅ |
-| privileged | ❌ | ✅ |
+| Campo | Pod Level | Container Level | Descrizione |
+|---|---|---|---|
+| runAsUser | ✅ | ✅ | UID con cui gira il processo |
+| runAsNonRoot | ✅ | ✅ | Blocca esecuzione come root |
+| runAsGroup | ✅ | ✅ | GID principale del processo |
+| seccompProfile | ✅ | ✅ | Restrizione system call |
+| fsGroup | ✅ | ❌ | Permette accesso ai volumi montati |
+| supplementalGroups | ✅ | ❌ | Gruppi extra del processo |
+| allowPrivilegeEscalation | ❌ | ✅ | Blocca escalation privilegi |
+| readOnlyRootFilesystem | ❌ | ✅ | Root filesystem in sola lettura |
+| capabilities | ❌ | ✅ | Gestione capability Linux |
+| privileged | ❌ | ✅ | Modalità privilegiata host-like |
+
 
 > Il container-level sovrascrive il pod-level.
+> le capabilities si configurano solo su container-level.
 
 Serve per controllare:
 
