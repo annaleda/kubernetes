@@ -188,19 +188,7 @@ Definisce privilegi a livello di:
 - Pod
 - Container
 
-Esempi di opzioni:
-- `runAsUser` (Pod, Container)
-- `runAsNonRoot` (Pod, Container)
-- `runAsGroup` (Pod, Container)
-- `seccompProfile` (Pod, Container)
-- `fsGroup` (Pod)
-- `supplementalGroups` (Pod)
-- `readOnlyRootFilesystem` (Container)
-- `allowPrivilegeEscalation` (Container)
-- `privileged` (Container)
-- `capabilities` (Container)
-
-| Campo | Pod Level | Container Level | Descrizione |
+| Opzione | Pod Level | Container Level | Descrizione |
 |---|---|---|---|
 | runAsUser | ✅ | ✅ | UID con cui gira il processo |
 | runAsNonRoot | ✅ | ✅ | Blocca esecuzione come root |
@@ -215,6 +203,7 @@ Esempi di opzioni:
 
 
 > Il container-level sovrascrive il pod-level.
+
 > le capabilities si configurano solo su container-level.
 
 Serve per controllare:
@@ -226,7 +215,7 @@ Serve per controllare:
   
 ---
 
-## Impostare privilegi container
+### Impostare privilegi container
 
 ```yaml
 securityContext:
@@ -238,18 +227,18 @@ securityContext:
 
 - `readOnlyRootFilesystem`  →  Rende il filesystem root del container in sola lettura
 
-## Privileged Container 
+### Privileged Container 
 
 ```yaml
 securityContext:
   privileged: true
 ```
 
-Permette al container di avere accesso quasi completo al nodo host.
-Da evitare in produzione salvo casi specifici.
+> Permette al container di avere accesso quasi completo al nodo host.
+> Da evitare in produzione salvo casi specifici.
 ---
 
-## Run as non-root
+### Run as non-root
 
 Best practice: non eseguire container come root.
 
@@ -260,8 +249,27 @@ securityContext:
 - `runAsUser: 1000` → il container gira con UID 1000
 
 - `runAsNonRoot: true` → impedisce l’avvio se l’immagine prova a usare root
+- 
+---
+### seccompProfile 
 
-Esempio con runAsUser, runAsNonRoot, runAsGroup
+Permette di filtrare le system call Linux.
+
+Esempio:
+```yaml
+securityContext:
+  seccompProfile:
+    type: RuntimeDefault
+```
+Valori possibili:
+
+- `RuntimeDefault`
+- `Localhost`
+- `Unconfined`
+
+> Con Pod Security restricted, viene richiesto almeno RuntimeDefault.
+---
+Esempio con runAsUser, runAsGroup
 
 ```yaml
 securityContext:
@@ -294,27 +302,8 @@ spec:
         drop: ["ALL"]
 ```
 ---
-### seccompProfile 
 
-Permette di filtrare le system call Linux.
-
-Esempio:
-```yaml
-securityContext:
-  seccompProfile:
-    type: RuntimeDefault
-```
-Valori possibili:
-
-- `RuntimeDefault`
-- `Localhost`
-- `Unconfined`
-
-> Con Pod Security restricted, viene richiesto almeno RuntimeDefault.
-
----
-
-## Aggiungere capability Linux
+### Aggiungere capability Linux
 
 ```yaml
 securityContext:
@@ -338,7 +327,7 @@ Esempi:
 > Le capability si configurano solo a livello container
 ---
 
-# Pod-level vs Container-level SecurityContext
+### Pod-level vs Container-level SecurityContext
 
 - Pod securityContext → applicato a tutti i container
 - Container securityContext → specifico per container
@@ -365,7 +354,7 @@ spec:
 ```
 ---
 
-# Verifica Permessi
+### Verifica Permessi
 
 Testare accesso:
 
