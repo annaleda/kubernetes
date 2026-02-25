@@ -378,14 +378,31 @@ kubectl auth can-i create deployments --as=system:serviceaccount:default:my-sa
 
 ## Esercizi
 
-1. Creare un Pod che gira come utente non-root.
-2. Impostare readOnlyRootFilesystem.
-3. Creare ServiceAccount personalizzato.
-4. Associare ServiceAccount a un Pod.
-5. Creare Role per leggere Pod.
-6. Creare RoleBinding per ServiceAccount.
-7. Verificare accesso con `kubectl auth can-i`.
-8. Creare semplice NetworkPolicy che blocca traffico.
+1. Creare un Pod che esegue il processo con UID non-root.
+
+2. Configurare un Pod con:
+   - filesystem in sola lettura
+   - privilege escalation disabilitata
+
+3. Creare un ServiceAccount personalizzato e assegnarlo ad un Pod.
+
+4. Creare un Role che permetta solo:
+   - lettura dei Pod nel namespace corrente.
+
+5. Creare un RoleBinding che associa il Role al ServiceAccount.
+
+6. Verificare i permessi del ServiceAccount usando:
+
+kubectl auth can-i
+
+
+7. Creare un Pod che utilizza capability Linux specifiche (es. NET_ADMIN o SYS_TIME).
+
+8. Configurare seccompProfile su un Pod usando RuntimeDefault.
+
+9. Verificare accesso API con impersonation:
+
+kubectl auth can-i ... --as=system:serviceaccount:namespace:sa-name
 
 ---
 
