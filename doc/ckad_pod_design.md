@@ -100,6 +100,9 @@ spec:
             image: busybox
             command: ["echo", "Hello CKAD"]
 ```
+> `*` = qualsiasi valore
+
+> `*/n` = ogni n unità di tempo
 
 Parametri utili:
 - `concurrencyPolicy`
