@@ -10,7 +10,7 @@
    - (Workload,Job,CronJob,Rollback,Scaling)
 
 ### 1.4 [Storage (State Persistence)](../doc/ckad_storage.md)
-   - (Volumes,Type of volumes,StorageClass)
+   - (Volumes,Type of volumes,StorageClass, StatefulSet)
 
 
 
