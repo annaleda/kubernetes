@@ -40,11 +40,11 @@ kubectl run pod nginx --image=nginx --dry-run=client -o yaml > pod.yaml
 - Workflow reale / modifiche → `kubectl apply -f replicaset.yaml`
 - Vuoi generare YAML → `--dry-run=client -o yaml`
 ```bash
-kubectl create replicaset nginx --image=nginx --dry-run=client -o yaml
+kubectl run replicaset nginx --image=nginx --dry-run=client -o yaml
 ```
 - Vuoi salvare il YAML su file → usa `>` (redirect output)
 ```bash
-kubectl create replicaset nginx --image=nginx --dry-run=client -o yaml > replicaset.yaml
+kubectl run replicaset nginx --image=nginx --dry-run=client -o yaml > replicaset.yaml
 ```
 ---
 
@@ -63,11 +63,11 @@ kubectl create replicaset nginx --image=nginx --dry-run=client -o yaml > replica
 - Workflow reale / modifiche → `kubectl apply -f deployment.yaml`
 - Vuoi generare YAML → `--dry-run=client -o yaml`
 ```bash
-kubectl create deployment nginx --image=nginx --dry-run=client -o yaml
+kubectl run deployment nginx --image=nginx --dry-run=client -o yaml
 ```
 - Vuoi salvare il YAML su file → usa `>` (redirect output)
 ```bash
-kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > deployment.yaml
+kubectl run deployment nginx --image=nginx --dry-run=client -o yaml > deployment.yaml
 ```
 ---
 
