@@ -145,14 +145,17 @@ Supportato da storage backend esterni (cloud, NFS, ecc.)
 | `hostPath / nfs / csi`          | Backend storage utilizzato                  |
 
 ---
-**accessModes**
+`accessModes` 
+
 | Mode                  | Significato                                 |
 | --------------------- | ------------------------------------------- |
 | `ReadWriteOnce (RWO)` | Montabile in **read/write da un solo nodo** |
 | `ReadOnlyMany (ROX)`  | Montabile in sola lettura da più nodi       |
 | `ReadWriteMany (RWX)` | Montabile in read/write da più nodi         |
 
-**reclaimPolicy**
+
+`persistentVolumeReclaimPolicy`
+
 | Policy     | Comportamento                               |
 | ---------- | ------------------------------------------- |
 | `Retain`   | Mantiene i dati (richiede cleanup manuale)  |
@@ -270,18 +273,6 @@ Se un PVC specifica una StorageClass, il PV viene creato automaticamente.
 
 ---
 
-## Reclaim Policy
-
-Definisce cosa succede al PV quando il PVC viene eliminato:
-
-`persistentVolumeReclaimPolicy`
-
-- `Retain` → mantiene i dati
-- `Delete` → elimina volume
-- `Recycle` (deprecato)
-
----
-
 ## Volume Lifecycle
 
 - Container restart → dati persistono
@@ -301,11 +292,55 @@ I PV sono risorse di storage indipendenti, spesso supportate da sistemi esterni 
 
 ## Stateful Applications
 
+Le applicazioni stateful sono quelle che devono conservare lo stato tra restart, scaling o ricreazione dei Pod.
+
+Esempi tipici:
+
+- Database
+- Cache distribuite
+- Messaging systems
+- Storage persistente per servizi specifici
+
+Quando usare StatefulSet
+
+Si usa StatefulSet quando servono:
+
+- Identità stabile dei Pod
+- Storage persistente dedicato
+- Ordinal indexing dei Pod
+- Network identity stabile
+  
 Per applicazioni con stato si usa spesso:
 
 - StatefulSet
 - PVC dedicato per ogni replica
 - Headless Service
+
+| Feature      | Deployment         | StatefulSet               |
+| ------------ | ------------------ | ------------------------- |
+| Pod Identity | Random             | Stable (es. web-0, web-1) |
+| Storage      | Shared o stateless | PVC dedicato per replica  |
+| Scaling      | Parallel           | Ordinal order             |
+| Network      | Service normale    | Headless Service          |
+| Use case     | Stateless apps     | Stateful apps             |
+
+---
+Uno `StatefulSet` richiede spesso un `Headless Service`.
+
+Differenza:
+  - Service normale → load balancing
+  - Headless Service → DNS diretto verso ogni Pod
+
+Permette:
+ - Discovery diretto dei Pod
+ - Comunicazione stabile tra repliche
+
+`spec.podManagementPolicy`
+
+| Policy                 | Descrizione                                          |
+|------------------------|------------------------------------------------------|
+| OrderedReady (default) | I Pod vengono creati e pronti in ordine sequenziale  |
+| Parallel               | I Pod possono essere creati o terminati in parallelo |
 
 <img width="1207" height="703" alt="Immagine 2026-02-24 231557" src="https://github.com/user-attachments/assets/e813e89a-3f31-43f3-81d3-63d6b0926e29" />
 <img width="1093" height="713" alt="Immagine 2026-02-24 231756" src="https://github.com/user-attachments/assets/5acbad8b-dffe-40be-87c3-a87b9c770358" />
@@ -385,7 +420,6 @@ spec:
           storage: 1Gi
       storageClassName: standard
 ```
-Cosa succede dietro le quinte?
 
 Lo StatefulSet crea il Pod web-0
 
