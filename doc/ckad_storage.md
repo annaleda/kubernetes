@@ -122,33 +122,79 @@ Per persistenza oltre il ciclo di vita del Pod si usano:
 
 ## PersistentVolume (PV)
 
-- Rappresenta lo storage fisico nel cluster
-- Può essere:
-  - Provisionato manualmente
-  - Creato dinamicamente tramite StorageClass
-- È una risorsa cluster-wide
+Il PersistentVolume rappresenta lo storage fisico disponibile nel cluster.
 
-Caratteristiche:
-- capacity
-- accessModes
-- persistentVolumeReclaimPolicy
+È una risorsa cluster-wide, indipendente dal Pod o dal Namespace.
 
-Access Modes comuni:
-- `ReadWriteOnce` (RWO)
-- `ReadOnlyMany` (ROX)
-- `ReadWriteMany` (RWX)
+Può essere:
+
+Provisionato manualmente dall’amministratore
+
+Creato dinamicamente tramite StorageClass 
+
+Supportato da storage backend esterni (cloud, NFS, ecc.)
+
+> Il PV vive indipendentemente dal ciclo di vita del Pod.
+
+| Campo                           | Descrizione                                 |
+| ------------------------------- | ------------------------------------------- |
+| `capacity`                      | Dimensione dello storage disponibile        |
+| `accessModes`                   | Modalità di accesso al volume               |
+| `persistentVolumeReclaimPolicy` | Comportamento quando il PVC viene eliminato |
+| `storageClassName`              | Associa PV a una StorageClass               |
+| `hostPath / nfs / csi`          | Backend storage utilizzato                  |
+
+---
+**accessModes**
+| Mode                  | Significato                                 |
+| --------------------- | ------------------------------------------- |
+| `ReadWriteOnce (RWO)` | Montabile in **read/write da un solo nodo** |
+| `ReadOnlyMany (ROX)`  | Montabile in sola lettura da più nodi       |
+| `ReadWriteMany (RWX)` | Montabile in read/write da più nodi         |
+
+**reclaimPolicy**
+| Policy     | Comportamento                               |
+| ---------- | ------------------------------------------- |
+| `Retain`   | Mantiene i dati (richiede cleanup manuale)  |
+| `Delete`   | Cancella automaticamente lo storage backend |
+
+**Binding tra PV e PVC**
+
+Il PV viene assegnato a un PVC solo se:
+
+- Capacity compatibile
+- AccessMode compatibile
+- StorageClass compatibile (se specificata)
+
+Se non esiste PV compatibile → il PVC rimane in Pending.
 
 <img width="993" height="612" alt="Immagine 2026-02-24 230354" src="https://github.com/user-attachments/assets/02a863db-ad09-4675-b0b0-62ff8a98969b" />
 
 ---
 
 ## PersistentVolumeClaim (PVC)
+Il PersistentVolumeClaim rappresenta una richiesta di storage effettuata da un Pod.
 
-- Richiesta di storage da parte di un Pod
-- Specifica:
-  - Dimensione richiesta
-  - Access mode
+> È il livello di astrazione tra Pod e storage fisico.
+
+Il PVC permette al Pod di non conoscere i dettagli dell’infrastruttura storage.
+
+Un PVC specifica:
+  - Dimensione dello storage richiesto
+  - Modalità di accesso al volume
   - StorageClass (opzionale)
+  - Binding verso un PersistentVolume compatibile
+
+**Binding PVC → PV**
+
+Kubernetes prova automaticamente a trovare un PV che soddisfi la richiesta.
+
+Il binding avviene quando:
+  - Capacity è sufficiente
+  - AccessMode è compatibile
+  - StorageClass coincide (se specificata)
+
+> Se non trova un PV compatibile → il PVC resta in Pending state
 
 Esempio:
 
@@ -184,6 +230,10 @@ volumeMounts:
   - mountPath: /data
     name: my-storage
 ```
+Esempio:
+
+<img width="390" height="454" alt="Immagine 2026-02-26 033143" src="https://github.com/user-attachments/assets/f4a84d4e-25bc-4d84-9775-ecf14195bf84" />
+
 <img width="1223" height="610" alt="Immagine 2026-02-24 231025" src="https://github.com/user-attachments/assets/20163d66-dbf4-4445-b638-b0b284a6ee51" />
 
 ---
