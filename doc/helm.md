@@ -2,7 +2,7 @@
 ## 📦 Helm
 
 Helm è il package manager di Kubernetes.
-Permette di installare applicazioni nel cluster tramite Chart.
+Permette di installare applicazioni nel Cluster/nei Cluster tramite Chart.
 
 ### Installazione Helm su Linux (Debian/Ubuntu)
 
