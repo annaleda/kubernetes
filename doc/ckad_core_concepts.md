@@ -20,11 +20,11 @@
 - Workflow reale / modifiche → `kubectl apply -f pod.yaml`
 - Vuoi generare YAML → `--dry-run=client -o yaml`
 ```bash
-kubectl run pod nginx --image=nginx --dry-run=client -o yaml
+kubectl run nginx --image=nginx --dry-run=client -o yaml
 ```
 - Vuoi salvare il YAML su file → usa `>` (redirect output)
 ```bash
-kubectl run pod nginx --image=nginx --dry-run=client -o yaml > pod.yaml
+kubectl run nginx --image=nginx --dry-run=client -o yaml > pod.yaml
 ```
 ---
 
