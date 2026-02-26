@@ -149,4 +149,20 @@ Set-based:
 kubectl get pods -l 'env in (prod,staging)'
 ```
 
+
+| Selector                  | Livello                       | Dove si usa                          | Scopo                                      | Complessità | Note                                      |
+| ------------------------- | ----------------------------- | ------------------------------------ | ------------------------------------------ | ----------- | ----------------------------------------- |
+| Label Selector            | Resource metadata             | Deployment, Service, ReplicaSet, Job | Filtrare risorse tramite label             | Bassa       | Base fondamentale di molti altri selector |
+| nodeSelector              | Pod spec                      | Pod scheduling                       | Vincolare pod su nodi con label specifiche | Molto bassa | Match esatto solo key/value               |
+| nodeAffinity              | Pod spec                      | Scheduling avanzato                  | Regole di placement sui nodi               | Media       | Supporta preferenze e vincoli obbligatori |
+| podAffinity               | Pod spec                      | Scheduling topology-aware            | Collocare pod vicino ad altri pod          | Alta        | Usa topologyKey                           |
+| podAntiAffinity           | Pod spec                      | Scheduling resilienza                | Evitare co-locazione di pod simili         | Alta        | Molto usato per HA                        |
+| topologySpreadConstraints | Pod spec                      | High availability scheduling         | Distribuzione uniforme dei pod             | Alta        | Migliora fault tolerance                  |
+| podSelector               | NetworkPolicy                 | Networking security                  | Selezionare pod target per policy          | Media       | Tipico in security isolation              |
+| namespaceSelector         | NetworkPolicy / Policy engine | Isolation tra namespace              | Filtrare namespace di appartenenza         | Media       | Usato in security context                 |
+| service selector          | Service spec                  | Traffic routing                      | Associare Service ai Pod target            | Bassa       | Fondamentale per networking interno       |
+| fieldSelector             | API query layer               | kubectl, API filtering               | Filtrare risorse per campi dello schema    | Media       | Non è uno scheduler selector              |
+| matchLabels               | Selector expression           | Deployment, Affinity, Policy         | Match esatto su label                      | Bassa       | Parte di strutture selector più complesse |
+| matchExpressions          | Selector expression           | Affinity, Policy                     | Match logico avanzato (In, NotIn, Exists…) | Media       | Consigliato per flessibilità              |
+
 ---
