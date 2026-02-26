@@ -121,6 +121,55 @@ Non serve Service per comunicazione interna al Pod.
 
 ---
 
+| Pattern                    | Campo YAML                 | Livello YAML    | Quando usarlo                | Caso CKAD tipico              | Note                          |
+| -------------------------- | -------------------------- | --------------- | ---------------------------- | ----------------------------- | ----------------------------- |
+| Single Container Pod       | containers                 | spec            | Applicazione base            | nginx deployment semplice     | Caso più comune               |
+| Multi Container Pod        | containers (array)         | spec            | Più servizi nello stesso pod | app + helper container        | Condivide IP                  |
+| Sidecar Pattern            | containers + shared volume | spec            | Logging, monitoring, sync    | filebeat log shipping         |  Molto frequente              |
+| Init Container             | initContainers             | spec            | Setup pre-start              | creare file, wait service     | Deve terminare                |
+| Restart Policy             | restartPolicy              | spec            | Controllo lifecycle pod      | sidecar lab exercises         | Solo livello Pod              |
+| Volume Definition          | volumes                    | spec            | Storage condiviso            | log sharing                   | Deve esistere prima del mount |
+| Volume Mount App Container | volumeMounts               | container level | Accesso storage app          | /log/app.log                  | Dentro container spec         |
+| Volume Mount Sidecar       | volumeMounts               | container level | Logging collector            | /var/log/event                | Shared volume                 |
+| Command Override           | command                    | container level | Exec script startup          | busybox sleep loop            | Override ENTRYPOINT           |
+| Args Override              | args                       | container level | Parametri comando            | tail -f log                   | Override CMD                  |
+| Container Image            | image                      | container level | Runtime container            | kodekloud/filebeat-configured | Obbligatorio                  |
+| Container Name             | name                       | container level | Identificazione              | sidecar / app / adapter       | CKAD lab check                |
+
+---
+
+| Pattern            | Execution              |
+| ------------------ | ---------------------- |
+| Init Container     | Sequential pre-start   |
+| Main Container     | Runtime service        |
+| Sidecar Container  | Parallel helper        |
+| Adapter Pattern    | Output transformation  |
+| Ambassador Pattern | Proxy external service |
+
+---
+
+- Level Placement Rule (Important per esame)
+
+  - Pod Spec Level
+  ```
+  │
+  ├── restartPolicy
+  ├── volumes
+  ├── containers
+  ├── initContainers
+  └── affinity / tolerations
+  ```
+
+  - Container Level
+  ```
+  │
+  ├── image
+  ├── command
+  ├── args
+  ├── volumeMounts
+  └── env variables
+  ```
+  
 ## Esercizi
 
 1. Creare un Pod con nginx + sidecar busybox che scrive log su volume condiviso.
