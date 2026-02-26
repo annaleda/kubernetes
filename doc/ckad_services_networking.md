@@ -13,6 +13,11 @@ Permette:
 - Accesso interno o esterno al cluster
 - Load balancing automatico tra Pod
 
+> Quando viene specificato il selector, il service crea in autonomia l'Endpoints, se il selector non viene specificato Endpoints va creato manualmente.
+
+<img width="648" height="198" alt="Immagine 2026-02-26 125012" src="https://github.com/user-attachments/assets/bd0865a9-370e-4dd6-ad59-c6b79372f513" />
+
+
 Il Service crea un IP virtuale stabile (ClusterIP).
 
 ---
