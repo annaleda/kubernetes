@@ -159,3 +159,25 @@ Esempio:
 - Repliche della stessa app su nodi diversi → **Pod Anti-Affinity** (alta disponibilità)
 
 ---
+
+| Operator              | Quando usarlo                                    | Caso tipico CKAD                        | Esempio domanda esame                 | Note importanti                |
+| --------------------- | ------------------------------------------------ | --------------------------------------- | ------------------------------------- | -------------------------------|
+| **In**                | Quando esiste una lista di valori possibili      | NodeAffinity con value esplicito        | key=color, value=blue                 | Più usato                      |
+| **NotIn**             | Quando devi escludere valori                     | Anti-affinity logica                    | escludere node role                   | Utile per scheduling negativo  |
+| **Exists**            | Quando serve solo verificare che la label esista | Label key data ma value non specificato | node-role.kubernetes.io/control-plane | frequente in esame      |
+| **DoesNotExist**      | Quando vuoi evitare nodi con una label           | Evitare control plane scheduling        | workload su worker nodes              | Anti-pattern protection        |
+| **Gt (Greater than)** | Solo per valori numerici                         | Resource topology scheduling            | cpu > 4                               | Meno comune nel CKAD           |
+| **Lt (Less than)**    | Solo per valori numerici                         | Resource constraint scheduling          | memory < 8Gi                          | Raro ma possibile              |
+| **Equal (Implicit)**  | Quando value è singolo e fisso                   | NodeSelector semplice                   | disktype=ssd                          | Spesso scritto come matchLabels|
+
+---
+
+| Scenario                                   | Operator da pensare |
+| ------------------------------------------ | ------------------- |
+| Label key presente senza value             | Exists              |
+| Place pod su node specifico                | In                  |
+| Escludere node control plane genericamente | DoesNotExist        |
+| List of allowed nodes                      | In                  |
+| Scheduling preferenziale                   | Preferred affinity  |
+| Scheduling obbligatorio                    | Required affinity   |
+
