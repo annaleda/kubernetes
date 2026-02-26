@@ -2,7 +2,7 @@
 ## Application Deployment
 ---
 ### 2.1 [Deployment Strategies](../doc/dep_strategies.md)
-   - blue, green canary
+   - recreate, rolling update, rollback, scaling, descaling,blue/green, canary
 
 ### 2.2 [Helm](../doc/helm.md)
 
