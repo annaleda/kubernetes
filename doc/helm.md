@@ -83,12 +83,10 @@ Importante
 ### Release
 
 È possibile avere:
-
-Più release dello stesso chart
-
-Configurazioni diverse per ogni release
-
- Installare con valori personalizzati
+  - Più release dello stesso chart
+  - Configurazioni diverse per ogni release
+  - Installare con valori personalizzati
+    
  ```bash
 helm install my-nginx bitnami/nginx --set replicaCount=3
 ```
