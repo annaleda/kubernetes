@@ -50,6 +50,7 @@ Esempio concettuale:
 
 <img width="943" height="513" alt="Immagine 2026-02-24 143209" src="https://github.com/user-attachments/assets/e167bdd4-feee-4562-a935-00da81562185" />
 
+> Attenzione! restartPolicy è sotto spec allo stesso livello dei container!
 ---
 
 ## Init Containers
