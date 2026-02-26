@@ -91,3 +91,7 @@ replicaset   0/1     CrashLoopBackOff   2 (19s ago)   33m   172.17.0.6   control
 
 controlplane ~ ➜  
 ```
+---
+
+- [Mock Exercises - Affinity](./affinity-ex.md)
+---
