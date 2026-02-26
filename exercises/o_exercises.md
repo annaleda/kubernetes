@@ -1,6 +1,7 @@
 ### Pod Security
 
 Update the pod ubuntu-sleeper to run as Root user and with the SYS_TIME capability.
+[pod-ubuntu-sleeper.yaml](https://github.com/user-attachments/files/25586999/pod-ubuntu-sleeper.yaml)
 
 Note:
 Set the capabilities within the container, not at the pod level, as setting them at the pod level is not supported.
