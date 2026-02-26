@@ -40,6 +40,8 @@
 
 ### 4 [Mock Exam - 4](./doc/exam-4.md)
 
+### 5 [Mock Exam - 5](./doc/exam-5.md)
+
 
 ---
 
