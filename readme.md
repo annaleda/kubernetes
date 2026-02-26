@@ -24,15 +24,9 @@
 
 ### 4 [Esercizi Linux Foundation + Soluzione](./doc/ckad_lf_sol_esercizi_sc.md)
 
-### 5 [CKAD Exercises GitHub 1](https://github.com/dgkanatsios/CKAD-exercises/blob/main/README.md)
+### 5 [CKAD Exercises online](./exercises/ex_online.md)
 
-### 6 [CKAD Exercises GitHub 2](https://github.com/ibrahimatay/CKAD-Exercises/blob/master/README.md)
-
-### 7 [CKAD Exercises online 1](https://miroberes.github.io)
-
-### 8 [CKAD Exercises online 2](https://hitenpratap.github.io/CKAD-Exercises)
-
-### 9 [CKAD 100 Exercises](./doc/session.md)
+### 6 [CKAD 100 Exercises](./doc/session.md)
 
 ---
 
