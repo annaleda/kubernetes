@@ -4,6 +4,9 @@
 
 ## 1️⃣ Info esame
 
+[Curriculum CKAD](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_v1.35.pdf)
+ - Argomenti e percentuali orientative
+
 Caratteristiche principali:
 
 * ⏱️ Durata: 2 ore
