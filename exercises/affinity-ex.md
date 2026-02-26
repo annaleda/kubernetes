@@ -5,9 +5,9 @@ Mock Exercises – Node / Taints / Affinity (con soluzioni)
 Obiettivo: schedulare un pod solo su nodi con label disktype=ssd.
 
 - Esercizio
-Name: pod-ssd
-NodeSelector: disktype=ssd
-Image: nginx
+  - Name: pod-ssd
+  - NodeSelector: disktype=ssd
+  - Image: nginx
 
 Soluzione:
 ```
@@ -29,12 +29,12 @@ spec:
 Obiettivo: schedulare un deployment su tutti i controlplane nodes (label key presente, value vuoto).
 
 - Esercizio
-Name: red
-Replicas: 2
-Image: nginx
-NodeAffinity: requiredDuringSchedulingIgnoredDuringExecution
-Key: node-role.kubernetes.io/control-plane
-Operator: Exists
+  - Name: red
+  - Replicas: 2
+  - Image: nginx
+  - NodeAffinity: requiredDuringSchedulingIgnoredDuringExecution
+  - Key: node-role.kubernetes.io/control-plane
+  - Operator: Exists
 
 Soluzione:
 ```
@@ -70,13 +70,13 @@ spec:
 Obiettivo: schedulare un pod solo su nodi con label color=blue o color=green.
 
 - Esercizio
-Name: blue-green
-Replicas: 3
-Image: nginx
-NodeAffinity: requiredDuringSchedulingIgnoredDuringExecution
-Key: color
-Operator: In
-Values: [blue, green]
+  - Name: blue-green
+  - Replicas: 3
+  - Image: nginx
+  - NodeAffinity: requiredDuringSchedulingIgnoredDuringExecution
+  - Key: color
+  - Operator: In
+  - Values: [blue, green]
 
 Soluzione:
 ```
