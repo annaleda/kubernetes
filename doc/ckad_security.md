@@ -73,7 +73,52 @@ spec:
   - name: nginx
     image: nginx
 ```
+> Se il Pod è gestito da Deployment, modifica il Deployment template.
+
+Verifica quale è il sa associato
+```bash
+kubectl get pod <pod-name> -o yaml | grep serviceAccountName
+```
+
 <img width="1164" height="721" alt="Immagine 2026-02-24 133108" src="https://github.com/user-attachments/assets/de5f77b3-b58f-40ea-866a-2803f133bec5" />
+
+## Projected Volume Token
+
+Il **Projected Volume Token** è il metodo moderno e sicuro per gestire l’iniezione del token del ServiceAccount nei Pod.
+
+Viene utilizzato per migliorare la sicurezza rispetto al mount automatico dei token.
+
+### Caratteristiche principali
+
+- Disabilitazione dell’automount del token
+- Iniezione manuale delle credenziali
+- Mount del token in modalità read-only
+- Possibilità di definire la durata del token
+
+---
+### Esempio di configurazione dei volumi
+
+Il mount path deve essere: `/var/run/secrets/kubernetes.io/serviceaccount`
+
+Volumi Pod/Deployment
+```yaml
+volumes:
+- name: token
+  projected:
+    sources:
+    - serviceAccountToken:
+        path: token
+        expirationSeconds: 3607
+```
+Mount del token nel container
+```yaml
+volumeMounts:
+- name: token
+  mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+  readOnly: true
+```
+<img width="708" height="726" alt="Immagine 2026-02-26 021812" src="https://github.com/user-attachments/assets/d0f90a98-c122-4833-841e-576d4002576e" />
+
 
 `Token Automation`
 
