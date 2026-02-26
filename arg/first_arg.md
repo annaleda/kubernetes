@@ -12,6 +12,28 @@
 ### 1.4 [Storage (State Persistence)](../doc/ckad_storage.md)
    - (Volumes,Type of volumes,StorageClass, StatefulSet)
 
+---
+
+> Nota: Un `DaemonSet` è una risorsa Kubernetes che garantisce che un Pod venga eseguito su ogni nodo del cluster.
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-daemon
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
 
 
      
