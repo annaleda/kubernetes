@@ -8,5 +8,6 @@
    - package manager di Kubernetes
      
 ### 2.3 [Kustomize](../doc/kustomize.md)
+   - strumento integrato in kubectl che permette di personalizzare i manifest 
 
 
