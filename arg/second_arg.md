@@ -1,6 +1,9 @@
 
 ## Application Deployment
 ---
+### 2.0 [Labels, Selectors](../doc/labs_selectors.md)
+   - (Labels, Selectors)
+
 ### 2.1 [Deployment Strategies](../doc/dep_strategies.md)
    - (recreate, rolling update, rollback, scaling, descaling,blue/green, canary)
 
