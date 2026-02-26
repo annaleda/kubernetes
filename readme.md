@@ -28,6 +28,8 @@
 
 ### 6 [CKAD 100 Exercises](./doc/session.md)
 
+### 7 [Other Exercises](./exercises/o_exercises.md)
+
 ---
 
 ## 🔗 Mock Exams
