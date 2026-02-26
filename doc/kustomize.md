@@ -41,11 +41,11 @@ my-app/
 ```
 ---
 ### 📄 kustomization.yaml minimo
-
+```bash
 resources:
 - deployment.yaml
 - service.yaml
-
+```
 Applicazione:
 
 ```bash
