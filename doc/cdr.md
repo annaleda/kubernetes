@@ -74,4 +74,62 @@ E usarla come qualsiasi altra risorsa:
 kubectl get backups
 kubectl describe backup my-backup
 ```
+---
+### Operators
+
+Un Operator è un controller che gestisce una CRD.
+
+CRD = definisce il nuovo oggetto
+Operator = implementa la logica di gestione
+
+|Componente| Funzione                 |
+|----------|--------------------------|
+|CRD	     | Estende l'API            |
+|Operator  | Automatizza la gestione  |
+
+Esempio CRD:
+
+kind: MyDatabase
+
+Quando crei:
+
+kind: MyDatabase
+spec:
+  version: 15
+  storage: 10Gi
+
+L’Operator:
+
+- Crea Deployment
+- Crea Service
+- Crea PVC
+- Gestisce backup
+- Gestisce failover
+- Aggiorna versioni
+ -Ripristina in caso di crash
+
+Esempi Operator:
+
+- Prometheus Operator
+- PostgreSQL Operator
+- MongoDB Operator
+- ArgoCD
+- Cert-Manager
+
+internamente funziona:
+
+- L’utente crea una Custom Resource
+- L’API Server la salva in etcd
+- L’Operator la osserva (watch)
+- L’Operator esegue azioni per raggiungere lo stato desiderato
+
+
+| Native     | Custom     |
+| ---------- | ---------- |
+| Pod        | MyApp      |
+| Deployment | MyDatabase |
+| Service    | Backup     |
+
+
+---
 
