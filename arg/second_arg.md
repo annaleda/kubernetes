@@ -5,7 +5,8 @@
    - recreate, rolling update, rollback, scaling, descaling,blue/green, canary
 
 ### 2.2 [Helm](../doc/helm.md)
-
+   - package manager di Kubernetes
+     
 ### 2.3 [Kustomize](../doc/kustomize.md)
 
 
