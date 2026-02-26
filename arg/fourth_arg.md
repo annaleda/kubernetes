@@ -10,6 +10,6 @@
 ### 4.3 [Node,Taint and Toleration/ Affinity](../doc/ckad_t_t_affinity.md)
    - (Node, Taint and Toleration, Affinity)
      
-### 4.4 [CDR, Operators](../doc/ckad_t_t_affinity.md)
+### 4.4 [CDR: Custom Resource Definition, Operators](../doc/ckad_t_t_affinity.md)
 
 
