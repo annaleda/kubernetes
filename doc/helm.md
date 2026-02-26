@@ -44,18 +44,20 @@ $env:Path += ";C:\helm\windows-amd64"
 ```
 Per renderlo permanente:
 
-Apri Variabili d’ambiente
+Apri `Variabili d’ambiente`
 
-Modifica la variabile PATH
+Modifica la variabile `PATH`
 
-Aggiungi: C:\helm\windows-amd64
+Aggiungi: `C:\helm\windows-amd64`
 
 Verifica installazione
 
 ```bash
 helm version
 ```
-Cercare applicazioni
+
+---
+### Cercare applicazioni
 
 ```bash
 helm search repo <nome-applicazione>
@@ -94,7 +96,7 @@ Oppure usando un file:
 ```bash
 helm install my-nginx bitnami/nginx -f values.yaml
 ```
-Creare un Chart personalizzato
+### Creare un Chart personalizzato
 
 ```bash
 helm create <nome-chart>
