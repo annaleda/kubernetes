@@ -2,10 +2,18 @@
 
 <img width="899" height="346" alt="Immagine 2026-02-26 125603" src="https://github.com/user-attachments/assets/fee71a2b-40b5-430e-be51-f20c8b264d5d" />
 
-- Recreate, Rollig Update and Rollback → []()
-- Scaling and Descaling                → []()
+- [Deployment - Core Concepts](../doc/ckad_core_concepts.md#deployment)
+- Recreate, Rollig Update and Rollback 
+- Scaling and Descaling                
 - Blue/Green
 - Canary
+  
+---
+### Recreate, Rollig Update and Rollback 
+
+---
+### Scaling and Descaling     
+
 ---
 ### Blue/Green
 
