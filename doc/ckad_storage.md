@@ -190,6 +190,14 @@ volumeMounts:
 
 ## StorageClass
 
+| Parametro              | Obbligatorio | Valori possibili                                                                                                             | Descrizione                                                 |
+| ---------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+  | `provisioner`          | ✅            | `kubernetes.io/aws-ebs`<br>`kubernetes.io/no-provisioner`<br>`kubernetes.io/gce-pd`<br>`kubernetes.io/cinder`<br>         | Definisce il backend che crea lo storage                    |
+| `volumeBindingMode`    | ❌            | `Immediate`<br>`WaitForFirstConsumer`                                                                                        | Determina quando il PVC viene bound al PV                   |
+| `reclaimPolicy`        | ❌            | `Retain`<br>`Delete`                                                                                                         | Decide cosa succede al volume quando il PVC viene eliminato |
+| `allowVolumeExpansion` | ❌            | `true` / `false`                                                                                                             | Permette o meno l’espansione dinamica del volume            |
+| `parameters`           | ❌            | Dipende dal provisioner                                                                                                      | Configurazioni specifiche del backend                       |
+
 - Permette provisioning dinamico dei volumi
 - Automatizza la creazione di PV
 - Definisce:
