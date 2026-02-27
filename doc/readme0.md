@@ -144,5 +144,105 @@ Oppure tramite variabile d’ambiente:
 ```bash
 export KUBECONFIG=altro-config.yaml
 ```
+---
 
+### kubeadm
+
+---
+
+kubeadm è uno strumento CLI usato per Inizializzare e configurare un cluster Kubernetes.
+È il tool ufficiale per creare cluster Kubernetes in modo semplice e standardizzato.
+
+>  `kubeadm ` non è un componente del cluster, ma uno strumento di bootstrap.
+
+
+
+Con  `kubeadm ` puoi:
+ - Creare il control plane
+ - Configurare certificati TLS
+ - Generare file kubeconfig
+ - Joinare nodi worker
+ - Aggiornare il cluster
+
+Per inizializzare il cluster si usa il comando `kubeadm init `
+
+Questo comando:
+  - Avvia il control plane
+  - Genera certificati
+  - Crea file  `/etc/kubernetes/admin.conf `
+  - Mostra il comando  `kubeadm join `
+  - Aggiungere un worker node
+
+Sul nodo worker:
+
+ ```
+kubeadm join <ip-control-plane>:6443 \
+  --token <token> \
+  --discovery-token-ca-cert-hash sha256:<hash>
+ ```
+
+Questo collega il nodo worker al control plane.
+
+---
+
+- Collegamento con kubeconfig
+
+Dopo   `kubeadm init `, viene creato:
+
+ ```
+/etc/kubernetes/admin.conf
+ ```
+
+Per usare kubectl come utente normale:
+
+ ```
+mkdir -p $HOME/.kube
+cp /etc/kubernetes/admin.conf $HOME/.kube/config
+ ```
+
+Ora kubectl può comunicare con il cluster.
+
+---
+- Static Pods creati da kubeadm
+
+Dopo l’inizializzazione, kubeadm crea i componenti del control plane come Static Pods.
+
+Puoi verificarli con:
+
+ ```
+ls /etc/kubernetes/manifests/
+ ```
+
+- Vengono avviati dal kubelet:
+  - kube-apiserver.yaml
+  - kube-controller-manager.yaml
+  - kube-scheduler.yaml
+  - etcd.yaml
+
+
+---
+
+Differenza tra tool principali
+   - kubeadm        ->	Crea cluster
+   - kubectl	      -> Gestisce risorse
+   - kubelet        ->	Gira su ogni nodo
+   - etcd           ->	Database del cluster
+   - kube-apiserver ->	Espone API Kubernetes
+
+---
+
+ Flusso 
+ ```
+kubeadm init
+        ↓
+Crea control plane (Static Pods)
+        ↓
+Genera certificati
+        ↓
+Genera kubeconfig
+        ↓
+kubectl usa kubeconfig
+        ↓
+kubectl comunica con kube-apiserver
+```
 ---
