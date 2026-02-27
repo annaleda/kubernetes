@@ -166,6 +166,26 @@ readinessProbe:
 
 ---
 
+- Caso reale
+  - App con delayed start:
+
+```yaml
+startupProbe:
+  httpGet:
+    path: /
+    port: 8080
+  failureThreshold: 30
+  periodSeconds: 10
+```
+
+> Significa:
+> 
+> 30 × 10 = 300 secondi massimo di startup consentiti.
+
+---
+---
+---
+
 ## Logging
 
 Per visualizzare log:
