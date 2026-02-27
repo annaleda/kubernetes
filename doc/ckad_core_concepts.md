@@ -81,6 +81,18 @@ kubectl create deployment nginx --image=nginx --dry-run=client -o yaml
 kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > deployment.yaml
 ```
 ---
+## Namespace
+*Namespace di sistema
+
+ Kubernetes crea automaticamente alcuni namespace:
+
+   - `default` → namespace predefinito
+
+   - `kube-system` → componenti interni del cluster (es: scheduler, controller manager, kube-dns)
+
+   - `kube-public` → visibile a tutti gli utenti
+
+   - `kube-node-lease` → gestione heartbeat dei nodi
 
 <img width="1051" height="460" alt="Immagine 2026-02-24 120518" src="https://github.com/user-attachments/assets/7b9f6bb1-ae95-4f42-a38b-233093224345" />
 
