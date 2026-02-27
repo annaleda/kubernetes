@@ -134,27 +134,52 @@ La nuova versione viene rilasciata gradualmente. Il Service punta alla stessa la
 - Deployment stabile (v1.0)
 
 ```bash
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  labels:
-    app: nginx
+  name: nginx-v1
 spec:
   replicas: 5
+  selector:
+    matchLabels:
+      app: nginx
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v1
 ```
 - Deployment canary (v1.1)
 
 ```bash
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  labels:
-    app: nginx
+  name: nginx-v2
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v2
 ```
 
-- Service
+- Service(label comune)
   
 ```bash
-selector:
-  app: nginx
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
 ```
 - Distribuzione traffico
     - Totale Pod: 6
