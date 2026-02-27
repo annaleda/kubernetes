@@ -48,8 +48,9 @@ livenessProbe:
   httpGet:
     path: /
     port: 80
-  initialDelaySeconds: 5
-  periodSeconds: 10
+  initialDelaySeconds: 80
+  periodSeconds: 5
+  failureThreshold: 3
 ```
 
 ---
