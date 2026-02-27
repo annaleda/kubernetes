@@ -207,4 +207,6 @@ spec:
 | Blue/Green    | ❌ No     | ❌ No     | ✅ Sì           | Alto        |
 | Canary        | ❌ No     | ✅ Sì     | ❌ No           | Medio       |
 
+
+> Downtime: Periodo di tempo in cui un servizio o applicazione NON è disponibile.
 ---
