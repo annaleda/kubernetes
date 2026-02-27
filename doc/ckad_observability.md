@@ -269,6 +269,17 @@ Diagnosi:
 
 ---
 
+| Problema         | Comando                |
+| ---------------- | ---------------------- |
+| Pod crash        | `kubectl logs`         |
+| Pod NotReady     | `kubectl describe pod` |
+| CPU alta         | `kubectl top pod`      |
+| Nessun traffico  | controlla readiness    |
+| Restart continui | controlla liveness     |
+
+
+---
+
 ## Esercizi
 
 1. Aggiungere una liveness probe HTTP a un Deployment nginx.
