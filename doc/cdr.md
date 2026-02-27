@@ -74,6 +74,34 @@ E usarla come qualsiasi altra risorsa:
 kubectl get backups
 kubectl describe backup my-backup
 ```
+
+---
+- `etcd`: Storage del Cluster State
+
+In Kubernetes, lo stato del cluster viene memorizzato in un database distribuito chiamato: etcd.
+  - È il data store principale del cluster.
+  - Funziona come un key-value database distribuito.
+  - Contiene lo stato desiderato e corrente delle risorse.
+
+All’interno di etcd vengono memorizzati:
+  - Metadata delle risorse
+  - Spec delle risorse
+  - Configurazioni cluster
+  - Secrets
+
+Quando crei una CRD:
+  - Definisci un nuovo schema API
+  - API Server registra il nuovo resource type
+  - Le istanze della custom resource vengono salvate in etcd
+  - Controller o operator gestiscono il reconciliation logic
+
+-Sicurezza di etcd 
+
+Poiché contiene dati sensibili del cluster:
+  - Deve essere accessibile solo dal control plane
+  - Usa comunicazione TLS
+  - Supporta encryption at rest
+  - Deve essere hardenizzato in produzione
 ---
 ### Operators
 
