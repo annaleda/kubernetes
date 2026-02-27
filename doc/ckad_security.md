@@ -288,14 +288,21 @@ Gli API Groups organizzano le risorse Kubernetes. Sono parte dell’URL API serv
       - Namespaces
 
 API Groups più comuni
-| Group                     | Contiene                               |
-| ------------------------- | -------------------------------------- |
-| apps                      | Deployments, ReplicaSets, StatefulSets |
-| batch                     | Jobs, CronJobs                         |
-| networking.k8s.io         | Ingress, NetworkPolicy                 |
-| rbac.authorization.k8s.io | Roles, RoleBindings                    |
-| autoscaling               | HPA                                    |
-| policy                    | PodDisruptionBudget                    |
+| Group                          | Contiene                                                     | Nota                       |
+| ------------------------------ | ------------------------------------------------------------ | -------------------------- |
+| "" (core group)                | Pods, Services, ConfigMaps, Secrets, Nodes                   | Core API group             |
+| apps                           | Deployments, ReplicaSets, StatefulSets                       | Molto importante           |
+| batch                          | Jobs, CronJobs                                               | Automation workload        |
+| networking.k8s.io              | Ingress, NetworkPolicy                                       | Networking security        |
+| rbac.authorization.k8s.io      | Roles, RoleBindings                                          | Authorization security    |
+| autoscaling                    | HorizontalPodAutoscaler                                      | Resource scaling           |
+| policy                         | PodDisruptionBudget                                          | Availability control       |
+| storage.k8s.io                 | StorageClass, VolumeAttachment                               | Storage provisioning       |
+| admissionregistration.k8s.io   | MutatingWebhookConfiguration, ValidatingWebhookConfiguration | Admission control security |
+| extensions                     | Legacy API (quasi deprecato)                                 | Evitare in production      |
+| apiregistration.k8s.io         | APIService                                                   | Aggregated API server      |
+| coordination.k8s.io            | Leases (leader election)                                     | Controller runtime         |
+
 
 ---
 
@@ -536,6 +543,65 @@ Oltre a RBAC, Kubernetes supporta altri modelli di autorizzazione.
 - Webhook Authorization
   - Delegazione dell’autorizzazione a servizi esterni.
   - Molto usato in architetture enterprise.
+
+---
+
+### Admission Control Pipeline
+
+In Kubernetes, dopo authentication e authorization (RBAC), le richieste passano attraverso il livello di Admission Control.
+
+L’admission layer è fondamentale perché permette di:
+
+  - Applicare policy di sicurezza
+  - Mutare automaticamente le risorse create
+  - Validare configurazioni prima dello storage
+
+Questo è particolarmente importante in ambienti production perché riduce gli errori di configurazione e aumenta la compliance security.
+
+---
+
+### Mutating Admission Webhook
+
+Il Mutating Admission Webhook è un meccanismo che permette di intercettare le richieste API e modificarle prima che l’oggetto venga salvato in etcd.
+
+Funziona come un plugin esterno collegato al API server.
+
+Esempi di utilizzo:
+
+  - Injection automatica di sidecar container
+  - Configurazione SecurityContext default
+  - Aggiunta ServiceAccount
+  - Setup logging agent
+  - Policy enforcement dinamico
+
+Pipeline tipica:
+```
+Client Request
+ ↓
+Authentication
+ ↓
+RBAC Authorization
+ ↓
+Mutating Webhook (Modify Resource)
+ ↓
+Validating Webhook (Check Policy)
+ ↓
+Storage in etcd
+```
+> Il mutating webhook è molto usato in architetture enterprise per implementare security automation.
+
+| Admission Controller       | Tipo                  | Funzione                                    | Note CKAD                       |
+| -------------------------- | --------------------- | ------------------------------------------- | ------------------------------- |
+| AlwaysPullImages           | Mutating              | Forza il pull dell’immagine da registry     | Previene uso di immagini locali |
+| PodSecurity                | Validating            | Applica policy security namespace           | Sostituisce vecchi PSP          |
+| NamespaceLifecycle         | Validating            | Blocca creazione Pod in namespace terminati | Default cluster behavior        |
+| NodeRestriction            | Validating            | Limita kubelet accesso API                  | Security hardening              |
+| LimitRanger                | Mutating / Validating | Applica limiti CPU/memory                   | Richiede ResourceQuota          |
+| ResourceQuota              | Validating            | Controlla consumo risorse namespace         | Molto comune in production      |
+| DefaultStorageClass        | Mutating              | Aggiunge StorageClass se assente            | Importantissimo per PVC         |
+| ServiceAccount             | Mutating              | Inietta ServiceAccount token                | Vedi projected volume token     |
+| MutatingAdmissionWebhook   | Mutating              | Permette plugin esterni                     | Enterprise security             |
+| ValidatingAdmissionWebhook | Validating            | Enforcement policy esterna                  | Policy engine integration       |
 
 ---
 
