@@ -102,11 +102,67 @@ startupProbe:
 
 ## Differenza tra le Probe
 
-| Probe | Riavvia Container | Rimuove dal Service | Quando usarla |
-|--------|-------------------|---------------------|---------------|
-| Liveness | ✅ | ❌ | Crash / deadlock |
-| Readiness | ❌ | ✅ | Non pronto al traffico |
-| Startup | ✅ | ❌ | Avvio lento |
+| Tipo Probe | Riavvia Container | Rimuove dal Service | Uso Tipico             |
+| ---------- | ----------------- | ------------------- | ---------------------- |
+| Liveness   | ✅                 | ❌                   | Crash, deadlock        |
+| Readiness  | ❌                 | ✅                   | Non pronto al traffico |
+| Startup    | ✅                 | ❌                   | Avvio lento            |
+
+---
+
+| Metodo    | Descrizione                  | Quando usarlo        |
+| --------- | ---------------------------- | -------------------- |
+| httpGet   | Effettua richiesta HTTP      | Web app / API        |
+| tcpSocket | Verifica apertura porta TCP  | DB / servizi TCP     |
+| exec      | Esegue comando nel container | Check personalizzati |
+
+---
+
+| Parametro   | Obbligatorio | Descrizione          | Esempio        |
+| ----------- | ------------ | -------------------- | -------------- |
+| path        | ✅            | Endpoint da chiamare | `/health`      |
+| port        | ✅            | Porta del container  | `8080`         |
+| host        | ❌            | Host da contattare   | `localhost`    |
+| scheme      | ❌            | HTTP o HTTPS         | `HTTPS`        |
+| httpHeaders | ❌            | Header custom        | `name: X-Test` |
+
+---
+
+| Parametro           | Default | Descrizione                         | Effetto Pratico               |
+| ------------------- | ------- | ----------------------------------- | ----------------------------- |
+| initialDelaySeconds | 0       | Attesa prima del primo check        | Evita crash loop su app lente |
+| periodSeconds       | 10      | Ogni quanto esegue il check         | Frequenza controllo           |
+| timeoutSeconds      | 1       | Tempo massimo attesa risposta       | Se supera → failure           |
+| successThreshold    | 1       | Successi consecutivi richiesti      | Usato spesso per readiness    |
+| failureThreshold    | 3       | Fallimenti consecutivi prima azione | Dopo questo interviene K8s    |
+
+Esempio exec:
+
+```yaml
+livenessProbe:
+  exec:
+    command:
+      - cat
+      - /tmp/healthy
+```
+
+Esempio tcpSocket:
+
+```yaml
+readinessProbe:
+  tcpSocket:
+    port: 3306
+  initialDelaySeconds: 5
+  periodSeconds: 10
+```
+
+| Caso                          | Cosa succede                                         |
+| ----------------------------- | ---------------------------------------------------- |
+| Liveness fallisce             | Container riavviato                                  |
+| Readiness fallisce            | Pod = NotReady                                       |
+| Startup fallisce              | Container riavviato                                  |
+| Readiness + Liveness presenti | Liveness può riavviare, readiness controlla traffico |
+
 
 ---
 
