@@ -3,8 +3,52 @@
 ## Teoria
 
 ---
+### kube-apiserver
 
-## Security in Kubernetes (CKAD Focus)
+Il `kube-apiserver` è il componente centrale del Control Plane. È il punto di ingresso di tutte le richieste al cluster.
+
+Ogni comando kubectl, controller o componente interno comunica sempre tramite l’API Server.
+
+  - Espone le API Kubernetes (REST)
+  - Valida le richieste
+  - Autentica e autorizza gli utenti (RBAC)
+  - Aggiorna lo stato nel etcd
+  - Restituisce le risposte ai client
+
+---
+
+### Flusso di una richiesta
+---
+
+Quando esegui: `kubectl get pods`
+
+kubectl invia richiesta HTTPS al kube-apiserver, kube-apiserver autentica l’utente, controlla permessi (RBAC), legge dati da etcd, restituisce risposta
+
+
+Nel cluster creato con kubeadm lo trovi come: `kubectl get pods -n kube-system`
+
+Output tipico:
+
+kube-apiserver-controlplane   1/1   Running
+
+È un `Static Pod` che gira sul nodo control plane.
+
+---
+
+### Sicurezza
+
+Il kube-apiserver:
+
+  - Usa HTTPS (porta 6443)
+  - Supporta autenticazione:
+  - Certificati
+  - Token
+  - ServiceAccount
+  - Applica autorizzazione tramite RBAC
+
+---
+
+## Security in Kubernetes 
 
 Nel CKAD la sicurezza è principalmente a livello di:
 
