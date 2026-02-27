@@ -29,6 +29,9 @@ Oppure:
 kubectl apply -k .
 ```
 ---
+---
+---
+
 ### 📁 Struttura Base
 
 Esempio directory:
