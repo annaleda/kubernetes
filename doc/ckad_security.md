@@ -336,6 +336,7 @@ kubectl create clusterrolebinding read-all \
 --clusterrole=pod-reader \
 --serviceaccount=default:my-sa
 ```
+---
 
 Per controllare le API deprecated usa:
 
