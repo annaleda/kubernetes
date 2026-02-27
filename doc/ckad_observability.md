@@ -194,6 +194,11 @@ Per visualizzare log:
 kubectl logs <pod>
 ```
 
+Entra nel container
+```
+kubectl exec -it <pod> -- /bin/sh
+```
+
 <img width="1107" height="617" alt="Immagine 2026-02-24 144309" src="https://github.com/user-attachments/assets/a1f85930-3208-4c51-9e6a-faf4143ca8eb" />
 
 
