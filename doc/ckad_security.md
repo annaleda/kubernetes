@@ -299,7 +299,7 @@ API Groups più comuni
 | policy                         | PodDisruptionBudget                                          | Availability control       |
 | storage.k8s.io                 | StorageClass, VolumeAttachment                               | Storage provisioning       |
 | admissionregistration.k8s.io   | MutatingWebhookConfiguration, ValidatingWebhookConfiguration | Admission control security |
-| extensions                     | Legacy API (quasi deprecato)                                 | Evitare in production      |
+| apiextensions.k8s.io           | extensions                                                   | extensions                 |
 | apiregistration.k8s.io         | APIService                                                   | Aggregated API server      |
 | coordination.k8s.io            | Leases (leader election)                                     | Controller runtime         |
 
