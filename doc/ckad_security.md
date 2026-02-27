@@ -270,6 +270,67 @@ kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceacc
 
 ---
 
+### API Groups 
+
+---
+
+Gli API Groups organizzano le risorse Kubernetes. Sono parte dell’URL API server.
+
+  - Core Group
+    Il core group ha nome vuoto: `apiGroups: [""]`
+
+      Include:
+      - Pods
+      - Services
+      - ConfigMaps
+      - Secrets
+      - Nodes
+      - Namespaces
+
+API Groups più comuni
+| Group                     | Contiene                               |
+| ------------------------- | -------------------------------------- |
+| apps                      | Deployments, ReplicaSets, StatefulSets |
+| batch                     | Jobs, CronJobs                         |
+| networking.k8s.io         | Ingress, NetworkPolicy                 |
+| rbac.authorization.k8s.io | Roles, RoleBindings                    |
+| autoscaling               | HPA                                    |
+| policy                    | PodDisruptionBudget                    |
+
+---
+
+Role Example
+
+Permette lettura dei Pod nel namespace.
+
+```
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+  ```
+RoleBinding Example
+
+```
+subjects:
+- kind: ServiceAccount
+  name: my-sa
+
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+ClusterRole Example
+kubectl create clusterrole pod-reader \
+--verb=get,list,watch \
+--resource=pods
+ClusterRoleBinding Example
+kubectl create clusterrolebinding read-all \
+--clusterrole=pod-reader \
+--serviceaccount=default:my-sa
+```
+---
+
 # SecurityContext
 
 Definisce privilegi a livello di:
@@ -452,6 +513,29 @@ kubectl auth can-i get pods
 kubectl auth can-i create deployments --as=system:serviceaccount:default:my-sa
 ```
 <img width="732" height="607" alt="Immagine 2026-02-24 234344" src="https://github.com/user-attachments/assets/5fe65618-af91-46e8-8397-2452f06710b8" />
+
+---
+
+### Modelli di Autorizzazione
+
+Oltre a RBAC, Kubernetes supporta altri modelli di autorizzazione.
+
+- ABAC (Attribute-Based Access Control)
+  - Basato su policy statiche definite in file JSON. Più flessibile ma più difficile da gestire. Richiede restart del server API per modifiche. Oggi è deprecato e poco usato.
+
+- RBAC (Role-Based Access Control) 
+  - Standard moderno
+  - Dynamic
+  - Facile da mantenere
+  - Best practice production
+
+- Node Authorization
+  - Usato internamente dai componenti del cluster.
+  - Permette ai nodi di comunicare con l’API server.
+
+- Webhook Authorization
+  - Delegazione dell’autorizzazione a servizi esterni.
+  - Molto usato in architetture enterprise.
 
 ---
 
