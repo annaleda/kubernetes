@@ -4,7 +4,7 @@
 
 ---
 
-## Pod
+## Pod 
 * Unità minima deployabile in Kubernetes.
 * Può contenere uno o più container.
 * I container nel pod condividono:
