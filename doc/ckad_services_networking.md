@@ -227,6 +227,17 @@ Pod
 
 ---
 
+| Feature             | Ingress           | NetworkPolicy    |
+| ------------------- | ----------------- | ---------------- |
+| Livello             | Application Layer | Network Layer    |
+| Uso                 | Traffico esterno  | Traffico interno |
+| Routing HTTP        | ✅                 | ❌                |
+| Security Pod-to-Pod | ❌                 | ✅                |
+| Richiede Controller | ✅                 | Optional         |
+| Blocca traffico     | No                | Sì               |
+
+---
+
 ## Esercizi
 
 1. Esporre un Deployment con ClusterIP.
