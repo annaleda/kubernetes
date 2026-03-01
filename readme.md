@@ -30,6 +30,8 @@
 
 ### 7 [Other Exercises](./exercises/o_exercises.md)
 
+### 8 [KodeKlaud Free Challenges](https://learn.kodekloud.com/user/courses/kubernetes-challenges?utm_source=udemy&utm_medium=video-description&utm_campaign=kubernetes-challenges)
+
 ---
 
 ## 🔗 Mock Exams
