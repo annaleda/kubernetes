@@ -319,5 +319,20 @@ Utile per vedere il risultato finale.
 |Installazione chart|	Modifica manifest esistenti|
 
 
+Esempio versione:
+
+```
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deployment.yaml
+
+namePrefix: dev-
+
+images:
+- name: nginx
+  newTag: 1.27
+```
 
 ---
