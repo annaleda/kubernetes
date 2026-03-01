@@ -8,3 +8,5 @@
 ### 3 [CKAD Exercises online 1](https://miroberes.github.io)
 
 ### 4 [CKAD Exercises online 2](https://hitenpratap.github.io/CKAD-Exercises)
+
+### 5 [dgkanatsios/CKAD-exercises](https://github.com/dgkanatsios/CKAD-exercises?tab=readme-ov-file)
