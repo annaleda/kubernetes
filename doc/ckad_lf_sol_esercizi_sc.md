@@ -366,7 +366,6 @@ spec:
               name: test
               port:
                 number: 80
-PS C:\Users\annaleda\ckad\first-exercises> k apply -f ingress.yaml
 
 
 kubectl apply -f ingress.yaml
