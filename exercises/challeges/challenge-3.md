@@ -1,5 +1,5 @@
 
-Challenge 3 – Voting Architecture Solution
+## Challenge 3 – Voting Architecture Solution
 - Namespace
 Name: vote
 Create namespace
