@@ -115,58 +115,40 @@ Possibili sintomi:
 - Comandi Utili per Troubleshooting
 
 Verificare certificati:
-
+```
 openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
-
+```
 Controllare data di scadenza:
-
+```
 openssl x509 -enddate -noout -in apiserver.crt
-
+```
 Verificare stato kubelet:
-
+```
 systemctl status kubelet
-
+```
 Controllare certificati con kubeadm:
-
+```
 kubeadm certs check-expiration
-🧠 Concetto Fondamentale da Esame
-
-Ricorda sempre questo schema mentale:
-
-TUTTI → kube-apiserver → etcd
-
-Nessun componente parla direttamente con etcd tranne il kube-apiserver.
-
-🛡️ Perché Questo È Importante per la Security
+```
+---
+> Nessun componente parla direttamente con etcd tranne il kube-apiserver.
 
 TLS nel cluster garantisce:
 
-Confidenzialità (dati cifrati)
+ - Confidenzialità (dati cifrati)
+ - Integrità (nessuna manomissione)
+ - Autenticazione forte
+ - Riduzione attacchi Man-in-the-Middle
 
-Integrità (nessuna manomissione)
-
-Autenticazione forte
-
-Riduzione attacchi Man-in-the-Middle
-
-🎯 Riassunto Finale
+- Riassunto Finale
 
 Kubernetes usa TLS ovunque
-
 È basato su mTLS
-
 kube-apiserver è il centro delle comunicazioni
-
 etcd è protetto da certificati dedicati
-
 La CA è il punto di fiducia del cluster
-
 Se vuoi posso aggiungerti anche una sezione:
 
-🔐 RBAC vs TLS
-
-🔐 ServiceAccount Tokens vs Client Certificates
-
-🔐 Security Hardening checklist CKA level
+---
 
 Dimmi tu quanto vuoi spingere in profondità 😈
