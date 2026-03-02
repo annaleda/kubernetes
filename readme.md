@@ -32,9 +32,9 @@
 
 ## 🔗 Mock Exams
 
-### 1 [Mock Exams](./exams/exams.md)
+### 1 [Mock Exams](./exems/exams.md)
 
-### 2 [Mock Exam solutions](./exams/sol-exams.md)
+### 2 [Mock Exam solutions](./exems/sol-exams.md)
 
 ---
 
