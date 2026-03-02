@@ -2,118 +2,243 @@
 ### Storage 
 ---
 
-## ST-1 — Static PV + PVC
+## PD-1 — Pod Singolo (non gestito)
 
-- PersistentVolume
-  - Nome: `pv-static`
-  - Storage: `100Mi`
-  - AccessMode: ReadWriteOnce
-  - hostPath: `/mnt/static`
+Creare un Pod chiamato standalone-pod
 
-- PersistentVolumeClaim
-  - Nome: `pvc-static`
-  - Richiede: `100Mi`
+Container
 
-- Pod
-  - Nome: `static-consumer`
-  - Image: nginx
-  - Monta PVC in /data
+Image: nginx
 
-- Validazione
-  - PVC Bound
-  - Pod Running
+Porta: 80
 
-```
+Configurazione
 
-```
----
+restartPolicy: Always (default)
 
-## ST-2 — Multiple PVC in Pod
+Vincoli
 
-- PVC
-  - pvc-config
-  - pvc-data
+Non usare Deployment
 
-- Pod: `multi-volume-app`
-  - Monta pvc-config in /config
-  - Monta pvc-data in /data
+Validazione
 
-- Validazione
-  - Entrambi i volumi montati correttamente
+Il Pod è Running
+
+Eliminando il Pod non viene ricreato automaticamente
 
 ```
 
 ```
 ---
 
-## ST-3 — ReadWriteMany Scenario
+## PD-2 — Deployment con Scaling
 
-- PersistentVolume
-  - Storage: `200Mi`
-  - AccessMode: ReadWriteMany
-  - hostPath: `/mnt/shared`
+Creare un Deployment chiamato web-deployment
 
-- PVC collegato al PV
-  - Pod 1: shared-1
-  - Pod 2: shared-2
+Specifiche
 
-Entrambi montano stesso PVC
+Image: nginx:1.22
 
-- Validazione
-  - Entrambi Running
-  - File scritto da uno visibile nell’altro
+Replicas: 3
 
-```
+Task successivo
 
-```
----
+Scalare a 5 repliche
 
-## ST-4 — SubPath Mount
+Validazione
 
-- Pod: `subpath-app`
+kubectl get pods mostra 5 pod
 
-- PVC: `pvc-static`
-
-- Configurazione
-  - Montare solo subPath logs in /var/log/app
-
-- Validazione
-  - Solo la directory logs è montata
+ReplicaSet aggiornato
 
 ```
 
 ```
 ---
 
-## ST-5 — StorageClass Usage
+## PD-3 — Rolling Update + Rollback
 
-- PVC: `dynamic-storage`
-- Storage: `150Mi`
-- StorageClass: standard
-- Pod: dynamic-consumer
-  - Image: busybox
-  - Monta volume in `/data`
-  - Scrive file `test.txt`
+Creare Deployment api-deployment
 
--Validazione
-- PVC Bound automaticamente
+Specifiche iniziali
+
+Image: nginx:1.21
+
+Replicas: 4
+
+Aggiornare l’immagine a nginx:1.23
+
+Poi eseguire rollback alla versione precedente
+
+Vincoli
+
+Usare rolling update (default strategy)
+
+Validazione
+
+kubectl rollout history deployment api-deployment
+
+Verificare versione immagine dopo rollback
 
 ```
 
 ```
 ---
 
-## ST-6 — VolumeMount ReadOnly
+## PD-4 — Job (Batch Task)
 
-- Pod: `readonly-app`
+Creare un Job chiamato batch-job
 
-- PVC: `pvc-static`
+Container
 
-- Configurazione
-  - volumeMount readOnly: true
+Image: busybox
 
-- Validazione
-  - Tentativo di scrittura fallisce
+Command:
+
+sh -c "echo Job executed && sleep 5"
+
+Configurazione
+
+completions: 1
+
+backoffLimit: 2
+
+Validazione
+
+Job completato con stato Complete
+
+Pod termina correttamente
+
+```
+
+```
+---
+
+## PD-5 — Parallel Job
+
+Creare un Job chiamato parallel-job
+
+Specifiche
+
+Image: busybox
+
+Command: sleep 10
+
+completions: 4
+
+parallelism: 2
+
+Obiettivo
+
+Eseguire 2 pod alla volta fino a 4 completamenti
+
+Validazione
+
+Non più di 2 pod Running contemporaneamente
+
+Job termina con 4 completamenti
+
+```
+
+```
+---
+
+## PD-6 — CronJob (Scheduled Task)
+
+Creare un CronJob chiamato scheduled-task
+
+Specifiche
+
+Schedule: ogni 2 minuti
+
+Image: busybox
+
+Command:
+
+date
+
+Configurazione
+
+successfulJobsHistoryLimit: 3
+
+failedJobsHistoryLimit: 1
+
+Validazione
+
+Viene creato almeno un Job
+
+kubectl get cronjob mostra schedule corretto
+
+```
+
+```
+---
+
+## PD-7 — StatefulSet con Storage Persistente
+
+StatefulSet: db-stateful
+
+Specifiche
+
+Replicas: 2
+
+ServiceName: db-headless
+
+Image: nginx
+
+Porta: 80
+
+Service richiesto
+
+Nome: db-headless
+
+ClusterIP: None
+
+Selector coerente con il StatefulSet
+
+Storage
+
+Utilizzare volumeClaimTemplates
+
+Nome claim: data
+
+Storage richiesto: 100Mi
+
+AccessMode: ReadWriteOnce
+
+StorageClass: standard
+
+Obiettivo
+
+Ogni replica deve avere il proprio PVC
+
+I pod devono avere nomi prevedibili:
+
+db-stateful-0
+
+db-stateful-1
+
+Vincoli
+
+Non usare Deployment
+
+Non creare manualmente i PVC
+
+I PVC devono essere generati automaticamente
+
+Validazione
+
+kubectl get pods mostra nomi ordinali
+
+kubectl get pvc mostra:
+
+data-db-stateful-0
+
+data-db-stateful-1
+
+Eliminando db-stateful-0 viene ricreato con lo stesso nome
+
+Il PVC associato rimane Bound
 
 ```
 
