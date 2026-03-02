@@ -202,7 +202,6 @@ k apply -f pvc.yaml
 ```
 kubectl get pv data-pv -o yaml > pv.yaml
 
-kubectl create pv --dry-run=client -o yaml > pv.yaml
 ```
 
 ```
