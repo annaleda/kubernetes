@@ -4,27 +4,21 @@
 
 ## PD-1 — Pod Singolo (non gestito)
 
-Creare un Pod chiamato standalone-pod
+Creare un Pod chiamato `standalone-pod`
 
-Container
+- Container
+  - Image: nginx
+  - Porta: 80
 
-Image: nginx
+- Configurazione
+  - restartPolicy: Always (default)
 
-Porta: 80
+- Vincoli
+  Non usare Deployment
 
-Configurazione
-
-restartPolicy: Always (default)
-
-Vincoli
-
-Non usare Deployment
-
-Validazione
-
-Il Pod è Running
-
-Eliminando il Pod non viene ricreato automaticamente
+- Validazione
+  - Il Pod è Running
+  - Eliminando il Pod non viene ricreato automaticamente
 
 ```
 
@@ -33,23 +27,19 @@ Eliminando il Pod non viene ricreato automaticamente
 
 ## PD-2 — Deployment con Scaling
 
-Creare un Deployment chiamato web-deployment
+Creare un Deployment chiamato `web-deployment`
 
-Specifiche
+- Specifiche
 
 Image: nginx:1.22
+  - Replicas: 3
 
-Replicas: 3
+- Task successivo
+  - Scalare a 5 repliche
 
-Task successivo
-
-Scalare a 5 repliche
-
-Validazione
-
-kubectl get pods mostra 5 pod
-
-ReplicaSet aggiornato
+- Validazione
+  - kubectl get pods mostra 5 pod
+  - ReplicaSet aggiornato
 
 ```
 
@@ -58,27 +48,20 @@ ReplicaSet aggiornato
 
 ## PD-3 — Rolling Update + Rollback
 
-Creare Deployment api-deployment
+Creare Deployment `api-deployment`
 
-Specifiche iniziali
+- Specifiche iniziali
+  - Image: nginx:1.21
+  - Replicas: 4
 
-Image: nginx:1.21
+Aggiornare l’immagine a nginx:1.23. Poi eseguire rollback alla versione precedente
 
-Replicas: 4
+- Vincoli
+  - Usare rolling update (default strategy)
 
-Aggiornare l’immagine a nginx:1.23
-
-Poi eseguire rollback alla versione precedente
-
-Vincoli
-
-Usare rolling update (default strategy)
-
-Validazione
-
-kubectl rollout history deployment api-deployment
-
-Verificare versione immagine dopo rollback
+- Validazione
+  - kubectl rollout history deployment api-deployment
+  - Verificare versione immagine dopo rollback
 
 ```
 
@@ -87,27 +70,19 @@ Verificare versione immagine dopo rollback
 
 ## PD-4 — Job (Batch Task)
 
-Creare un Job chiamato batch-job
+Creare un Job chiamato `batch-job`
 
-Container
+- Container
+  - Image: busybox
+  - Command: `sh -c "echo Job executed && sleep 5"`
 
-Image: busybox
+- Configurazione
+  - completions: 1
+  - backoffLimit: 2
 
-Command:
-
-sh -c "echo Job executed && sleep 5"
-
-Configurazione
-
-completions: 1
-
-backoffLimit: 2
-
-Validazione
-
-Job completato con stato Complete
-
-Pod termina correttamente
+- Validazione
+  - Job completato con stato Complete
+  - Pod termina correttamente
 
 ```
 
@@ -116,27 +91,20 @@ Pod termina correttamente
 
 ## PD-5 — Parallel Job
 
-Creare un Job chiamato parallel-job
+Creare un Job chiamato `parallel-job`
 
-Specifiche
+- Specifiche
+  - Image: busybox
+  - Command: sleep 10
+  - completions: 4
+  - parallelism: 2
 
-Image: busybox
+- Obiettivo
+  - Eseguire 2 pod alla volta fino a 4 completamenti
 
-Command: sleep 10
-
-completions: 4
-
-parallelism: 2
-
-Obiettivo
-
-Eseguire 2 pod alla volta fino a 4 completamenti
-
-Validazione
-
-Non più di 2 pod Running contemporaneamente
-
-Job termina con 4 completamenti
+- Validazione
+  - Non più di 2 pod Running contemporaneamente
+  - Job termina con 4 completamenti
 
 ```
 
@@ -145,29 +113,20 @@ Job termina con 4 completamenti
 
 ## PD-6 — CronJob (Scheduled Task)
 
-Creare un CronJob chiamato scheduled-task
+Creare un CronJob chiamato `scheduled-task`
 
-Specifiche
+- Specifiche
+  - Schedule: ogni 2 minuti
+  - Image: busybox
+  - Command: date
 
-Schedule: ogni 2 minuti
+- Configurazione
+  - successfulJobsHistoryLimit: 3
+  - failedJobsHistoryLimit: 1
 
-Image: busybox
-
-Command:
-
-date
-
-Configurazione
-
-successfulJobsHistoryLimit: 3
-
-failedJobsHistoryLimit: 1
-
-Validazione
-
-Viene creato almeno un Job
-
-kubectl get cronjob mostra schedule corretto
+- Validazione
+  - Viene creato almeno un Job
+  - kubectl get cronjob mostra schedule corretto
 
 ```
 
@@ -176,69 +135,44 @@ kubectl get cronjob mostra schedule corretto
 
 ## PD-7 — StatefulSet con Storage Persistente
 
-StatefulSet: db-stateful
+StatefulSet: `db-stateful`
 
-Specifiche
+- Specifiche
+  - Replicas: 2
+  - ServiceName: `db-headless`
+  - Image: nginx
+  - Porta: 80
 
-Replicas: 2
+- Service richiesto
+  - Nome: `db-headless`
+  - ClusterIP: None
+  - Selector coerente con il StatefulSet
 
-ServiceName: db-headless
+- Storage
+  - Utilizzare `volumeClaimTemplates`
+  - Nome claim: data
+  - Storage richiesto: 100Mi
+  - AccessMode: ReadWriteOnce
+  - StorageClass: standard
 
-Image: nginx
+- Obiettivo
+  - Ogni replica deve avere il proprio PVC
+  - I pod devono avere nomi prevedibili:
+    - db-stateful-0
+    - db-stateful-1
 
-Porta: 80
+- Vincoli
+  - Non usare Deployment
+  - Non creare manualmente i PVC
+  - I PVC devono essere generati automaticamente
 
-Service richiesto
-
-Nome: db-headless
-
-ClusterIP: None
-
-Selector coerente con il StatefulSet
-
-Storage
-
-Utilizzare volumeClaimTemplates
-
-Nome claim: data
-
-Storage richiesto: 100Mi
-
-AccessMode: ReadWriteOnce
-
-StorageClass: standard
-
-Obiettivo
-
-Ogni replica deve avere il proprio PVC
-
-I pod devono avere nomi prevedibili:
-
-db-stateful-0
-
-db-stateful-1
-
-Vincoli
-
-Non usare Deployment
-
-Non creare manualmente i PVC
-
-I PVC devono essere generati automaticamente
-
-Validazione
-
-kubectl get pods mostra nomi ordinali
-
-kubectl get pvc mostra:
-
-data-db-stateful-0
-
-data-db-stateful-1
-
-Eliminando db-stateful-0 viene ricreato con lo stesso nome
-
-Il PVC associato rimane Bound
+- Validazione
+  - kubectl get pods mostra nomi ordinali
+  - kubectl get pvc mostra:
+    - data-db-stateful-0
+    - data-db-stateful-1
+  - Eliminando db-stateful-0 viene ricreato con lo stesso nome
+  - Il PVC associato rimane Bound
 
 ```
 
