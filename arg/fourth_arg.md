@@ -1,6 +1,8 @@
 
 ## Application Environment, Configuration and Security
---- 
+---
+### 4.0 [Security intro](../doc/sec-intro.md)
+
 ### 4.1 [Security](../doc/ckad_security.md)
    - (Pod Securiity,ServiceAccount,RBAC,SecurityContext)     
 
