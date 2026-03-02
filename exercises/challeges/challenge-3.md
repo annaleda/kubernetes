@@ -265,8 +265,9 @@ Specification
 
 ```
 kubectl expose deployment db \
---name=vote \
---tcp=5432:5432 \
+--name=db \
+--port=5432 \
+--target-port=5432 \
 --type=ClusterIP \
 -n vote \
 --dry-run=client -o yaml > db-service.yaml
