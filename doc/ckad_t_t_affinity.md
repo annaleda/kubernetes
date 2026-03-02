@@ -86,6 +86,25 @@ Dove `effect` può essere:
 
 <img width="873" height="325" alt="Immagine 2026-02-24 135344" src="https://github.com/user-attachments/assets/5844af51-a8d6-4184-8f00-619add76c89e" />
 
+
+---
+## Toleration in un pod : esempio
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpha
+spec:
+  tolerations:
+  - key: "app_type"
+    operator: "Equal"
+    value: "alpha"
+    effect: "NoSchedule"
+
+  containers:
+  - name: alpha
+    image: redis
+```
 ---
 ## NodeSelector
 
