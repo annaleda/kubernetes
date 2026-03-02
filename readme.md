@@ -18,17 +18,15 @@
 
 ## 🔗 Esercizi 
 
-### 1 [First Teorichal exercises](./exercises/f-t-e.md)
+### 1 [CKAD First Teorichal exercises](./exercises/f-t-e.md)
 
-### 5 [CKAD Exercises online](./exercises/ex_online.md)
+### 2 [CKAD Exercises online](./exercises/ex_online.md)
 
-### 6 [CKAD 100 Exercises](./doc/session.md)
+### 3 [CKAD 100 Exercises](./doc/session.md)
 
-### 7 [Other Exercises](./exercises/o_exercises.md)
+### 4 [CKAD Other Exercises](./exercises/o_exercises.md)
 
-### 8 [KodeKlaud Free Challenges](https://learn.kodekloud.com/user/courses/kubernetes-challenges?utm_source=udemy&utm_medium=video-description&utm_campaign=kubernetes-challenges)
-
-### 9 [Soluzioni Challenges](./exercises/challeges/diz-soluzioni-chall.md)
+### 5 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
 ---
 
