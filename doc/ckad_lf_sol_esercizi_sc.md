@@ -206,7 +206,7 @@ k apply -f pod3.yaml
 </details>
 
 
-## 3. Multi-Container Pods
+## 🔹 3. Multi-Container Pods
 
 ### 3.1 Sidecar + InitContainer
 
