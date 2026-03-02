@@ -115,19 +115,41 @@ kdry "create secret generic db-secret --from-literal=password=xyz"
 <details> <summary>Soluzione</summary>
   
 ```bash  
-volumes:
-- name: config-volume
-  configMap:
-    name: app-config
-- name: secret-volume
-  secret:
-    secretName: db-secret
+k run mount-pod --image=nginx --dry-run=client -o yaml > pod2.yaml
 
-volumeMounts:
-- name: config-volume
-  mountPath: /etc/config
-- name: secret-volume
-  mountPath: /etc/secret
+vi pod2.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mount-pod
+  name: mount-pod
+spec:
+  containers:
+  - image: nginx
+    name: mount-pod
+    resources: {}
+    volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+      - name: secret-volume
+        mountPath: /etc/secret
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config
+  - name: secret-volume
+    secret:
+      secretName: db-secret
+status: {}
+
+
+k apply -f pod2.yaml
+
 ```
 
 </details>
@@ -139,13 +161,33 @@ volumeMounts:
 <details> <summary>Soluzione</summary>
   
 ```bash  
-resources:
-  requests:
-    memory: "64Mi"
-    cpu: "250m"
-  limits:
-    memory: "128Mi"
-    cpu: "500m"
+ k run resource-pod --image=nginx --dry-run=client -o yaml > pod3.yaml
+
+ vi pod3.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: resource-pod
+  name: resource-pod
+spec:
+  containers:
+  - image: nginx
+    name: resource-pod
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 250m
+      limits:
+        memory: 128Mi
+        cpu: 500m
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+k apply -f pod3.yaml
 ```
 </details>
 
