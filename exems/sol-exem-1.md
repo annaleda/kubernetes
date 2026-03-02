@@ -128,6 +128,21 @@ Create a Persistent Volume with the given specification.
   - Access modes: ReadWriteMany
   - Host Path: /pv/data-analytics
 ```
+vi pv.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-analytics
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+  - ReadWriteMany
+  hostPath:
+    path: /pv/data-analytics
+
+k apply pv.yaml
 
 ```
 ---
@@ -138,7 +153,69 @@ Create a redis deployment using the image redis:alpine with 1 replica and label 
   - Network Policy allows the correct pods?
   - Network Policy applied on the correct pods?
 ```
+kubectl create deployment redis \
+--image=redis:alpine \
+--replicas=1 \
+--dry-run=client -o yaml > redis-deploy.yaml
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+
+kubectl apply -f redis-deploy.yaml
+
+kubectl expose deployment redis \
+--name=redis \
+--port=6379 \
+--target-port=6379 \
+--type=ClusterIP \
+--dry-run=client -o yaml > redis-service.yaml
+
+
+
+kubectl apply -f redis-service.yaml
+
+
+
+vi redis-networkpolicy.yaml
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-access
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+
+kubectl apply -f redis-networkpolicy.yaml
 ```
 ---
 Create a Pod called sega with two containers:
@@ -150,5 +227,26 @@ Create a Pod called sega with two containers:
   - Container tails created correctly?
 ---
 ```
+vi sega-pod.yaml
 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sega
+spec:
+  containers:
+
+  - name: tails
+    image: busybox
+    command: ["sleep", "3600"]
+
+  - name: sonic
+    image: nginx
+    env:
+    - name: NGINX_PORT
+      value: "8080"
+
+
+kubectl apply -f sega-pod.yaml
 ```
