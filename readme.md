@@ -12,6 +12,8 @@
 
 ### 4 [CKAD – Esame + Cheatsheet](./doc/ckad_exam_strategy.md)
 
+### 5 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
+
 ---
 
 ## 🔗 Esercizi 
