@@ -19,7 +19,10 @@
 - Validazione
   - Entrambi Running
   - Logs del container logger mostrano output
-    
+
+
+```  
+``` 
 ---
 
 ## MC-2 — Ambassador Pattern
@@ -40,6 +43,8 @@
 - Validazione
   - Logs mostrano risposta HTTP
 
+``` 
+```
 ---
 
 ## MC-3 — Adapter Pattern
@@ -61,6 +66,8 @@
 - Validazione
 File `processed.txt` esiste
 
+```  
+```
 ---
 
 ### MC-4 — Init + App
@@ -80,6 +87,8 @@ File `processed.txt` esiste
   - Volume: `emptyDir`
   - Nome: config-data
 
+```  
+```
 ---
 
 ### MC-5 — Multi-Container con variabili condivise
@@ -98,6 +107,8 @@ File `processed.txt` esiste
   - Shared volume
   - File generato da primo container
 
+```  
+```
 ---
 
 ### MC-6 — Multi-Container con resource limits diversi
@@ -115,4 +126,6 @@ File `processed.txt` esiste
 - Validazione
   - kubectl describe pod mostra limiti distinti
 
+```  
+```
 ---
