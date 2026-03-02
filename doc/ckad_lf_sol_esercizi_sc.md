@@ -110,8 +110,16 @@ kdry "create secret generic db-secret --from-literal=password=xyz"
 
 ### 2.3 Montaggio ConfigMap / Secret
 
-**Esercizio:** Montare ConfigMap e Secret come volume in un Pod.
-
+**Esercizio:** Montare ConfigMap e Secret creati nei precenti esercizi (app-config, db-secret) come volume in un Pod.
+  - volumeMounts:
+      - name: config-volume
+      - mountPath: /etc/config
+      - name: secret-volume
+      - mountPath: /etc/secret
+  - volumes:
+     - name: config-volume 
+     - name: secret-volume
+    
 <details> <summary>Soluzione</summary>
   
 ```bash  
@@ -157,6 +165,12 @@ k apply -f pod2.yaml
 ### 2.4 Resource Requests & Limits
 
 **Esercizio:** Definire requests e limits su un Pod.
+  - requests:
+        - memory: 64Mi
+        - cpu: 250m
+  - limits:
+        - memory: 128Mi
+        - cpu: 500m
 
 <details> <summary>Soluzione</summary>
   
@@ -192,15 +206,43 @@ k apply -f pod3.yaml
 </details>
 
 
-## 🔹 3. Multi-Container Pods
+## 3. Multi-Container Pods
 
 ### 3.1 Sidecar + InitContainer
 
 **Esercizio:** Pod con nginx + busybox sidecar, initContainer crea file.
 
+  - initContainer:
+    - name: init-myfile
+    - image: busybox
+    - command: sh' -c echo hello > /data/message' 
+    - mounts:
+      - name: shared-data 
+      - path: /data
+  - container1:
+    - name: nginx
+    - image: nginx
+    - mounts:
+      - name: shared-data 
+      - path: /usr/share/nginx/html  
+  - container2:  
+    - name: busybox
+    - image: busybox
+    - command: sh -c tail -f /dev/null
+    - mounts:
+      - name: shared-data 
+      - path: /data  
+  volume condiviso emptyDir:
+  - name: shared-data
+
 <details> <summary>Soluzione</summary>
 
-```bash   
+```bash
+
+k run sidecar-example --image=busybox --dry-run=client -o yaml > pod4.yaml
+
+vi pod4.yaml
+ 
 apiVersion: v1
 kind: Pod
 metadata:
@@ -228,6 +270,8 @@ spec:
   volumes:
   - name: shared-data
     emptyDir: {}
+
+k apply -f pod4.yam
 ```
   
 </details>
@@ -236,18 +280,59 @@ spec:
 
 ### 4.1 ClusterIP & NodePort
 
-**Esercizio:** Esporre deployment web-deploy.
+**Esercizio:** Esporre deployment web-deploy1 come ClusterIP (port:80) e web-deploy2 come NodePort (port:80, nodePort:30097).
 
 <details> <summary>Soluzione</summary>
 
-```bash   
+```bash
+k create deploy web-deploy --replicas=5 --image=nginx
+ 
 # ClusterIP
-kubectl expose deployment web-deploy --type=ClusterIP --port=80
-ks expose deployment web-deploy --type=ClusterIP --port=80
+kubectl expose deployment web-deploy --type=ClusterIP --port=80 --dry-run=client -o yaml > svc1.yaml
+ks expose deployment web-deploy --type=ClusterIP --port=80 --dry-run=client  -o yaml > svc1.yaml
+
+k apply -f svc1.yaml
 
 # NodePort
-kubectl expose deployment web-deploy --type=NodePort --port=80
-ks expose deployment web-deploy --type=NodePort --port=80
+kubectl expose deployment web-deploy --type=NodePort --port=80 --target-port=30097 --dry-run=client -o yaml > svc2.yaml
+ks expose deployment web-deploy --type=NodePort --port=80  --target-port=30097 --dry-run=client  -o yaml > svc2.yaml
+
+vi svc2.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2026-03-02T21:53:26Z"
+  labels:
+    app: web-deploy
+  name: web-deploy
+  namespace: default
+  resourceVersion: "292484"
+  uid: 028e34b1-c365-4798-9d6d-95c7f418d212
+spec:
+  clusterIP: 10.96.209.244
+  clusterIPs:
+  - 10.96.209.244
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 30097
+    port: 80
+    protocol: TCP
+  selector:
+    app: web-deploy
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+
+k apply -f svc2.yaml
+
+
+
 ```
 
 </details>
@@ -258,7 +343,32 @@ ks expose deployment web-deploy --type=NodePort --port=80
 
 <details> <summary>Soluzione</summary>
 
-```bash   
+```bash
+k expose deployment web-deploy --name=test --dry-run=client --port=80 -o yaml > svc3.yaml
+k apply -f svc3.yaml
+
+vi ingress.yaml
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+spec:
+  ingressClassName: nginx-example
+  rules:
+    - http:
+        paths:
+        - path: /test
+          pathType: Prefix
+          backend:
+            service:
+              name: test
+              port:
+                number: 80
+PS C:\Users\annaleda\ckad\first-exercises> k apply -f ingress.yaml
+
+
 kubectl apply -f ingress.yaml
 kapply ingress.yaml
 ```
