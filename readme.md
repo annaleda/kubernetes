@@ -32,7 +32,7 @@
 
 ### 8 [KodeKlaud Free Challenges](https://learn.kodekloud.com/user/courses/kubernetes-challenges?utm_source=udemy&utm_medium=video-description&utm_campaign=kubernetes-challenges)
 
-### 9 [Soluzioni Challenges](:/exercises/challenges/diz-soluzioni-chall.md)
+### 9 [Soluzioni Challenges](./exercises/challenges/diz-soluzioni-chall.md)
 
 ---
 
