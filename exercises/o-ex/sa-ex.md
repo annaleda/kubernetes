@@ -10,8 +10,14 @@
   - Usare serviceAccountName: app-sa
 - Validazione
   - Pod usa SA corretto
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## SA-2 — Default ServiceAccount
@@ -20,8 +26,14 @@
 - Validazione
   - Usa default ServiceAccount
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## SA-3 — Disabilitare Automount
@@ -31,8 +43,14 @@
   - automountServiceAccountToken: false
 - Validazione
   - Nessun token montato in `/var/run/secrets`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SA-4 — ServiceAccount + Role
@@ -41,8 +59,14 @@
 - Collegarla a ServiceAccount
   - Verificare accesso con `kubectl auth can-i`
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SA-5 — SA in Deployment
@@ -52,8 +76,14 @@
 - serviceAccountName: custom-sa
 - Validazione
   - Tutti i Pod usano SA corretto
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SA-6 — Multiple Namespace SA
@@ -61,6 +91,12 @@
 - Creare ServiceAccount con stesso nome in 2 namespace
 - Validazione
   - Sono entità distinte
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
