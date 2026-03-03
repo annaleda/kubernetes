@@ -84,6 +84,21 @@ Tre livelli disponibili:
 Applicazione tramite label sul namespace:
 
 > kubectl label namespace default pod-security.kubernetes.io/enforce=restricted
+
+esempio PSA
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod
+  namespace: secure-namespace
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      securityContext:
+        privileged: true
+```
 ---
 
 # ServiceAccount
