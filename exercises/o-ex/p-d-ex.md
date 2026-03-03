@@ -26,6 +26,7 @@ Creare un Pod chiamato `standalone-pod`
   
 ```
 k run standalone-pod --image=nginx --port=80 --dry-run=client -o yaml > standalone-pod.yaml
+k apply -f standalone-pod.yaml
 ```
 </details>
 
@@ -84,7 +85,13 @@ Aggiornare l’immagine a nginx:1.23. Poi eseguire rollback alla versione preced
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy api-deployment --image=nginx:1.21 --replicas=4 --dry-run=client -o yaml > api-deploy.yaml
+k apply -f api-deploy.yaml
+k set image deploy api-deployment nginx=nginx:1.23
+
+k rollout undo deploy api-deployment
+k rollout history deploy api-deployment
 ```
 </details>
 
@@ -111,7 +118,31 @@ Creare un Job chiamato `batch-job`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create job batch-job --image=busybox --dry-run=client -o yaml > job.yaml
+vi job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: batch-job
+spec:
+  completions: 1
+  backoffLimit: 2
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - image: busybox
+        name: batch-job
+        resources: {}
+        command: ["sh", "-c", "echo Job executed && sleep 5"]
+      restartPolicy: Never
+status: {}
+
+k apply -f job.yaml
 ```
 </details>
 
@@ -139,7 +170,30 @@ Creare un Job chiamato `parallel-job`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create job parallel-job --image=busybox --dry-run=client -o yaml > parallel-job.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parallel-job
+
+spec:
+  completions: 4
+  parallelism: 2
+  backoffLimit: 2
+
+  template:
+    spec:
+      containers:
+      - name: parallel-container
+        image: busybox
+        command:
+        - sh
+        - -c
+        - sleep 10
+
+      restartPolicy: Never
 ```
 </details>
 
@@ -166,8 +220,41 @@ Creare un CronJob chiamato `scheduled-task`
 <summary>Soluzione</summary>
 
 
-```  
 ```
+k create cronjob scheduled-task --image=busybox --schedule="*/2 * * * *" --dry-run=client -o yaml > cron-job.yaml
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scheduled-task
+
+spec:
+  schedule: "*/2 * * * *"
+
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cron-container
+            image: busybox
+            command:
+            - sh
+            - -c
+            - date
+
+          restartPolicy: OnFailure
+```
+
+| Espressione   | Significato                  |
+| ------------- | ---------------------------- |
+| `*/2 * * * *` | Ogni 2 minuti                |
+| `* * * * *`   | Ogni minuto                  |
+| `0 */2 * * *` | Ogni 2 ore, allo zero minuto |
+
 </details>
 
 ---
