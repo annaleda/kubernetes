@@ -70,7 +70,7 @@ kind delete cluster
 
 ---
 
-# Kubeconfig (Non è argomento CKAD)
+# Kubeconfig 
 
 > Il kubeconfig non è parte degli obiettivi principali dell’esame CKAD,
 > ma è fondamentale nella pratica reale.
