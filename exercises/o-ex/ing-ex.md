@@ -30,7 +30,6 @@ kind: Ingress
 metadata:
   name: web-ingress
 spec:
-  ingressClassName: nginx
   rules:
   - http:
       paths:
@@ -80,7 +79,6 @@ kind: Ingress
 metadata:
   name: full-ingress
 spec:
-  ingressClassName: nginx
   rules:
   - http:
       paths:
@@ -144,7 +142,6 @@ kind: Ingress
 metadata:
   name: secure-ingress
 spec:
-  ingressClassName: nginx
   tls:
   - hosts:
     - secure.local           # se arriva request da https://secure.local usa
@@ -160,6 +157,8 @@ spec:
             name: s-service
             port:
               number: 80
+
+k describe ingress secure-ingress
 
 ```
 </details>
@@ -184,8 +183,8 @@ spec:
  k create deploy dep-1 --image=nginx --replicas=2
  k create deploy dep-2 --image=nginx --replicas=2
 
- k expose deploy dep-1 --name app2-svc --port=80 --target-port=80
- k expose deploy dep-2 --name app1-svc --port=80 --target-port=80
+ k expose deploy dep-1 --name app1-svc --port=80 --target-port=80
+ k expose deploy dep-2 --name app2-svc --port=80 --target-port=80
 
  vi multi-host-ingress.yaml
 
@@ -194,7 +193,6 @@ kind: Ingress
 metadata:
   name: multi-host-ingress
 spec:
-  ingressClassName: nginx
   rules:                        # host separati
   - host: app1.local
     http:
@@ -217,6 +215,9 @@ spec:
             port:
               number: 80
 
+
+k describe ingress multi-host-ingress
+
 ```
 </details>
 
@@ -231,7 +232,40 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+# service default
+k create deploy default-app --image=nginx
+k expose deploy default-app --port=80 --name=default-svc
+
+k create deploy dep-1 --image=nginx --replicas=2
+k expose deploy dep-1 --name app1-svc --port=80 --target-port=80
+
+vi ingress-default.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-default
+spec:
+  defaultBackend:
+    service:
+      name: default-svc
+      port:
+        number: 80
+  rules:
+  - host: app1.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-svc
+            port:
+              number: 80
+
+kubectl describe ingress ingress-default
+
 ```
 </details>
 
@@ -247,7 +281,29 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rewrite-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /app
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-svc
+            port:
+              number: 80
+
+
+kubectl get ingress rewrite-ingress -o yaml
+
+curl http://host/app
 ```
 </details>
 
