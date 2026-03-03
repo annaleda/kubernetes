@@ -15,8 +15,14 @@
   - periodSeconds: 5
 - Validazione
   - `kubectl describe pod` mostra Liveness configurata
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## PR-2 — Readiness Probe HTTP
@@ -34,8 +40,14 @@
   - Pod diventano Ready
   - Service riceve endpoint solo se Ready
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## PR-3 — Liveness con comando (exec)
@@ -54,8 +66,14 @@
   - Creare manualmente il file per far passare la probe
 - Validazione
   - Senza file il Pod viene riavviato
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### PR-4 — Readiness + Liveness combinate
@@ -71,8 +89,14 @@
 - Validazione
   - Pod Running ma non Ready nei primi 15 secondi
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### PR-5 — Startup Probe
@@ -86,8 +110,14 @@
   - periodSeconds: 5
 - Validazione
   - Startup protegge da restart prematuri
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### PR-6 — Debug Probe Failure
@@ -102,6 +132,12 @@
   - Correggere il path
 - Validazione
   - Pod stabile dopo correzione
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
