@@ -251,10 +251,18 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: pod-reader
+  namespace: default
+
 rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
 ```
 
 ```bash
@@ -270,10 +278,14 @@ Associa Role a un utente o ServiceAccount.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: read-pods-binding
+  name: read-all
+  namespace: default
+
 subjects:
-- kind: ServiceAccount
-  name: my-sa
+  - kind: ServiceAccount
+    name: my-sa
+    namespace: default
+
 roleRef:
   kind: Role
   name: pod-reader
