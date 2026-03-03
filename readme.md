@@ -8,12 +8,11 @@
 
 ### 2 [CKAD Teory](./arguments.md)
 
-### 3 [Kubernates Documentation](https://kubernetes.io/docs/home/)
+### 3 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
 
-### 4 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
+### 4 [Kubernates Documentation](https://kubernetes.io/docs/home/)
 
-### 5 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
-
+### 5 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
 
 ---
