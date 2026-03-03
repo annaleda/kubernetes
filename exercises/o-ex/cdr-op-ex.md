@@ -9,8 +9,14 @@
 - Scope: Namespaced
 - Validazione
   - `kubectl get crd`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## CRD-2 — Creare Custom Resource
@@ -20,8 +26,14 @@
 - Validazione
   - `kubectl get myapp`
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## CRD-3 — Versioning CRD
@@ -29,8 +41,14 @@
 - Aggiungere versione v2 al CRD
 - Validazione
   - CRD mostra multiple versioni
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CRD-4 — Status Subresource
@@ -39,8 +57,14 @@
 - Validazione
   - `kubectl get myapp -o yaml` mostra status
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CRD-5 — RBAC per CRD
@@ -48,8 +72,14 @@
 - Creare Role che permette get su MyApp
 - Validazione
   - `kubectl auth can-i get myapp`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CRD-6 — Concept Operator
@@ -58,6 +88,12 @@
 - Simulare creando Deployment basato su campo spec
 - Validazione
   - Deployment creato manualmente come simulazione
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
