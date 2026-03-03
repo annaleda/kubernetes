@@ -95,14 +95,14 @@ Quando crei una CRD:
   - Le istanze della custom resource vengono salvate in etcd
   - Controller o operator gestiscono il reconciliation logic
 
--Sicurezza di etcd 
+- Sicurezza di etcd 
 
 Poiché contiene dati sensibili del cluster:
   - Deve essere accessibile solo dal control plane
   - Usa comunicazione TLS
   - Supporta encryption at rest
-  - Deve essere hardenizzato in produzione
 ---
+
 ### Operators
 
 Un Operator è un controller che gestisce una CRD.
