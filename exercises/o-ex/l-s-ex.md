@@ -19,8 +19,14 @@ Labels:
 - Validazione
   - kubectl get pods --show-labels
   - Label coerenti tra Deployment e Pod
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## LS-2 — Service con Selector Multipli
@@ -45,8 +51,14 @@ Creare Service `backend-service`
   - Service seleziona solo i Pod corretti
   - kubectl describe svc backend-service mostra Endpoints
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## LS-3 — Modifica Label Live
@@ -60,8 +72,14 @@ Creare Pod `temp-app`
 
 - Validazione
   - kubectl get pod temp-app --show-labels
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### LS-4 — Selector Non Matchante (Debug)
@@ -79,8 +97,14 @@ Creare Deployment `api-app`
 - Validazione
   - Service ha endpoint dopo la correzione
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### LS-5 — Node Selector
@@ -95,8 +119,14 @@ Creare Pod `ssd-app`
 
 - Validazione
   - Pod schedulato solo sul nodo corretto
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### LS-6 — Set-Based Selectors
@@ -114,6 +144,12 @@ Creare Deployment `multi-env-app`
 
 - Validazione
   - Usare selector set-based via CLI
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
