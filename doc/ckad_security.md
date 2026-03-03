@@ -257,6 +257,9 @@ rules:
   verbs: ["get", "list", "watch"]
 ```
 
+```bash
+kubectl create role pod-reader --verb=get,list,watch --resource=pods, services, persistentvolumeclaims
+```
 ---
 
 ## RoleBinding
@@ -276,7 +279,9 @@ roleRef:
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
 ```
-
+```bash
+kubectl create rolebinding read-all --role=pod-reader --serviceaccount=default:my-sa
+```
 ---
 
 ## ClusterRole & ClusterRoleBinding
