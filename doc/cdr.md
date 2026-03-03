@@ -116,16 +116,16 @@ Operator = implementa la logica di gestione
 |Operator  | Automatizza la gestione  |
 
 Esempio CRD:
-
+```
 kind: MyDatabase
-
+```
 Quando crei:
-
+```
 kind: MyDatabase
 spec:
   version: 15
   storage: 10Gi
-
+```
 L’Operator:
 
 - Crea Deployment
