@@ -151,3 +151,36 @@ La CA è il punto di fiducia del cluster
 
 ---
 
+- Glossario:
+
+🔹 `kube-apiserver` → etcd (client cert)
+- È il gateway principale del cluster.
+- Riceve tutte le richieste e le salva in storage.
+
+
+🔹 `kube-scheduler` → kube-apiserver (client cert)
+> Decide su quale node eseguire i Pod.
+Non crea Pod, solo assegna la posizione.
+
+🔹 `kube-controller-manager` → kube-apiserver (client cert)
+- Gestisce i controller loop:
+   - ReplicaSet
+   - Deployment
+   - Service reconciliation
+   - Node monitoring
+
+🔹 `kubelet` → kube-apiserver (client cert)
+> È l’agent che gira sul node.
+- Fa:
+ - Avvia container
+ - Controlla stato Pod
+ - Esegue istruzioni del control plane
+
+🔹 `kube-proxy` → kube-apiserver (client cert)
+> Gestisce networking del cluster.
+- Fa:
+ - Routing Service → Pod
+ - Load balancing semplice
+ - Regole iptables / IPVS
+   
+---  
