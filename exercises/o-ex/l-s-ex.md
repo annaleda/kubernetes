@@ -23,7 +23,44 @@ Labels:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy frontend-app --image=nginx --replicas=3 --dry-run=client -o yaml > deploy1.yaml
+
+vi deploy1.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: frontend-app
+  name: frontend-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+      tier: web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: frontend
+        tier: web
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+
+k apply -f deploy1.yaml
+
+kubectl get pods --show-labels
+
 ```
 </details>
 
@@ -55,7 +92,50 @@ Creare Service `backend-service`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy backend-app --image=nginx --replicas=3 --dry-run=client -o yaml > deploy2.yaml
+
+vi deploy2.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: backend-app
+  name: backend-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      tier: api
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: backend
+        tier: api
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+
+k apply -f deploy2.yaml
+
+kubectl get pods --show-labels
+
+k expose deploy backend-app --name backend-service --port=80 --dry-run=client -o yaml > svc1.yaml
+
+k apply -f svc1.yaml
+
+k get svc
+
+k get pod -l app=backend
 ```
 </details>
 
