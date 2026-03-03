@@ -16,7 +16,34 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy ingress-web --image=nginx --replicas=2
+
+ k expose deploy ingress-web --name ingress-svc --port=82
+
+ vi ingress.yaml
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ingress-svc
+            port:
+              number: 82
+
+k apply -f ingress.yaml
+
 ```
 </details>
 
