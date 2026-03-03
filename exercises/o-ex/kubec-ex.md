@@ -3,30 +3,22 @@
 
 ## KC-1 — Visualizzare Contesti
 
-Verificare il kubeconfig corrente
-
-Obiettivo
-
-Elencare tutti i contesti disponibili
-
-Validazione
-
-kubectl config get-contexts
+- Verificare il kubeconfig corrente
+- Obiettivo
+  - Elencare tutti i contesti disponibili
+- Validazione
+  - `kubectl config get-contexts`
 ```  
 ``` 
 ---
 
 ## KC-2 — Cambiare Contesto
 
-Cambiare contesto attivo
-
-Obiettivo
-
-Impostare come corrente il contesto dev-cluster
-
-Validazione
-
-kubectl config current-context 
+- Cambiare contesto attivo
+- Obiettivo
+  - Impostare come corrente il contesto `dev-cluster`
+- Validazione
+  - `kubectl config current-context`
 
 ``` 
 ```
@@ -34,31 +26,24 @@ kubectl config current-context
 
 ## KC-3 — Impostare Namespace di Default
 
-Impostare namespace di default testing
+- Impostare namespace di default `testing`
 per il contesto corrente
 
-Validazione
-
-kubectl config view --minify mostra namespace
+- Validazione
+  - `kubectl config view --minify` mostra namespace
 ```  
 ```
 ---
 
 ### KC-4 — Creare Nuovo Context
 
-Creare un nuovo context chiamato staging-context
-
-Specifiche
-
-cluster: staging-cluster
-
-user: staging-user
-
-namespace: staging
-
-Validazione
-
-Context visibile in get-contexts
+- Creare un nuovo context chiamato `staging-context`
+- Specifiche
+  - cluster: staging-cluster
+  - user: staging-user
+  - namespace: staging
+- Validazione
+  - Context visibile in `get-contexts`
 
 ```  
 ```
@@ -66,33 +51,24 @@ Context visibile in get-contexts
 
 ### KC-5 — Usare KUBECONFIG Multipli
 
-Impostare variabile ambiente KUBECONFIG
+- Impostare variabile ambiente `KUBECONFIG`
 con due file kubeconfig
-
-Obiettivo
-
-Verificare che kubectl legga entrambi
-
-Validazione
-
-kubectl config get-contexts mostra contesti combinati
+- Obiettivo
+  - Verificare che kubectl legga entrambi
+- Validazione
+  - `kubectl config get-contexts` mostra contesti combinati
 ```  
 ```
 ---
 
 ### KC-6 — Debug Accesso Cluster
 
-Simulare errore di connessione
-
-Obiettivo
-
-Identificare problema (cluster endpoint errato o credenziali)
-
-Correggere kubeconfig
-
-Validazione
-
-kubectl get nodes funziona
+- Simulare errore di connessione
+- Obiettivo
+  - Identificare problema (cluster endpoint errato o credenziali)
+  - Correggere kubeconfig
+- Validazione
+  - `kubectl get nodes` funziona
 ```  
 ```
 ---
