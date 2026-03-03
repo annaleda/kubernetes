@@ -6,8 +6,14 @@
 - Recuperare endpoint del cluster
 - Validazione
   - `kubectl cluster-info`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## KA-2 — Verificare Certificati
@@ -18,8 +24,14 @@
 - Validazione
   - `kubectl config view`
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## KA-3 — Abilitare Audit Log (Concettuale)
@@ -29,8 +41,14 @@ nel kube-apiserver
 
 - Obiettivo
   - Identificare flag `--audit-policy-file`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KA-4 — Admission Controllers
@@ -44,8 +62,14 @@ nel kube-apiserver
 - Validazione
   - Descrizione teorica o flag API server
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KA-5 — API Resources
@@ -53,8 +77,14 @@ nel kube-apiserver
 - Elencare tutte le risorse API disponibili
 - Validazione
   - `kubectl api-resources`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KA-6 — Versione API
@@ -62,6 +92,12 @@ nel kube-apiserver
 - Verificare versione cluster
 - Validazione
   - `kubectl version --short`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
