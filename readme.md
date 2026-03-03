@@ -20,13 +20,13 @@
 
 ## 🔗 Esercizi 
 
-### 1 [CKAD First Teorichal exercises](./exercises/f-t-e.md)
+### 1 [First Teorichal exercises](./exercises/f-t-e.md)
 
-### 2 [CKAD online Exercises](./exercises/ex_online.md)
+### 2 [Online Exercises](./exercises/ex_online.md)
 
-### 3 [CKAD 100 Exercises](./doc/session.md)
+### 3 [100 Exercises](./doc/session.md)
 
-### 4 [CKAD Other Exercises](./exercises/o_exercises.md)
+### 4 [Other Exercises](./exercises/o_exercises.md)
 
 ### 5 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
