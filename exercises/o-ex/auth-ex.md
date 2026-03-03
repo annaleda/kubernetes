@@ -28,7 +28,7 @@ k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
 ## AUTH-2 — Limitare Accesso ai ConfigMap
 
 - Namespace: `secure-ns`
-- Creare Role
+- Creare Role `cm-reader` 
   - Solo get su configmaps
 - Associare a ServiceAccount
 - Validazione
@@ -38,7 +38,14 @@ k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns secure-ns
+k create role cm-reader --verb=get --resource=configmaps -n secure-ns
+
+kubectl create rolebinding cm-reader-rb --role=cm-reader --serviceaccount=secure-ns:default -n secure-ns
+
+k auth can-i create cm  -n secure-ns --as=system:serviceaccount:secure-ns:default
+k auth can-i get cm  -n secure-ns --as=system:serviceaccount:secure-ns:default
 ```
 </details>
 
@@ -120,7 +127,18 @@ k auth can-i create pods --as=system:serviceaccount:restricted:restricted-sa -n 
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns multi-role
+k create sa multi-sa -n multi-role
+k create role role-pod-reader --verb=get,list,watch --resource=pods -n multi-role
+k create role role-cm-reader  --verb=get --resource=configmaps -n multi-role
+
+k create rolebinding rb-pods --role=role-pod-reader --serviceaccount=multi-role:multi-sa -n multi-role
+k create rolebinding rb-cm --role=role-cm-reader --serviceaccount=multi-role:multi-sa -n multi-role
+
+k auth can-i get pods -n multi-role --as=system:serviceaccount:multi-role:multi-sa
+k auth can-i create pods -n multi-role --as=system:serviceaccount:multi-role:multi-sa
+k auth can-i get configmap -n multi-role --as=system:serviceaccount:multi-role:multi-sa
 ```
 </details>
 
