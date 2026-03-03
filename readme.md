@@ -20,7 +20,7 @@
 
 ### 1 [CKAD First Teorichal exercises](./exercises/f-t-e.md)
 
-### 2 [CKAD Exercises online](./exercises/ex_online.md)
+### 2 [CKAD online Exercises](./exercises/ex_online.md)
 
 ### 3 [CKAD 100 Exercises](./doc/session.md)
 
