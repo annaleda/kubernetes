@@ -1,6 +1,6 @@
 
 
-## 📚 CKAD
+## 📚 CKAD: info and teory
 
 ### 0 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
 
