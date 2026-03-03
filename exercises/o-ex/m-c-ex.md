@@ -211,6 +211,7 @@ spec:
 k apply -f metric-adapter.yaml
 ```
 </details>
+
 ---
 
 ### MC-4 — Init + App
