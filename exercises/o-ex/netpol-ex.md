@@ -1,6 +1,47 @@
 
 ###  Network policies(6 esercizi)
 
+---
+
+## NP-0 — Allow All Ingress
+
+- Namespace: `net-open`
+
+- Creare NetworkPolicy
+  - Consentire tutto il traffico in ingresso verso i pod del namespace
+- Spec
+  - Policy Type: Ingress
+  - Pod selector: tutti i pod
+  - Ingress: consentito da qualsiasi sorgente
+- Validazione
+  - I pod possono comunicare liberamente in ingresso
+
+---
+<details>
+<summary>Soluzione</summary>
+  
+```
+kubectl create ns net-open
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-ingress
+  namespace: net-open
+spec:
+  podSelector: {}          # match all pods
+
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - {}                     # permette qualsiasi traffico ingress
+
+```
+</details>
+
+---
+
 ## NP-1 — Default Deny (podSelector)
 
 - Namespace: `net-secure`
