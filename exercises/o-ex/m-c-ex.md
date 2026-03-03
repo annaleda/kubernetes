@@ -20,6 +20,8 @@
   - Entrambi Running
   - Logs del container logger mostrano output
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
@@ -87,6 +89,8 @@ k apply -f order-app.yaml
 - Validazione
   - Logs mostrano risposta HTTP
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
@@ -115,6 +119,8 @@ k apply -f order-app.yaml
 - Validazione
 File `processed.txt` esiste
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
@@ -140,6 +146,8 @@ File `processed.txt` esiste
   - Volume: `emptyDir`
   - Nome: config-data
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
@@ -164,7 +172,9 @@ File `processed.txt` esiste
 - Vincoli
   - Shared volume
   - File generato da primo container
-    
+
+ ---
+ 
 <details>
 <summary>Soluzione</summary>
   
@@ -188,6 +198,8 @@ File `processed.txt` esiste
 
 - Validazione
   - kubectl describe pod mostra limiti distinti
+
+---
 
 <details>
 <summary>Soluzione</summary>
