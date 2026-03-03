@@ -305,7 +305,69 @@ StatefulSet: `db-stateful`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create service clusterip db-headless --tcp=80:80 --dry-run=client -o yaml > db-headless.yaml
+k create statefulset db-stateful --image=nginx --replicas=2 --dry-run=client -o yaml > db-stateful.yaml
+
+vi db-headless.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-headless
+spec:
+  clusterIP: None # modificato
+  selector:
+    app: db-stateful
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+
+vi db-stateful.yaml
+
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-stateful
+spec:
+  serviceName: db-headless # aggiunto
+  replicas: 2
+  selector:
+    matchLabels:
+      app: db-stateful
+
+  template:
+    metadata:
+      labels:
+        app: db-stateful
+
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+          volumeMounts:   # aggiunto
+            - name: data
+              mountPath: /usr/share/nginx/html
+
+  volumeClaimTemplates:   # aggiunto
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        storageClassName: standard
+
+        resources:
+          requests:
+            storage: 100Mi
 ```
 </details>
 
