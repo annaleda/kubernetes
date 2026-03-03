@@ -125,6 +125,14 @@ spec:
         - name: shared-logs
           mountPath: /logs
 ```
+
+- app scrive su /var/log/app.log
+- Il volume emptyDir è condiviso
+- log-adapter legge lo stesso file
+- Trasforma ogni riga in JSON
+- Scrive su stdout 
+- L’app non sa nulla del formato JSON.
+- L’adapter fa solo trasformazione → questo è Adapter Pattern.
 ---
 
 ## Ambassador Pattern
@@ -157,6 +165,12 @@ spec:
         - "TCP-LISTEN:5432,fork,reuseaddr"
         - "TCP:mydb.abcdefg.us-east-1.rds.amazonaws.com:5432"
 ```
+- L’app si connette a localhost:5432
+- Il container db-ambassador ascolta su quella porta
+- socat inoltra il traffico verso il database remoto
+- L’app non sa che sta parlando con un servizio esterno
+- Tutta la logica di rete è isolata nel container ambassador.
+- Se cambia endpoint o TLS, modifichi solo quel container.
 ---
 
 ## Comunicazione tra Container
