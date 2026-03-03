@@ -55,7 +55,17 @@ Verifica installazione
 ```bash
 helm version
 ```
+---
+### Add repository
 
+```bash
+ helm repo add <nome-repo> <source-url>
+```
+Esempio:
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
 ---
 ### Cercare applicazioni
 
