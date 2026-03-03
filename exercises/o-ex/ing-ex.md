@@ -180,7 +180,43 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy dep-1 --image=nginx --replicas=2
+ k create deploy dep-2 --image=nginx --replicas=2
+
+ k expose deploy dep-1 --name app2-svc --port=80 --target-port=80
+ k expose deploy dep-2 --name app1-svc --port=80 --target-port=80
+
+ vi multi-host-ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-host-ingress
+spec:
+  ingressClassName: nginx
+  rules:                        # host separati
+  - host: app1.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-svc
+            port:
+              number: 80
+  - host: app2.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app2-svc
+            port:
+              number: 80
+
 ```
 </details>
 
