@@ -55,7 +55,14 @@ k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+# k create ns dev-auth
+# k config set-credentials dev-user --client-key=tls.key --client-certificate=tls.crt
+k create clusterrole node-reader --verb=get --resource=nodes -n dev-auth
+k create clusterrolebinding node-reader-rb --user=dev-user --clusterrole=node-reader -n dev-auth
+
+k auth can-i get nodes --as=dev-user -n dev-auth
+
 ```
 </details>
 
@@ -74,7 +81,9 @@ k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k auth can-i delete po --as=dev-user -n dev-auth
+
 ```
 </details>
 
