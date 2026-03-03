@@ -8,8 +8,14 @@
   - Elencare tutti i contesti disponibili
 - Validazione
   - `kubectl config get-contexts`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## KC-2 — Cambiare Contesto
@@ -20,8 +26,14 @@
 - Validazione
   - `kubectl config current-context`
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## KC-3 — Impostare Namespace di Default
@@ -31,8 +43,14 @@ per il contesto corrente
 
 - Validazione
   - `kubectl config view --minify` mostra namespace
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KC-4 — Creare Nuovo Context
@@ -45,8 +63,14 @@ per il contesto corrente
 - Validazione
   - Context visibile in `get-contexts`
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KC-5 — Usare KUBECONFIG Multipli
@@ -57,8 +81,14 @@ con due file kubeconfig
   - Verificare che kubectl legga entrambi
 - Validazione
   - `kubectl config get-contexts` mostra contesti combinati
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KC-6 — Debug Accesso Cluster
@@ -69,6 +99,12 @@ con due file kubeconfig
   - Correggere kubeconfig
 - Validazione
   - `kubectl get nodes` funziona
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
