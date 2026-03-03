@@ -1,5 +1,5 @@
 
-###  (6 esercizi)
+###  Kustomize (6 esercizi)
 
 ##
 ```  
