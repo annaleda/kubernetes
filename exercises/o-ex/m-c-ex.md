@@ -94,7 +94,37 @@ k apply -f order-app.yaml
 <details>
 <summary>Soluzione</summary>
   
-``` 
+```
+ k run external-proxy --image=httpd --port=80 --dry-run=client -o yaml > external-proxy.yaml
+
+
+ vi .\external-proxy.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: external-proxy
+  name: external-proxy
+spec:
+  containers:
+  - image: httpd
+    name: external-proxy
+    ports:
+    - containerPort: 80
+    resources: {}
+  - image: alpine
+    name: proxy
+    command: ["sh", "-c", "apk add curl && while true; do curl localhost:80; sleep 5; done"]
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+k apply -f external-proxy.yaml
+
 ```
 </details>
 
@@ -124,7 +154,61 @@ File `processed.txt` esiste
 <details>
 <summary>Soluzione</summary>
   
-``` 
+```
+k run metric-adapter --image=busybox --dry-run=client -o yaml > metric-adapter.yaml
+
+vi .\metric-adapter.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: metric-adapter
+
+spec:
+  containers:
+
+  # Container 1 - Producer
+  - name: metric-producer
+    image: busybox
+    command:
+    - sh
+    - -c
+    - |
+      while true; do
+        echo "sample metric data" >> /data/raw.txt;
+        sleep 5;
+      done
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data
+
+  # Container 2 - Adapter Transformer
+  - name: transformer
+    image: busybox
+    command:
+    - sh
+    - -c
+    - |
+      while true; do
+        if [ -f /data/raw.txt ]; then
+          tr 'a-z' 'A-Z' < /data/raw.txt > /data/processed.txt
+        fi
+        sleep 5;
+      done
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data
+
+  volumes:
+  - name: data-volume
+    emptyDir: {}
+
+  restartPolicy: Always
+
+
+
+k apply -f metric-adapter.yaml
 ```
 </details>
 ---
