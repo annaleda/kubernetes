@@ -236,7 +236,45 @@ k apply -f metric-adapter.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-config-app
+
+spec:
+  # Volume condiviso tra init e app container
+  volumes:
+  - name: config-data
+    emptyDir: {}
+
+  # Init container (preparazione file config)
+  initContainers:
+  - name: init-config
+    image: busybox
+    command:
+    - sh
+    - -c
+    - |
+      mkdir -p /config
+      echo "settings=enabled" > /config/settings.conf
+
+    volumeMounts:
+    - name: config-data
+      mountPath: /config
+
+  # Main container (app nginx)
+  containers:
+  - name: app-container
+    image: nginx
+
+    volumeMounts:
+    - name: config-data
+      mountPath: /config
+
+  restartPolicy: Always
+
 ```
 </details>
 
@@ -263,7 +301,57 @@ k apply -f metric-adapter.yaml
 <details>
 <summary>Soluzione</summary>
   
-``` 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-sharing-app
+
+spec:
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+
+  containers:
+
+  # Container 1 - Producer
+  - name: producer
+    image: busybox
+    env:
+    - name: MODE
+      value: production
+
+    command:
+    - sh
+    - -c
+    - |
+      echo $MODE > /data/env.txt;
+      sleep 3600;
+
+    volumeMounts:
+    - name: shared-data
+      mountPath: /data
+
+  # Container 2 - Consumer
+  - name: consumer
+    image: busybox
+
+    command:
+    - sh
+    - -c
+    - |
+      while true; do
+        if [ -f /data/env.txt ]; then
+          cat /data/env.txt;
+        fi
+        sleep 5;
+      done
+
+    volumeMounts:
+    - name: shared-data
+      mountPath: /data
+
+  restartPolicy: Always
 ```
 </details>
 
@@ -289,7 +377,41 @@ k apply -f metric-adapter.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-multi
+
+spec:
+  containers:
+
+  # Container 1 - Nginx CPU limit
+  - name: nginx-container
+    image: nginx
+
+    resources:
+      limits:
+        cpu: "200m"
+      requests:
+        cpu: "100m"
+
+  # Container 2 - Busybox Memory limit
+  - name: busybox-container
+    image: busybox
+
+    command:
+    - sh
+    - -c
+    - sleep 3600
+
+    resources:
+      limits:
+        memory: "128Mi"
+      requests:
+        memory: "64Mi"
+
+  restartPolicy: Always
 ```
 </details>
 
