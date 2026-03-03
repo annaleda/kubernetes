@@ -2,18 +2,17 @@
 
 ## 📚 CKAD
 
-### 0 [Kubernates - Kind + Kubeconfig](./doc/readme0.md)
+### 0 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
 
-### 1 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
+### 1 [Kubernates - Kind + Kubeconfig](./doc/readme0.md)
 
 ### 2 [CKAD Teory](./arguments.md)
 
-### 3 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
+### 3 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
 
-### 4 [Kubernates Documentation](https://kubernetes.io/docs/home/)
+### 4 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
-### 5 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
-
+### 5 [Kubernates Documentation](https://kubernetes.io/docs/home/)
 
 ---
 
