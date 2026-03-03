@@ -300,12 +300,6 @@ kubectl create rolebinding read-all --role=pod-reader --serviceaccount=default:m
 
 Permessi validi per tutto il cluster.
 
-Esempio CLI:
-
-```
-kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
-kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceaccount=default:my-sa
-```
 <img width="1080" height="630" alt="Immagine 2026-02-24 234616" src="https://github.com/user-attachments/assets/7be97a1a-de0d-4a2f-b0e0-b98bcb42b2c6" />
 
 ---
@@ -367,14 +361,15 @@ roleRef:
   kind: Role
   name: pod-reader
   apiGroup: rbac.authorization.k8s.io
+
+```
 ClusterRole Example
-kubectl create clusterrole pod-reader \
---verb=get,list,watch \
---resource=pods
+```
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
+```
 ClusterRoleBinding Example
-kubectl create clusterrolebinding read-all \
---clusterrole=pod-reader \
---serviceaccount=default:my-sa
+```
+kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceaccount=default:my-sa
 ```
 ---
 
