@@ -8,6 +8,19 @@
 Lo schema mostra l’architettura di Kubernetes: il Cluster contiene Control Plane e Nodes, che gestiscono Pod e container tramite Namespace e runtime.
 In pratica, il Control Plane decide lo stato desiderato mentre i Node eseguono realmente i workload applicativi.
 
+- Un Node può ospitare Pod di più namespace.
+
+- Un Namespace può avere Pod distribuiti su più node.
+
+Schema mentale:
+```
+Namespace A ───┐
+Namespace B ───┼──▶ Node 1
+Namespace C ───┤
+               ├──▶ Node 2
+               └──▶ Node 3
+```
+> il Namespace non ha isolamento hardware ma separazione logica 
 ---
 
 ## Pod 
