@@ -19,7 +19,37 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy web-liveness --image=nginx --replicas=2 --dry-run=client -o yaml > deploy2.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-liveness
+  name: web-liveness
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-liveness
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web-liveness
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
 ```
 </details>
 
@@ -44,7 +74,38 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+
+k create deploy api-readiness --image=nginx --replicas=3 --dry-run=client -o yaml > deploy3.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api-readiness
+  name: api-readiness
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-readiness
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: api-readiness
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
 ```
 </details>
 
@@ -70,7 +131,32 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: exec-liveness
+  name: exec-liveness
+spec:
+  containers:
+  - image: busybox
+    name: exec-liveness
+    command:
+      - sh
+      - -c
+      - sleep 3600
+    livenessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - cat /tmp/healthy
+      initialDelaySeconds: 5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+
 ```
 </details>
 
@@ -93,7 +179,42 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy combined-probes --image=nginx --dry-run=client -o yaml > deploy4.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: combined-probes
+  name: combined-probes
+spec:
+  selector:
+    matchLabels:
+      app: combined-probes
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: combined-probes
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+         
 ```
 </details>
 
