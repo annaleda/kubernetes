@@ -3,26 +3,22 @@
 
 ## NP-1 — Default Deny
 
-Namespace: net-secure
+- Namespace: `net-secure`
 
-Creare NetworkPolicy
+- Creare NetworkPolicy
+  - Nessun traffico consentito
 
-Nessun traffico consentito
-
-Validazione
-
-Pod non comunicano tra loro
+- Validazione
+  - Pod non comunicano tra loro
 ```  
 ``` 
 ---
 
 ## NP-2 — Allow Ingress da Label
 
-Consentire traffico solo da Pod con label role=frontend
-
-Validazione
-
-Solo frontend comunica
+- Consentire traffico solo da Pod con label `role=frontend`
+- Validazione
+  - Solo frontend comunica
 
 ``` 
 ```
@@ -30,24 +26,19 @@ Solo frontend comunica
 
 ## NP-3 — Allow Egress DNS
 
-Consentire egress solo verso porta 53
-
-Validazione
-
-DNS funziona
-
-Altro traffico bloccato
+- Consentire egress solo verso porta 53
+- Validazione
+  - DNS funziona
+  - Altro traffico bloccato
 ```  
 ```
 ---
 
 ### NP-4 — Namespace Selector
 
-Consentire traffico solo da namespace trusted
-
-Validazione
-
-Altri namespace bloccati
+- Consentire traffico solo da namespace `trusted`
+- Validazione
+  - Altri namespace bloccati
 
 ```  
 ```
@@ -55,26 +46,21 @@ Altri namespace bloccati
 
 ### NP-5 — Port Restriction
 
-Consentire traffico solo su porta 80
-
-Validazione
-
-Porta diversa bloccata
+- Consentire traffico solo su porta 80
+- Validazione
+  - Porta diversa bloccata
 ```  
 ```
 ---
 
 ### NP-6 — Combined Policy
 
-Consentire:
+- Consentire:
+  - Ingress da namespace trusted
+  - Solo porta 443
 
-Ingress da namespace trusted
-
-Solo porta 443
-
-Validazione
-
-Traffico limitato correttamente
+- Validazione
+  - Traffico limitato correttamente
 ```  
 ```
 ---
