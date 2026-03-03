@@ -1,5 +1,5 @@
 
-###  (6 esercizi)
+###  Kubeconfig (6 esercizi)
 
 ## KC-1 — Visualizzare Contesti
 
