@@ -99,7 +99,12 @@ k auth can-i get nodes --as=dev-user -n dev-auth
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create ns restricted
+ k create sa restricted-sa -n restricted --dry-run=client -o yaml > restricted-sa.yaml
+
+k auth can-i create pods --as=system:serviceaccount:restricted:restricted-sa -n restricted
+
 ```
 </details>
 
