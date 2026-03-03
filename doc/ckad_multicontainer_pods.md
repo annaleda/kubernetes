@@ -89,6 +89,42 @@ initContainers:
 
 Il container adapter legge da un volume condiviso e scrive output trasformato.
 
+```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-adapter
+spec:
+  volumes:
+    - name: shared-logs
+      emptyDir: {}
+
+  containers:
+    # Container principale
+    - name: app
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - while true; do
+            echo "$(date) - ERROR - Database connection failed" >> /var/log/app.log;
+            sleep 5;
+          done
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log
+
+    # Container Adapter
+    - name: log-adapter
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - tail -n+1 -F /logs/app.log | while read line; do
+            echo "{\"log\":\"$line\"}";
+          done
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /logs
+```
 ---
 
 ## Ambassador Pattern
@@ -97,6 +133,30 @@ Il container adapter legge da un volume condiviso e scrive output trasformato.
 - Permette di isolare la logica di connessione.
 - Il container principale comunica con `localhost`, l’ambassador inoltra il traffico.
 
+```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-ambassador
+spec:
+  containers:
+    # Container principale
+    - name: app
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - while true; do
+            nc localhost 5432;
+            sleep 10;
+          done
+
+    # Container Ambassador (proxy TCP)
+    - name: db-ambassador
+      image: alpine/socat
+      args:
+        - "TCP-LISTEN:5432,fork,reuseaddr"
+        - "TCP:mydb.abcdefg.us-east-1.rds.amazonaws.com:5432"
+```
 ---
 
 ## Comunicazione tra Container
