@@ -133,12 +133,13 @@ kubeadm certs check-expiration
 ---
 > Nessun componente parla direttamente con etcd tranne il kube-apiserver.
 
-TLS nel cluster garantisce:
-
+- TLS nel cluster garantisce:
   - Confidenzialità (dati cifrati)
   - Integrità (nessuna manomissione)
   - Autenticazione forte
   - Riduzione attacchi Man-in-the-Middle
+    
+---
 
 - Riassunto Finale
 
