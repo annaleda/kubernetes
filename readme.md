@@ -28,11 +28,11 @@
 
 ### 4 [Other Exercises](./exercises/o_exercises.md)
 
-### 5 [KodeKlaud Free Challenges](./exercises/challenges.md)
-
 ---
 
 ## 🔗 Mock Exams
+
+### 0 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
 ### 1 [Mock Exams](./exems/exams.md)
 
