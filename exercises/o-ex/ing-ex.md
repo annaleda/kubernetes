@@ -125,7 +125,7 @@ curl http://<IP>/back
 <summary>Soluzione</summary>
   
 ```
-# da git bash
+# da git bash per creare tls.crt and tls.key
 MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" 
 
 kubectl create secret tls secure-tls --cert=tls.crt --key=tls.key
