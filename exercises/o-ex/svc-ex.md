@@ -16,7 +16,9 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy web-svc --image=nginx --replicas=3
+k expose deploy web-svc --name web-clusterip --type=ClusterIP --port=80
 ```
 </details>
 
@@ -27,8 +29,8 @@
 - Creare Service `web-nodeport`
 - Specifiche
   - Type: NodePort
-  - Porta interna: 80
-  - NodePort manuale: 30007
+  - Porta interna: 81
+  - NodePort manuale: 30067
 - Validazione
   - kubectl get svc mostra NodePort
 
@@ -36,7 +38,28 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k expose deploy web-svc --name web-nodeport --type=NodePort --port=81 --dry-run=client -o yaml > svc2.yaml
+
+vi svc2.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-svc
+  name: web-nodeport
+spec:
+  ports:
+  - port: 81
+    nodePort: 30067
+    targetPort: 81
+  selector:
+    app: web-svc
+  type: NodePort
+status:
+  loadBalancer: {}
 ```
 </details>
 
@@ -52,7 +75,22 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-lb
+spec:
+  type: LoadBalancer
+  selector:
+    env: prod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+
 ```
 </details>
 
