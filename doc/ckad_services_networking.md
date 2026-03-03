@@ -185,7 +185,27 @@ Richiede un **Ingress Controller** (non incluso di default). [Esempio: NGINX]
 
 Esempio di regola:
 
+esempio service
 ```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+```
+esempio ingress
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+
 spec:
   rules:
     - host: myapp.local
@@ -195,7 +215,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: web
+                name: nginx-service # service creato in precedenza
                 port:
                   number: 80
 ```
