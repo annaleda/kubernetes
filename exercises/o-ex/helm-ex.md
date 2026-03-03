@@ -3,38 +3,31 @@
 
 ## HELM-1 — Installazione Chart
 
-Namespace: helm-test
+Namespace: `helm-test`
 
 Installare chart nginx
 
-Specifiche
+- Specifiche
+  - Release name: `web-release`
+  - Chart: `bitnami/nginx`
 
-Release name: web-release
-
-Chart: bitnami/nginx
-
-Validazione
-
-helm list -n helm-test
+- Validazione
+  - helm list -n helm-test
 ```  
 ``` 
 ---
 
 ## HELM-2 — Override Values via CLI
 
-Installare release custom-nginx
+Installare release `custom-nginx`
 
-Specifiche
+- Specifiche
+  - ReplicaCount: 3
+  - Service type: ClusterIP
+  - Usare flag --set
 
-ReplicaCount: 3
-
-Service type: ClusterIP
-
-Usare flag --set
-
-Validazione
-
-kubectl get deployment mostra 3 repliche
+- Validazione
+  - kubectl get deployment mostra 3 repliche
 
 ``` 
 ```
@@ -42,36 +35,29 @@ kubectl get deployment mostra 3 repliche
 
 ## HELM-3 — Override con values.yaml
 
-Creare file custom-values.yaml
+Creare file `custom-values.yaml`
 
-Specifiche
+- Specifiche
+  - replicaCount: 2
+  - service.type: NodePort
+  - Installare release file-nginx usando file
 
-replicaCount: 2
-
-service.type: NodePort
-
-Installare release file-nginx usando file
-
-Validazione
-
-Service è NodePort
+- Validazione
+  - Service è NodePort
 ```  
 ```
 ---
 
 ### HELM-4 — Upgrade Release
 
-Aggiornare release web-release
+Aggiornare release `web-release`
 
-Specifiche
+- Specifiche
+  - Cambiare replicaCount a 4
 
-Cambiare replicaCount a 4
-
-Validazione
-
-helm history web-release
-
-Deployment aggiornato
+- Validazione
+  - helm history web-release
+  - Deployment aggiornato
 
 ```  
 ```
@@ -79,30 +65,26 @@ Deployment aggiornato
 
 ### HELM-5 — Rollback Release
 
-Eseguire rollback della release web-release
+Eseguire rollback della release `web-release`
 
 Alla revisione precedente
 
-Validazione
-
-helm history mostra nuova revisione rollback
+- Validazione
+  - helm history mostra nuova revisione rollback
 ```  
 ```
 ---
 
 ### HELM-6 — Template Rendering
 
-Eseguire render locale del chart nginx
+Eseguire render locale del chart `nginx`
 
-Specifiche
+- Specifiche
+  - Non installare nel cluster
+  - Output in file nginx-rendered.yaml
 
-Non installare nel cluster
-
-Output in file nginx-rendered.yaml
-
-Validazione
-
-File contiene manifest Kubernetes
+- Validazione
+  - File contiene manifest Kubernetes
 ```  
 ```
 ---
