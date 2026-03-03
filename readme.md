@@ -16,7 +16,7 @@
 
 ---
 
-## 🔗 Exercises
+## 🔗 CKAD: exercises
 
 ### 1 [First Teorichal exercises](./exercises/f-t-e.md)
 
@@ -28,7 +28,7 @@
 
 ---
 
-## 🔗 Mock Exams
+## 🔗 CKAD: mock exams
 
 ### 0 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
