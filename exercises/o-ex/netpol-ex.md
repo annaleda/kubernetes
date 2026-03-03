@@ -10,8 +10,14 @@
 
 - Validazione
   - Pod non comunicano tra loro
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## NP-2 — Allow Ingress da Label
@@ -20,8 +26,14 @@
 - Validazione
   - Solo frontend comunica
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## NP-3 — Allow Egress DNS
@@ -30,8 +42,14 @@
 - Validazione
   - DNS funziona
   - Altro traffico bloccato
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### NP-4 — Namespace Selector
@@ -40,8 +58,14 @@
 - Validazione
   - Altri namespace bloccati
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### NP-5 — Port Restriction
@@ -49,8 +73,14 @@
 - Consentire traffico solo su porta 80
 - Validazione
   - Porta diversa bloccata
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### NP-6 — Combined Policy
@@ -61,6 +91,12 @@
 
 - Validazione
   - Traffico limitato correttamente
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
