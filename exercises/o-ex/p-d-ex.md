@@ -20,12 +20,14 @@ Creare un Pod chiamato `standalone-pod`
   - Il Pod è Running
   - Eliminando il Pod non viene ricreato automaticamente
 
+---
 <details>
 <summary>Soluzione</summary>
   
 ```  
 ```
 </details>
+
 ---
 
 ## PD-2 — Deployment con Scaling
@@ -44,12 +46,14 @@ Image: nginx:1.22
   - kubectl get pods mostra 5 pod
   - ReplicaSet aggiornato
 
+---
 <details>
 <summary>Soluzione</summary>
-  
+
 ```  
 ```
 </details>
+
 ---
 
 ## PD-3 — Rolling Update + Rollback
@@ -69,12 +73,14 @@ Aggiornare l’immagine a nginx:1.23. Poi eseguire rollback alla versione preced
   - kubectl rollout history deployment api-deployment
   - Verificare versione immagine dopo rollback
 
+---
 <details>
 <summary>Soluzione</summary>
   
 ```  
 ```
 </details>
+
 ---
 
 ## PD-4 — Job (Batch Task)
@@ -93,12 +99,15 @@ Creare un Job chiamato `batch-job`
   - Job completato con stato Complete
   - Pod termina correttamente
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
 ```  
 ```
 </details>
+
 ---
 
 ## PD-5 — Parallel Job
@@ -118,12 +127,15 @@ Creare un Job chiamato `parallel-job`
   - Non più di 2 pod Running contemporaneamente
   - Job termina con 4 completamenti
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
 ```  
 ```
 </details>
+
 ---
 
 ## PD-6 — CronJob (Scheduled Task)
@@ -142,13 +154,15 @@ Creare un CronJob chiamato `scheduled-task`
 - Validazione
   - Viene creato almeno un Job
   - kubectl get cronjob mostra schedule corretto
-
+---
 <details>
 <summary>Soluzione</summary>
-  
+
+
 ```  
 ```
 </details>
+
 ---
 
 ## PD-7 — StatefulSet con Storage Persistente
@@ -192,10 +206,13 @@ StatefulSet: `db-stateful`
   - Eliminando db-stateful-0 viene ricreato con lo stesso nome
   - Il PVC associato rimane Bound
 
+---
+
 <details>
 <summary>Soluzione</summary>
   
 ```  
 ```
 </details>
+
 ---
