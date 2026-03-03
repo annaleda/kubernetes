@@ -10,7 +10,7 @@
 
 ### 3 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
-### 4 [CKAD – Exame + Cheatsheet](./doc/ckad_exam_strategy.md)
+### 4 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
 
 ### 5 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
 
