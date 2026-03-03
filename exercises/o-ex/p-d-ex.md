@@ -24,7 +24,8 @@ Creare un Pod chiamato `standalone-pod`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k run standalone-pod --image=nginx --port=80 --dry-run=client -o yaml > standalone-pod.yaml
 ```
 </details>
 
@@ -50,7 +51,13 @@ Image: nginx:1.22
 <details>
 <summary>Soluzione</summary>
 
-```  
+```
+k create deploy web-deployment --image=nginx:1.22 --replicas=3
+
+k scale deploy web-deployment --replicas=5
+
+k get po -o wide
+k get rs -o wide
 ```
 </details>
 
