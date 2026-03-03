@@ -13,6 +13,10 @@
   
   - [Mock Exercises - Kustomize](./o-ex/kustomize-ex.md)
 
+  - [Mock Exercises - Kubeconfig](./o-ex/kubec-ex.md)
+    
+  - [Mock Exercises - Kube-apiserver](./o-ex/kubeas-ex.md)
+
 ---
 - Application Observability and Maintenance `15%`
   
