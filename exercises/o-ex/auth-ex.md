@@ -56,12 +56,11 @@ k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
 <summary>Soluzione</summary>
   
 ```
-# k create ns dev-auth
 # k config set-credentials dev-user --client-key=tls.key --client-certificate=tls.crt
-k create clusterrole node-reader --verb=get --resource=nodes -n dev-auth
-k create clusterrolebinding node-reader-rb --user=dev-user --clusterrole=node-reader -n dev-auth
+k create clusterrole node-reader --verb=get --resource=nodes 
+k create clusterrolebinding node-reader-rb --user=dev-user --clusterrole=node-reader 
 
-k auth can-i get nodes --as=dev-user -n dev-auth
+k auth can-i get nodes --as=dev-user 
 
 ```
 </details>
