@@ -12,7 +12,7 @@ Kubernetes offre diversi controller per gestire i Pod:
 - Deployment (stateless apps)
 - Job (task batch)
 - CronJob (task schedulati)
-- StatefulSet (app stateful - non focus principale CKAD)
+- strategies and restartPolicies
 
 ---
 
