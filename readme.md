@@ -16,7 +16,7 @@
 
 ---
 
-## 🔗 Esercizi 
+## 🔗 Exercises
 
 ### 1 [First Teorichal exercises](./exercises/f-t-e.md)
 
