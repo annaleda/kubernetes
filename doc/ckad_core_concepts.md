@@ -12,7 +12,7 @@ In pratica, il Control Plane decide lo stato desiderato mentre i Node eseguono r
 
 - Un Namespace può avere Pod distribuiti su più node.
 
-Schema mentale:
+Schema namespace-nodo:
 ```
 Namespace A ───┐
 Namespace B ───┼──▶ Node 1
