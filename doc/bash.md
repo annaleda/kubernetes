@@ -21,3 +21,41 @@
 | **`>>`**                        | Aggiunge output           | Logging                  |                         |
 | **`2>`**                        | Error output redirect     | Debug script             |                         |
 | **` \| ` (pipe)**               | Passa output tra comandi  | Filtri e trasformazioni  |                         |
+
+Esempi
+
+```bash
+# Filtra le righe che contengono "ERROR", poi ordina e conta le occorrenze
+cat log.txt | grep ERROR | sort | uniq -c
+
+# Loop FOR: stampa numeri da 1 a 5
+for i in {1..5}; do
+  echo "Numero: $i"
+done
+
+# Loop WHILE infinito: stampa la data ogni 2 secondi
+while true; do
+  date
+  sleep 2
+done
+
+# Loop WHILE infinito: chiama endpoint HTTP ogni 5 secondi (monitoring)
+while true; do
+  curl http://localhost:80
+  sleep 5
+done
+
+# Legge un file riga per riga e stampa ogni linea
+while read line; do
+  echo $line
+done < file.txt
+
+# Sovrascrive il file scrivendo "hello" (cancella contenuto precedente)
+echo "hello" > file.txt
+
+# Aggiunge una riga senza cancellare il file
+echo "second line" >> file.txt
+
+# Conta il numero di righe del file e stampa il risultato
+wc -l < file.txt
+```
