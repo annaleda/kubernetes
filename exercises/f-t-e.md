@@ -2,6 +2,6 @@
 
 ### 2 [Soluzione Esercizi Teoria](../doc/ckad_sol_esercizi.md)
 
-### 3 [Esercizi con soluzione shortcut](../doc/ckad_sol_esercizi_sc.md)
+### 3 [Esercizi Teoria con soluzione shortcut](../doc/ckad_sol_esercizi_sc.md)
 
-### 4 [Esercizi Linux Foundation + Soluzione](../doc/ckad_lf_sol_esercizi_sc.md)
+### 4 [CKAD – Esercizi e Soluzioni con Alias / Shortcut](../doc/ckad_lf_sol_esercizi_sc.md)
