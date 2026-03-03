@@ -20,9 +20,53 @@
   - Entrambi Running
   - Logs del container logger mostrano output
 
+<details>
+<summary>Soluzione</summary>
+  
+```
+k run order-app --image=nginx --dry-run=client -o yaml > order-app.yaml
 
-```  
-``` 
+ vi order-app.yaml
+
+
+PS C:\Users\annaleda\ckad\o-ex\1\1> cat order-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: order-app
+  name: order-app
+spec:
+  containers:
+  - image: nginx
+    name: app
+    resources: {}
+    command:
+    - sleep 5
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/app.log
+    ports:
+    - containerPort: 80
+  - image: busybox
+    name: logger
+    volumeMounts:
+    - name: shared-logs
+      mountPath: /var/log/app.log
+  volumes:
+    - name: shared-logs
+      emptyDir: {}
+
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+k apply -f order-app.yaml
+```
+</details> 
+
 ---
 
 ## MC-2 — Ambassador Pattern
@@ -43,8 +87,13 @@
 - Validazione
   - Logs mostrano risposta HTTP
 
+<details>
+<summary>Soluzione</summary>
+  
 ``` 
 ```
+</details>
+
 ---
 
 ## MC-3 — Adapter Pattern
@@ -66,8 +115,12 @@
 - Validazione
 File `processed.txt` esiste
 
-```  
+<details>
+<summary>Soluzione</summary>
+  
+``` 
 ```
+</details>
 ---
 
 ### MC-4 — Init + App
@@ -87,8 +140,13 @@ File `processed.txt` esiste
   - Volume: `emptyDir`
   - Nome: config-data
 
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### MC-5 — Multi-Container con variabili condivise
@@ -106,9 +164,14 @@ File `processed.txt` esiste
 - Vincoli
   - Shared volume
   - File generato da primo container
-
-```  
+    
+<details>
+<summary>Soluzione</summary>
+  
+``` 
 ```
+</details>
+
 ---
 
 ### MC-6 — Multi-Container con resource limits diversi
@@ -126,6 +189,11 @@ File `processed.txt` esiste
 - Validazione
   - kubectl describe pod mostra limiti distinti
 
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
