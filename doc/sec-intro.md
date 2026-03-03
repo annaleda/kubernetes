@@ -135,10 +135,10 @@ kubeadm certs check-expiration
 
 TLS nel cluster garantisce:
 
- - Confidenzialità (dati cifrati)
- - Integrità (nessuna manomissione)
- - Autenticazione forte
- - Riduzione attacchi Man-in-the-Middle
+  - Confidenzialità (dati cifrati)
+  - Integrità (nessuna manomissione)
+  - Autenticazione forte
+  - Riduzione attacchi Man-in-the-Middle
 
 - Riassunto Finale
 
