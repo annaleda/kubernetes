@@ -1,7 +1,7 @@
 
 ###  Network policies(6 esercizi)
 
-## NP-1 — Default Deny
+## NP-1 — Default Deny (podSelector)
 
 - Namespace: `net-secure`
 
@@ -14,7 +14,25 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+kubectl create namespace net-secure
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: net-secure
+spec:
+  podSelector: {}   # match all pods
+  policyTypes:
+  - Ingress
+
+k run pod1 --image=busybox -n net-secure -- sleep 3600
+k run pod2 --image=busybox -n net-secure -- sleep 3600
+
+k exec -it pod1 -n net-secure -- sh
+k get netpol -n net-secure
+k describe netpol default-deny -n net-secure
 ```
 </details>
 
