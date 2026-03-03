@@ -12,8 +12,14 @@
 - Validazione
   - Service ha endpoint
   - kubectl get endpoints
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## SVC-2 — NodePort
@@ -26,8 +32,14 @@
 - Validazione
   - kubectl get svc mostra NodePort
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## SVC-3 — LoadBalancer
@@ -36,8 +48,14 @@
   - Type: LoadBalancer
 - Validazione
   - External IP assegnato (se supportato)
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SVC-4 — Headless Service
@@ -49,8 +67,14 @@
 - Validazione
   - DNS restituisce IP dei singoli pod
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SVC-5 — Service Selector Mismatch
@@ -60,8 +84,14 @@
   - Debug e correzione
 - Validazione
   - Endpoints presenti dopo fix
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### SVC-6 — Port Mapping
@@ -73,6 +103,12 @@
   - TargetPort: 8080
 - Validazione
   - Mapping corretto
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
