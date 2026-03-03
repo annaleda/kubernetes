@@ -202,7 +202,106 @@ Entrambi montano stesso PVC
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+vi pv-many.yaml
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-many
+spec:
+  capacity:
+    storage: 200Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/shared
+
+k apply -f pv-many.yaml
+
+
+vi pvc-many.yaml
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-many
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 200Mi
+
+
+k apply -f pvc-many.yaml
+
+
+k run shared-2 --image=nginx --dry-run=client -o yaml > shared-2.yaml
+
+k run shared-1 --image=nginx --dry-run=client -o yaml > shared-1.yaml
+
+vi shared-1.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: shared-1
+  name: shared-1
+spec:
+  containers:
+  - image: nginx
+    name: shared-1
+    resources: {}
+    volumeMounts:
+    - name: pvc-many
+      mountPath: /many
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+  - name: pvc-many
+    persistentVolumeClaim:
+      claimName: pvc-many
+status: {}
+
+k apply -f shared-1.yaml
+
+ vi shared-2.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: shared-2
+  name: shared-2
+spec:
+  containers:
+  - image: nginx
+    name: shared-2
+    resources: {}
+    volumeMounts:
+    - name: pvc-many
+      mountPath: /many
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+  - name: pvc-many
+    persistentVolumeClaim:
+      claimName: pvc-many
+status: {}
+
+k apply -f shared-2.yaml
+
+kubectl exec -it shared-2 -- cat /many/test.txt
 ```
 </details>
 
