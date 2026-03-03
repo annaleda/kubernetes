@@ -13,8 +13,14 @@ Installare chart nginx
 
 - Validazione
   - helm list -n helm-test
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## HELM-2 — Override Values via CLI
@@ -29,8 +35,14 @@ Installare release `custom-nginx`
 - Validazione
   - kubectl get deployment mostra 3 repliche
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## HELM-3 — Override con values.yaml
@@ -44,8 +56,14 @@ Creare file `custom-values.yaml`
 
 - Validazione
   - Service è NodePort
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### HELM-4 — Upgrade Release
@@ -59,8 +77,14 @@ Aggiornare release `web-release`
   - helm history web-release
   - Deployment aggiornato
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### HELM-5 — Rollback Release
@@ -71,8 +95,14 @@ Alla revisione precedente
 
 - Validazione
   - helm history mostra nuova revisione rollback
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### HELM-6 — Template Rendering
@@ -85,6 +115,12 @@ Eseguire render locale del chart `nginx`
 
 - Validazione
   - File contiene manifest Kubernetes
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
