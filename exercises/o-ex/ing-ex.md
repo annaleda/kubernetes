@@ -114,7 +114,7 @@ curl http://<IP>/back
 ## ING-3 — TLS
 
 - Creare Secret TLS
-  - ( MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" # da git bash)
+  - ( MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local")
 - Ingress
   - TLS abilitato
   - Host: secure.local
@@ -125,7 +125,8 @@ curl http://<IP>/back
 <summary>Soluzione</summary>
   
 ```
- MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" # da git bash
+# da git bash
+MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" 
 
 kubectl create secret tls secure-tls --cert=tls.crt --key=tls.key
 
