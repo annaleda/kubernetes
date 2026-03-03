@@ -6,7 +6,7 @@
 - Namespace: `dev-auth`
 - Creare Role: `pod-reader`
   - Permessi: get, list, watch su pods
-- Creare RoleBinding
+- Creare RoleBinding: `pod-reader-rb`
   - Collegare Role a utente dev-user
 - Validazione
   - `kubectl auth can-i list pods --as=dev-user -n dev-auth`
@@ -14,7 +14,12 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns dev-auth
+k config set-credentials dev-user --client-key=tls.key --client-certificate=tls.crt
+k create role pod-reader --verb=get,list,watch --resource=pods -n dev-auth
+k create rolebinding pod-reader-rb --user=dev-user --role=pod-reader -n dev-auth
+
 ```
 </details>
 
