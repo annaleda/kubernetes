@@ -114,6 +114,7 @@ curl http://<IP>/back
 ## ING-3 — TLS
 
 - Creare Secret TLS
+  - ( MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" # da git bash)
 - Ingress
   - TLS abilitato
   - Host: secure.local
@@ -123,7 +124,42 @@ curl http://<IP>/back
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=secure.local" # da git bash
+
+kubectl create secret tls secure-tls --cert=tls.crt --key=tls.key
+
+kubectl get secret secure-tls
+
+kubectl describe secret secure-tls
+
+k create deploy s-deploy --image=nginx --replicas=2
+k expose deploy s-deploy --name s-service --port=80 --target-port=80
+
+vi secure-ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: secure-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - secure.local           # se arriva request da https://secure.local usa
+    secretName: secure-tls   # secret creato in precedenza
+  rules:
+  - host: secure.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: s-service
+            port:
+              number: 80
+
 ```
 </details>
 
