@@ -9,8 +9,14 @@
 - Montare in Pod config-pod
 - Validazione
   - Variabile disponibile nel container
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## CONF-2 — Secret
@@ -22,8 +28,14 @@
 - Validazione
   - File presente nel container
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## CONF-3 — ResourceQuota
@@ -34,8 +46,14 @@
   - Requests CPU totali: 500m
 - Validazione
   - Creazione terzo pod fallisce
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CONF-4 — LimitRange
@@ -47,8 +65,14 @@
 - Validazione
   - Pod senza limiti riceve default
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CONF-5 — Requests vs Limits
@@ -59,8 +83,14 @@
   - Limits: 200m
 - Validazione
   - Differenza visibile nel describe
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### CONF-6 — ConfigMap + Secret insieme
@@ -71,6 +101,12 @@
   - Secret per credenziali
 - Validazione
   - Entrambi montati correttamente
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
