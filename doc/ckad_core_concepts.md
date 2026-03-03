@@ -82,6 +82,12 @@ kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > deploym
 ```
 ---
 ## Namespace
+
+creazione namespace
+```bash
+kubectl create ns dev
+```
+
 *Namespace di sistema
 
  Kubernetes crea automaticamente alcuni namespace:
