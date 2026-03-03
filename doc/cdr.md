@@ -134,7 +134,7 @@ L’Operator:
 - Gestisce backup
 - Gestisce failover
 - Aggiorna versioni
- -Ripristina in caso di crash
+- Ripristina in caso di crash
 
 Esempi Operator:
 
