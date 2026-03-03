@@ -24,9 +24,14 @@
   - PVC Bound
   - Pod Running
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
 
 ## ST-2 — Multiple PVC in Pod
@@ -42,9 +47,14 @@
 - Validazione
   - Entrambi i volumi montati correttamente
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
 
 ## ST-3 — ReadWriteMany Scenario
@@ -64,9 +74,14 @@ Entrambi montano stesso PVC
   - Entrambi Running
   - File scritto da uno visibile nell’altro
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
 
 ## ST-4 — SubPath Mount
@@ -81,9 +96,14 @@ Entrambi montano stesso PVC
 - Validazione
   - Solo la directory logs è montata
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
 
 ## ST-5 — StorageClass Usage
@@ -99,9 +119,14 @@ Entrambi montano stesso PVC
 -Validazione
 - PVC Bound automaticamente
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
 
 ## ST-6 — VolumeMount ReadOnly
@@ -116,7 +141,12 @@ Entrambi montano stesso PVC
 - Validazione
   - Tentativo di scrittura fallisce
 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
 
-```
 ---
