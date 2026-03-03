@@ -32,6 +32,34 @@ strategy:
     maxSurge: 1
 ```
 
+esempio completo
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  
+  strategy:  
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  selector:
+    matchLabels:
+      app: my-app
+
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: app
+          image: nginx
+```
 - `maxUnavailable`: quanti Pod possono essere non disponibili
 
 - `maxSurge`: quanti Pod extra possono essere creati temporaneamente
