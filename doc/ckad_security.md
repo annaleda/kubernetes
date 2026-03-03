@@ -304,6 +304,55 @@ Permessi validi per tutto il cluster.
 
 ---
 
+ClusterRole Example
+
+Permette lettura dei Pod nel namespace.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-reader
+
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  ```
+ClusterRoleBinding Example
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: read-all
+
+subjects:
+  - kind: ServiceAccount
+    name: my-sa
+    namespace: default
+
+roleRef:
+  kind: ClusterRole
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+
+```
+ClusterRole Example
+```
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
+```
+ClusterRoleBinding Example
+```
+kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceaccount=default:my-sa
+```
+
+---
+
 ### API Groups 
 
 ---
@@ -338,39 +387,6 @@ API Groups più comuni
 | coordination.k8s.io            | Leases (leader election)                                     | Controller runtime         |
 
 
----
-
-Role Example
-
-Permette lettura dei Pod nel namespace.
-
-```
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-  ```
-RoleBinding Example
-
-```
-subjects:
-- kind: ServiceAccount
-  name: my-sa
-
-roleRef:
-  kind: Role
-  name: pod-reader
-  apiGroup: rbac.authorization.k8s.io
-
-```
-ClusterRole Example
-```
-kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
-```
-ClusterRoleBinding Example
-```
-kubectl create clusterrolebinding read-all --clusterrole=pod-reader --serviceaccount=default:my-sa
-```
 ---
 
 Per controllare le API deprecated usa:
