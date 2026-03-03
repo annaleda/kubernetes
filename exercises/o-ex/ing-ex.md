@@ -64,7 +64,48 @@ k apply -f ingress.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy frontend --image=nginx --replicas=2
+ k create deploy backend --image=nginx --replicas=2
+
+ k expose deploy frontend --name f-svc --port=83 --target-port=80
+ k expose deploy backend --name b-svc --port=84 --target-port=80
+
+vi ingress2.yaml
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: full-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /front
+        pathType: Prefix
+        backend:
+          service:
+            name: f-svc
+            port:
+              number: 83
+      - path: /back
+        pathType: Prefix
+        backend:
+          service:
+            name: b-svc
+            port:
+              number: 84
+
+k apply -f ingress2.yaml
+
+kubectl get ingress
+kubectl describe ingress full-ingress
+
+curl http://<IP>/front
+curl http://<IP>/back
 ```
 </details>
 
