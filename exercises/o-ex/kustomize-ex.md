@@ -17,8 +17,14 @@
 
 - Validazione
   - Deployment creato
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## KUS-2 — Overlay Dev
@@ -33,8 +39,14 @@
 - Validazione
   - kubectl kustomize overlays/dev mostra override
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## KUS-3 — Name Prefix
@@ -42,8 +54,14 @@
 - Applicare namePrefix: dev-
 - Validazione
   - Deployment diventa dev-nginx
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KUS-4 — ConfigMap Generator
@@ -56,8 +74,14 @@
 
 - Validazione
   - ConfigMap generata automaticamente
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KUS-5 — Patch Strategica
@@ -68,8 +92,14 @@
 - Usare patchStrategicMerge
 - Validazione
   - Replica aggiornata
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### KUS-6 — Image Transformer
@@ -80,6 +110,12 @@
 - Usare sezione images: in kustomization
 - Validazione
    - Output mostra nuova immagine
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
