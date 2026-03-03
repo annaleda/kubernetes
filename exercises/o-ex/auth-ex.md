@@ -10,8 +10,14 @@
   - Collegare Role a utente dev-user
 - Validazione
   - `kubectl auth can-i list pods --as=dev-user -n dev-auth`
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## AUTH-2 — Limitare Accesso ai ConfigMap
@@ -23,8 +29,14 @@
 - Validazione
   - ServiceAccount può leggere ma non creare ConfigMap
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## AUTH-3 — ClusterRole
@@ -34,8 +46,14 @@
 - Creare ClusterRoleBinding
 - Validazione
   - Utente può leggere nodes cluster-wide
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### AUTH-4 — Verifica Permessi
@@ -47,8 +65,14 @@
 - Obiettivo
   - Verificare se un utente può eliminare pod
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### AUTH-5 — Deny by Default
@@ -57,8 +81,14 @@
 - Creare ServiceAccount senza RoleBinding
 - Validazione
   - Non può creare Pod
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### AUTH-6 — Multiple RoleBinding
@@ -68,6 +98,12 @@
 - Associare entrambe alla stessa ServiceAccount
 - Validazione
   - Permessi cumulativi funzionano
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
