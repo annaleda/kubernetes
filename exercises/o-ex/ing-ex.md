@@ -12,8 +12,14 @@
   - Backend: ingress-svc
 - Validazione
   - kubectl describe ingress
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
-``` 
+```
+</details>
+
 ---
 
 ## ING-2 — Path Based Routing
@@ -27,8 +33,14 @@
 - Validazione
   - Routing corretto
 
-``` 
+---
+<details>
+<summary>Soluzione</summary>
+  
+```  
 ```
+</details>
+
 ---
 
 ## ING-3 — TLS
@@ -39,8 +51,14 @@
   - Host: secure.local
 - Validazione
   - Sezione TLS presente
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### ING-4 — Multiple Hosts
@@ -53,8 +71,14 @@
 - Validazione
   - Regole host separate
 
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### ING-5 — Default Backend
@@ -62,8 +86,14 @@
 - Ingress con default backend
 - Validazione
   - Richiesta a host sconosciuto va al default
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
 
 ### ING-6 — Rewrite Target
@@ -72,6 +102,12 @@
 - Path `/app` → `/`
 - Validazione
   - Routing corretto
+---
+<details>
+<summary>Soluzione</summary>
+  
 ```  
 ```
+</details>
+
 ---
