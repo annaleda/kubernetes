@@ -148,8 +148,6 @@ Kubernetes usa TLS ovunque
 kube-apiserver è il centro delle comunicazioni
 etcd è protetto da certificati dedicati
 La CA è il punto di fiducia del cluster
-Se vuoi posso aggiungerti anche una sezione:
 
 ---
 
-Dimmi tu quanto vuoi spingere in profondità 😈
