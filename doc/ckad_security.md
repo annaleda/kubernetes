@@ -118,6 +118,14 @@ Creazione:
 ```
 kubectl create serviceaccount my-sa
 ```
+esempio di ServiceAccount
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-sa
+  namespace: default
+```
 
 Assegnazione a un Pod:
 
@@ -127,7 +135,7 @@ kind: Pod
 metadata:
   name: my-pod
 spec:
-  serviceAccountName: my-sa
+  serviceAccountName: my-sa # assegnazione
   containers:
   - name: nginx
     image: nginx
