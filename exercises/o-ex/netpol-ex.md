@@ -15,7 +15,7 @@
 <summary>Soluzione</summary>
   
 ```
-kubectl create namespace net-secure
+kubectl create ns net-secure
 
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
