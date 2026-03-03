@@ -4,13 +4,13 @@
 
 ### 0 [Kubernates - Kind + Kubeconfig](./doc/readme0.md)
 
-### 1 [Argomenti Teoria CKAD](./arguments.md)
+### 1 [CKAD Teory](./arguments.md)
 
 ### 2 [Kubernates Documentation](https://kubernetes.io/docs/home/)
 
 ### 3 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
-### 4 [CKAD – Esame + Cheatsheet](./doc/ckad_exam_strategy.md)
+### 4 [CKAD – Exame + Cheatsheet](./doc/ckad_exam_strategy.md)
 
 ### 5 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
 
