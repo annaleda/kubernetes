@@ -3,9 +3,8 @@
 
 ## SEC-1 — RunAsUser
 
-Namespace: secure-apps
-
-Pod: secure-pod
+- Namespace: `secure-apps`
+- Pod: `secure-pod`
 
 Task:
 
@@ -44,9 +43,8 @@ kubectl apply -f secure-pod.yaml
 
 ## SEC-2 — ReadOnlyRootFilesystem
 
-Namespace: readonly-ns
-
-Pod: readonly-app
+- Namespace: `readonly-ns`
+- Pod: `readonly-app`
 
 Task:
 
@@ -71,9 +69,8 @@ containers:
 
 ## SEC-3 — Privileged Container
 
-Namespace: privileged-ns
-
-Pod: priv-app
+- Namespace: `privileged-ns`
+- Pod: `priv-app`
 
 Task:
 
@@ -92,9 +89,8 @@ securityContext:
 
 ## SEC-4 — Capabilities Drop
 
-Namespace: cap-ns
-
-Pod: cap-app
+- Namespace: `cap-ns`
+- Pod: `cap-app`
 
 Task:
 
@@ -115,9 +111,8 @@ securityContext:
 
 ## SEC-5 — Pod + Container Security Context Combined
 
-Namespace: mix-sec
-
-Pod:
+- Namespace: `mix-sec`
+- Pod: `mix-sec-app`
 
 runAsUser: 2000 (pod level)
 
@@ -145,9 +140,8 @@ spec:
 
 ## SEC-6 — Allow Privilege Escalation
 
-Namespace: escalation-ns
-
-Pod: escalate-app
+- Namespace: `escalation-ns`
+- Pod: `escalate-app`
 
 Task:
 
