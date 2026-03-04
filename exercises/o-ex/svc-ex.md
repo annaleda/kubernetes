@@ -109,7 +109,53 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy web-svc --image=nginx --replicas=3
+k expose deploy web-svc --name headless-svc  --port=81 --dry-run=client -o yaml > svc4.yaml
+k create stateful headless-stateful --image=nginx --replicas=2 --dry-run=client -o yaml > stateful.yaml
+
+vi svc4.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-svc
+spec:
+  clusterIP: None                     # modificato
+  selector:
+    app: headless-stateful            # diverso
+  ports:
+    - port: 80
+      targetPort: 80
+
+
+
+vi stateful.yaml
+
+
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: headless-stateful
+spec:
+  serviceName: headless-svc            # aggiunto
+  replicas: 2
+  selector:
+    matchLabels:
+      app: headless-stateful
+  template:
+    metadata:
+      labels:
+        app: headless-stateful
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+
 ```
 </details>
 
@@ -126,7 +172,33 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+spec:
+  selector:
+    app: wrong-label   # ERRORE
+  ports:
+  - port: 80
+    targetPort: 80
+
+kubectl get endpoints web-svc
+kubectl get pods --show-labels
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+spec:
+  selector:
+    app: web
+  ports:
+  - port: 80
+    targetPort: 80
+
+kubectl get endpoints web-svc
 ```
 </details>
 
@@ -136,7 +208,7 @@ spec:
 
 - Deployment `multi-port-app`
   - Container espone 8080
-- Service
+- Service  `svc-sei`
   - Port: 80
   - TargetPort: 8080
 - Validazione
@@ -145,7 +217,10 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy multi-port-app --replicas=1 --image=nginx --port=8080
+
+k expose deploy multi-port-app --name svc-sei --port=80 --target-port=8080
 ```
 </details>
 
