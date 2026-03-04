@@ -21,7 +21,24 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+mkdir base
+cd base
+k create ns kustomize
+k create deploy deploy --image=nginx:1.21 -n kustomize --dry-run=client -o yaml > deploy.yaml
+k expose deploy deploy --name svc --port=80 -n kustomize --dry-run=client -o yaml > svc.yaml
+
+vi kustomization.yaml
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- deploy.yaml
+- svc.yaml
+
+k apply -k .
 ```
 </details>
 
@@ -43,7 +60,37 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns dev
+
+mkdir base2
+cd base2
+
+k create deploy deploy --image=nginx:1.21 -n dev --dry-run=client -o yaml > deploy.yaml
+k expose deploy deploy --name svc --port=80 -n dev --dry-run=client -o yaml > svc.yaml
+
+mkdir -p overlays/dev
+cd overlays/dev
+
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+- ../../base
+
+images:
+- name: nginx
+  newTag: 1.23
+
+k apply -k .
+k kustomize .
+
+->
+ nginx:1.23
 ```
 </details>
 
