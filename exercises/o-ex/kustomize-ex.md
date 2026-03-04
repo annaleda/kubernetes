@@ -70,6 +70,19 @@ cd base2
 k create deploy deploy --image=nginx:1.21 -n dev --dry-run=client -o yaml > deploy.yaml
 k expose deploy deploy --name svc --port=80 -n dev --dry-run=client -o yaml > svc.yaml
 
+vi kustomization.yaml
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deploy.yaml
+- svc.yaml
+
+
+k apply -k .
+
+
 mkdir -p overlays/dev
 cd overlays/dev
 
