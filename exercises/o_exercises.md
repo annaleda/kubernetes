@@ -31,7 +31,7 @@
     
   - [Mock Exercises - serviceaccount](./o-ex/sa-ex.md)
 
-  - [Mock Exercises - securityContext](./sec-ex.md)
+  - [Mock Exercises - securityContext](./o-ex/sec-ex.md)
   
   - [Mock Exercises - Security (old)](./security-ex.md)
 
