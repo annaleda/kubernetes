@@ -37,7 +37,7 @@
 
   - [Mock Exercises - Affinity](./affinity-ex.md)
   
-  - [Mock Exercises - CDR, Operators](./o-ex/cdr-op-ex.md)
+  - [Mock Exercises - CRD, Operators](./o-ex/cdr-op-ex.md)
 
 
 ---
