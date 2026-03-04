@@ -3,8 +3,8 @@
 
 ## CRD-1 — Creare CRD Base
 
-- Definire CRD: `apps.stable.example.com`
-- Kind: `MyApp`
+- Definire CRD: `myapps.stable.example.com`
+- Kind: `myApp`
 - Version: v1
 - Scope: Namespaced
 - Validazione
@@ -13,7 +13,46 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: myapps.stable.example.com
+spec:
+  group: stable.example.com
+  scope: Namespaced
+  names:
+    plural: myapps
+    singular: myapp
+    kind: myApp
+    shortNames:
+      - ma
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              color:
+                type: string
+
+k get crd
+
+apiVersion: stable.example.com/v1
+kind: myApp
+metadata:
+  name: test-app
+spec:
+  color: "blue"
+
+k get ma
+NAME       AGE
+test-app   11s
 ```
 </details>
 
@@ -30,7 +69,17 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: stable.example.com/v1
+kind: myApp
+metadata:
+  name: test-app
+spec:
+  color: "blue"
+
+k get ma
+NAME       AGE
+test-app   11s
 ```
 </details>
 
@@ -61,7 +110,48 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: myapps.stable.example.com
+spec:
+  group: stable.example.com
+  scope: Namespaced
+  names:
+    plural: myapps
+    singular: myapp
+    kind: myApp
+    shortNames:
+      - ma
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              color:
+                type: string
+
+  - name: v2
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              color:
+                type: string
+              size:
+                type: integer
 ```
 </details>
 
@@ -71,12 +161,21 @@
 
 - Creare Role che permette get su MyApp
 - Validazione
-  - `kubectl auth can-i get myapp`
+  - `kubectl auth can-i get myapps`
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k auth can-i get myapps
+k create role myapp-reader --verb=get --resource=myapps --api-group=stable.example.com -n default
+# notare --api-groups !
+
+k create sa crd-user -n default
+k create rolebinding myapp-reader-binding --role=myapp-reader --serviceaccount=default:crd-user -n default
+
+k auth can-i get myapps --as=system:serviceaccount:default:crd-user -n default
+
 ```
 </details>
 
