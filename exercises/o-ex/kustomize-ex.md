@@ -106,7 +106,22 @@ k kustomize .
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: dev
+resources:
+- ../../base
+namePrefix: dev-
+images:
+- name: nginx
+  newTag: 1.23
+
+
+k apply -k .
+k kustomize .
 ```
 </details>
 
@@ -117,6 +132,8 @@ k kustomize .
 - Generare ConfigMap da file:
 
       app.properties
+              {key1=value1
+               key2=value2}
 
 - Usare configMapGenerator
 
@@ -126,7 +143,34 @@ k kustomize .
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+
+ cd ../..
+ cd base2
+ vim app.properties
+ vim kustomization.yaml
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+configMapGenerator:
+- name: app-config
+  files:
+  - app.properties
+
+
+ k apply -k .
+
+ k kustomize .
+
+ k get cm
+NAME                    DATA   AGE
+app-config-84gfck8fhb   1      37s
+kube-root-ca.crt        1      29m
+
 ```
 </details>
 
