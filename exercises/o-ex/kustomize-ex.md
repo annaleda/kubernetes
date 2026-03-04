@@ -33,10 +33,11 @@ vi kustomization.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
 - deploy.yaml
 - svc.yaml
+
+
 
 k apply -k .
 ```
@@ -74,17 +75,17 @@ cd overlays/dev
 
 vi kustomization.yaml
 
+
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: dev
-
 resources:
 - ../../base
-
 images:
 - name: nginx
   newTag: 1.23
+
+
 
 k apply -k .
 k kustomize .
