@@ -55,27 +55,31 @@
 
 ```yaml
 env:
-  - name: APP_ENV
-    value: "production"
+- name: APP_ENV
+  value: "production"
 ```
 
-### Da ConfigMap
+### Da ConfigMap / Secret (montare nel container tramite envFrom)
 
 ```yaml
 envFrom:
-  - configMapRef:
-      name: my-config
+- configMapRef:
+    name: my-config
+
+envFrom:
+- secretRef:
+    name: my-secret
 ```
 
 ### Da Secret
 
 ```yaml
 env:
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: my-secret
-        key: password
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: my-secret
+      key: password
 ```
 
 ---
@@ -86,17 +90,17 @@ env:
 
 ```yaml
 volumes:
-  - name: config-volume
-    configMap:
-      name: my-config
+- name: config-volume
+  configMap:
+    name: my-config
 ```
 
 ### Mount nel container
 
 ```yaml
 volumeMounts:
-  - name: config-volume
-    mountPath: /etc/config
+- name: config-volume
+  mountPath: /etc/config
 ```
 
 Ogni chiave diventa un file nella directory montata.
