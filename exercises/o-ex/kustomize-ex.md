@@ -160,8 +160,8 @@ k kustomize .
 
  cd ../..
  cd base2
- vim app.properties
- vim kustomization.yaml
+ vi app.properties
+ vi kustomization.yaml
 
 
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -201,7 +201,36 @@ kube-root-ca.crt        1      29m
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+vi patch-replica.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy
+spec:
+  replicas: 3
+
+
+vi kustomization.yaml
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+configMapGenerator:
+- name: app-config
+  files:
+  - app.properties
+patchesStrategicMerge:
+- patch-replica.yaml
+
+ k apply -k .
+
+ k kustomize .
 ```
 </details>
 
