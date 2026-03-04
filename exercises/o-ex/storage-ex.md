@@ -323,7 +323,24 @@ kubectl exec -it shared-2 -- cat /many/test.txt
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k run subpath-app --image=nginx --dry-run=client -o yaml > subpath-app.yaml
+
+spec:
+  containers:
+  - name: subpath-app
+    ....
+    volumeMounts:
+    - mountPath: /var/log/app
+      name: storage
+      subPath: logs
+
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: pvc-static
+
+kubectl exec -it subpath-app -- ls /var/log/app
 ```
 </details>
 
@@ -346,7 +363,39 @@ kubectl exec -it shared-2 -- cat /many/test.txt
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-storage                  # claim name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 150Mi
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dynamic-consumer
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["/bin/sh", "-c", "echo hello > /data/test.txt && sleep 3600"]
+    volumeMounts:
+    - name: storage
+      mountPath: /data
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: dynamic-storage          # claim name
+
+
+kubectl get pvc
 ```
 </details>
 
@@ -368,7 +417,38 @@ kubectl exec -it shared-2 -- cat /many/test.txt
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-static
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 150Mi
+
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readonly-app
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["/bin/sh", "-c", "sleep 3600"]
+    volumeMounts:
+    - name: storage
+      mountPath: /data
+      readOnly: true
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: pvc-static
 ```
 </details>
 
