@@ -6,37 +6,38 @@
 - Namespace: `secure-apps`
 - Pod: `secure-pod`
 
-Task:
+- Task:
+  - Container deve girare come user ID 1000
+  - Image: nginx
 
-Container deve girare come user ID 1000
-
-Image: nginx
-
-Validazione:
-
-Controllare user nel container
+- Validazione:
+  - Controllare user nel container
 
 <details> <summary>Soluzione</summary>
-kubectl create ns secure-apps
+  
+```
+k create ns secure-apps
 
-kubectl run secure-pod \
---image=nginx \
--n secure-apps \
---dry-run=client -o yaml > secure-pod.yaml
+k run secure-pod --image=nginx -n secure-apps --dry-run=client -o yaml > secure-pod.yaml
 
-Edit YAML:
-
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: secure-pod
+  name: secure-pod
+  namespace: secure-apps
 spec:
+  containers:
+  - image: nginx
+    name: secure-pod
   securityContext:
     runAsUser: 1000
 
-  containers:
-  - name: secure-pod
-    image: nginx
 
-Apply:
+k apply -f secure-pod.yaml
 
-kubectl apply -f secure-pod.yaml
+```
 </details>
 
 ---
@@ -46,25 +47,34 @@ kubectl apply -f secure-pod.yaml
 - Namespace: `readonly-ns`
 - Pod: `readonly-app`
 
-Task:
+- Task:
+  - Root filesystem deve essere read-only
 
-Root filesystem deve essere read-only
-
-Validazione:
-
-Container non può scrivere su filesystem
+- Validazione:
+  - Container non può scrivere su filesystem
 
 <details> <summary>Soluzione</summary>
-securityContext:
-  readOnlyRootFilesystem: true
+  
+```
+k create ns readonly-ns
 
-Container section:
+k run readonly-app --image=nginx -n readonly-ns --dry-run=client -o yaml > rpod.yaml
 
-containers:
-- name: readonly-app
-  image: nginx
-  securityContext:
-    readOnlyRootFilesystem: true
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: readonly-app
+  name: readonly-app
+  namespace: readonly-ns
+spec:
+  containers:
+  - image: nginx
+    name: readonly-app
+    securityContext:
+      readOnlyRootFilesystem: true
+
+```
 </details>
 
 ## SEC-3 — Privileged Container
@@ -72,17 +82,35 @@ containers:
 - Namespace: `privileged-ns`
 - Pod: `priv-app`
 
-Task:
+- Task:
+  - Container deve girare in privileged mode
 
-Container deve girare in privileged mode
-
-Validazione:
-
-Privileged flag attivo
+- Validazione:
+  - Privileged flag attivo
 
 <details> <summary>Soluzione</summary>
-securityContext:
-  privileged: true
+
+  ```
+  k create ns privileged-ns
+
+  k run priv-app --image=nginx -n privileged-ns --dry-run=client -o yaml > privpod.yaml
+
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    labels:
+      run: priv-app
+    name: priv-app
+    namespace: privileged-ns
+  spec:
+    containers:
+    - image: nginx
+      name: priv-app
+      securityContext:
+        privileged: true
+
+  ```
 </details>
 
 ---
@@ -92,48 +120,79 @@ securityContext:
 - Namespace: `cap-ns`
 - Pod: `cap-app`
 
-Task:
-
-Rimuovere capability NET_RAW
-
-Validazione:
-
-Capability non presente
+- Task:
+  - Rimuovere capability NET_RAW
+- Validazione:
+  - Capability non presente
 
 <details> <summary>Soluzione</summary>
-securityContext:
-  capabilities:
-    drop:
-    - NET_RAW
+ 
+```
+  k create ns cap-ns
+
+  k run cap-app --image=nginx -n cap-ns --dry-run=client -o yaml > cap-pod.yaml
+
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: null
+    labels:
+      run: cap-app
+    name: cap-app
+    namespace: cap-ns
+  spec:
+    containers:
+    - image: nginx
+      name: cap-app
+      securityContext:
+        capabilities:
+          drop:
+          - NET_RAW
+ ```
 </details>
 
 ---
 
 ## SEC-5 — Pod + Container Security Context Combined
 
-- Namespace: `mix-sec`
+- Namespace: `mix-sec-ns`
 - Pod: `mix-sec-app`
 
-runAsUser: 2000 (pod level)
+- runAsUser: 2000 (pod level)
 
-Container:
+- Container:
+  - runAsUser: 3000 (override container level)
 
-runAsUser: 3000 (override container level)
-
-Validazione:
-
-Container level ha priorità
+- Validazione:
+  - Container level ha priorità
 
 <details> <summary>Soluzione</summary>
+
+```
+k create ns mix-sec-ns
+
+k run mix-sec-app --image=nginx -n mix-sec-ns --dry-run=client -o yaml > mix-sec-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mix-sec-app
+  name: mix-sec-app
+  namespace: mix-sec-ns
 spec:
   securityContext:
     runAsUser: 2000
-
   containers:
-  - name: mix-app
-    image: nginx
+  - image: nginx
+    name: mix-sec-app
     securityContext:
       runAsUser: 3000
+
+```
+  
 </details>
 
 ---
@@ -143,17 +202,34 @@ spec:
 - Namespace: `escalation-ns`
 - Pod: `escalate-app`
 
-Task:
+- Task:
+  - Consentire privilege escalation
 
-Consentire privilege escalation
-
-Validazione:
-
-allowPrivilegeEscalation = true
+- Validazione:
+  - allowPrivilegeEscalation = true
 
 <details> <summary>Soluzione</summary>
-securityContext:
-  allowPrivilegeEscalation: true
+
+```
+k create ns escalation-ns
+
+k run escalation-app --image=nginx -n escalation-ns --dry-run=client -o yaml > escalation-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: escalation-app
+  name: escalation-app
+  namespace: escalation-ns
+spec:
+  containers:
+  - image: nginx
+    name: escalation-app
+    securityContext:
+      allowPrivilegeEscalation: true
+```
 </details>
 
 
