@@ -66,8 +66,7 @@ Function ks { kubectl get svc -o wide }
 Function kc { kubectl config get-contexts }
 Function kdry { param($cmd) kubectl $cmd --dry-run=client -o yaml }
 Function kapply { param($file) kubectl apply -f $file }
-notepad $PROFILE
-. $PROFILE
+
 ```
 
 
