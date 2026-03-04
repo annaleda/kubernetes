@@ -96,7 +96,7 @@ resources:
 - ../../base
 images:
 - name: nginx
-  newTag: 1.23
+  newTag: "1.23"
 
 
 
@@ -130,7 +130,7 @@ resources:
 namePrefix: dev-
 images:
 - name: nginx
-  newTag: 1.23
+  newTag: "1.23"
 
 
 k apply -k .
@@ -248,7 +248,30 @@ patchesStrategicMerge:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+cd ..
+mkdir base3
+cd base3
+
+k create deploy deploy2 --image=nginx:1.21 -n dev --dry-run=client -o yaml > deploy.yaml
+k expose deploy deploy2 --name svc2 --port=80 -n dev --dry-run=client -o yaml > svc.yaml
+
+vi kustomization.yaml
+
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deploy.yaml
+- svc.yaml
+images:
+- name: nginx
+  newTag: "1.25"
+
+k apply -k .
+k kustomize .
+k get deploy -n dev -o yaml | grep image
+
 ```
 </details>
 
