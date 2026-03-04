@@ -25,17 +25,20 @@
 ---
 - Application Environment, Configuration and Security `25%`
 
+  - [Mock Exercises - Configuration](./o-ex/config-ex.md)
+  
   - [Mock Exercises - Auth](./o-ex/auth-ex.md)
     
   - [Mock Exercises - serviceaccount](./o-ex/sa-ex.md)
 
-  - [Mock Exercises - CDR, Operators](./o-ex/cdr-op-ex.md)
+  - [Mock Exercises - Security (old)](./security-ex.md)
 
-  - [Mock Exercises - Configuration](./o-ex/config-ex.md)
-    
-  - [Mock Exercises - Security](./security-ex.md)
+  - [Mock Exercises - securityContext](./sec-ex.md)
   
   - [Mock Exercises - Affinity](./affinity-ex.md)
+  
+  - [Mock Exercises - CDR, Operators](./o-ex/cdr-op-ex.md)
+
 
 ---
 - Services and Networking `20%`
