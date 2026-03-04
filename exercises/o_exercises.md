@@ -29,7 +29,7 @@
   
   - [Mock Exercises - Auth](./o-ex/auth-ex.md)
     
-  - [Mock Exercises - serviceaccount](./o-ex/sa-ex.md)
+  - [Mock Exercises - serviceAccount](./o-ex/sa-ex.md)
 
   - [Mock Exercises - securityContext](./o-ex/sec-ex.md)
   
