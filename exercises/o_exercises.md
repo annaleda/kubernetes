@@ -31,10 +31,10 @@
     
   - [Mock Exercises - serviceaccount](./o-ex/sa-ex.md)
 
-  - [Mock Exercises - Security (old)](./security-ex.md)
-
   - [Mock Exercises - securityContext](./sec-ex.md)
   
+  - [Mock Exercises - Security (old)](./security-ex.md)
+
   - [Mock Exercises - Affinity](./affinity-ex.md)
   
   - [Mock Exercises - CDR, Operators](./o-ex/cdr-op-ex.md)
