@@ -4,13 +4,16 @@
 ## KA-1 — Identificare Endpoint API Server
 
 - Recuperare endpoint del cluster
-- Validazione
-  - `kubectl cluster-info`
+
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k cluster-info
+
+# cerca https://
+
 ```
 </details>
 
@@ -21,14 +24,15 @@
 - Esaminare certificati nel kubeconfig
 - Obiettivo
   - Identificare campo certificate-authority-data
-- Validazione
-  - `kubectl config view`
 
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k config view
+
+# cerca certificate-auth
 ```
 </details>
 
@@ -45,7 +49,18 @@ nel kube-apiserver
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+# creare ausit-policy.yaml
+apiVersion: audit.k8s.io/v1
+kind: Policy
+rules:
+- level: Metadata
+
+
+# Avviare kube-apiserver con flag 
+# Nel manifest o service configuration del control plane:
+# --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+ 
 ```
 </details>
 
@@ -66,7 +81,13 @@ nel kube-apiserver
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+kubectl api-versions
+cat /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# swe hai accesso al controlplane node
+ps aux | grep kube-apiserver
+# kube-apiserver -h | grep admission
 ```
 </details>
 
@@ -75,13 +96,13 @@ nel kube-apiserver
 ### KA-5 — API Resources
 
 - Elencare tutte le risorse API disponibili
-- Validazione
-  - `kubectl api-resources`
+
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k api-resources
 ```
 </details>
 
@@ -90,13 +111,13 @@ nel kube-apiserver
 ### KA-6 — Versione API
 
 - Verificare versione cluster
-- Validazione
-  - `kubectl version --short`
+
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+kubectl version --short  
 ```
 </details>
 
