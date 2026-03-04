@@ -105,7 +105,19 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create ns quota-ns 
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota
+  namespace: quota-ns
+spec:
+  hard:
+    pods: "2"
+    requests.cpu: "500m"
+ 
 ```
 </details>
 
@@ -124,7 +136,21 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create ns limit-ns
+
+  apiVersion: v1
+  kind: LimitRange
+  metadata:
+    name: limit-range
+    namespace: limit-ns
+  spec:
+    limits:
+    - type: Container
+    default:
+      cpu: 200m
+      memory: 128Mi
+
 ```
 </details>
 
@@ -142,7 +168,31 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+kubectl create deploy resource-test --image=nginx --dry-run=client -o yaml > resource-test.yaml
+
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-test
+  template:
+    metadata:
+      labels:
+        app: resource-test
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 200m
 ```
 </details>
 
@@ -160,7 +210,40 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create secret generic app-secret --from-literal=DB_USER=admin --from-literal=DB_PASS=pass123
+k create cm app-config --from-literal=APP_MODE=production
+k run env-app --image=nginx --dry-run=client -o yaml > env-app.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-app
+spec:
+  containers:
+  - name: app
+    image: nginx
+    envFrom:
+    - configMapRef:
+        name: app-config
+    - secretRef:
+        name: app-secret
+
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+    - name: secret-volume
+      mountPath: /etc/secret
+      readOnly: true
+      
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config
+
+  - name: secret-volume
+    secret:
+      secretName: app-secret
 ```
 </details>
 
