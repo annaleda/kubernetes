@@ -1,5 +1,5 @@
 
-### CDR and Operators (6 esercizi)
+### CRD and Operators (6 esercizi)
 
 ## CRD-1 — Creare CRD Base
 
