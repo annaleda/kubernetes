@@ -13,7 +13,37 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns configuration
+k create cm app-config --from-literal=APP_MODE=production -n configuration
+
+k run config-pod --image=nginx -n configuration --dry-run=client -o yaml > config-pod.yaml
+
+vi config-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: config-pod
+  name: config-pod
+  namespace: configuration
+spec:
+  containers:
+  - image: nginx
+    name: config-pod
+    volumeMounts:
+    - name: app-config-volume
+      mountPath: /etc/config
+  volumes:
+    - name: app-config-volume
+      configMap:
+        name: app-config
+
+ k apply -f config-pod.yaml
+ k describe po config-pod -n configuration
+ k exec -n configuration config-pod -- ls /etc/config
 ```
 </details>
 
@@ -24,7 +54,7 @@
 - Creare Secret: `db-secret`
   - DB_USER=admin
   - DB_PASS=pass123
-  - Montare come volume
+  - Montare come volume nel pod `secret-pod`
 - Validazione
   - File presente nel container
 
@@ -32,7 +62,32 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create secret generic db-secret -n configuration --from-literal=DB_USER=admin --from-literal=DB_PASS=pass123
+
+k run secret-pod --image=nginx -n configuration --dry-run=client -o yaml > secret-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: secret-pod
+  name: secret-pod
+  namespace: configuration
+spec:
+  containers:
+  - image: nginx
+    name: secred-pod
+    volumeMounts:
+    - name: db-secret-volume
+      mountPath: /etc/secret
+  volumes:
+    - name: db-secret-volume
+      secret:
+        name: db-secret
+
+ k exec -n configuration secret-pod -- ls /etc/secret
 ```
 </details>
 
