@@ -1,5 +1,7 @@
-Security Context (6 esercizi)
-SEC-1 — RunAsUser
+### Security Context (6 esercizi)
+---
+
+## SEC-1 — RunAsUser
 
 Namespace: secure-apps
 
@@ -37,7 +39,10 @@ Apply:
 
 kubectl apply -f secure-pod.yaml
 </details>
-SEC-2 — ReadOnlyRootFilesystem
+
+---
+
+## SEC-2 — ReadOnlyRootFilesystem
 
 Namespace: readonly-ns
 
@@ -63,7 +68,8 @@ containers:
   securityContext:
     readOnlyRootFilesystem: true
 </details>
-SEC-3 — Privileged Container
+
+## SEC-3 — Privileged Container
 
 Namespace: privileged-ns
 
@@ -81,7 +87,10 @@ Privileged flag attivo
 securityContext:
   privileged: true
 </details>
-SEC-4 — Capabilities Drop
+
+---
+
+## SEC-4 — Capabilities Drop
 
 Namespace: cap-ns
 
@@ -101,7 +110,10 @@ securityContext:
     drop:
     - NET_RAW
 </details>
-SEC-5 — Pod + Container Security Context Combined
+
+---
+
+## SEC-5 — Pod + Container Security Context Combined
 
 Namespace: mix-sec
 
@@ -128,7 +140,10 @@ spec:
     securityContext:
       runAsUser: 3000
 </details>
-SEC-6 — Allow Privilege Escalation
+
+---
+
+## SEC-6 — Allow Privilege Escalation
 
 Namespace: escalation-ns
 
@@ -146,3 +161,7 @@ allowPrivilegeEscalation = true
 securityContext:
   allowPrivilegeEscalation: true
 </details>
+
+
+---
+
