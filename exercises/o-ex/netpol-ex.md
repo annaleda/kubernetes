@@ -89,7 +89,24 @@ k describe netpol default-deny -n net-secure
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend
+spec:
+  podSelector: {}   # si applica a tutti i pod del namespace
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+
+kubectl run frontend --image=busybox --labels=role=frontend -- sleep 3600
+kubectl run backend --image=busybox --labels=role=backend -- sleep 3600
 ```
 </details>
 
@@ -105,7 +122,22 @@ k describe netpol default-deny -n net-secure
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+
+  egress:
+  - ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
 ```
 </details>
 
@@ -121,7 +153,21 @@ k describe netpol default-deny -n net-secure
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-trusted-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          access: trusted
 ```
 </details>
 
@@ -136,7 +182,21 @@ k describe netpol default-deny -n net-secure
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-port-80
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 80
+
 ```
 </details>
 
@@ -154,7 +214,24 @@ k describe netpol default-deny -n net-secure
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-trusted-443
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          access: trusted
+    ports:
+    - protocol: TCP
+      port: 443
 ```
 </details>
 
