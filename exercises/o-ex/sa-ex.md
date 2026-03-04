@@ -14,7 +14,29 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create ns sa-test
+ k create sa app-sa
+ k run sa-pod --image=nginx --dry-run=client -o yaml > sa-pod.yaml
+ 
+
+ vi sa-pod.yaml
+
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: null
+    labels:
+      run: sa-pod
+    name: sa-pod
+  spec:
+    containers:
+    - image: nginx
+      name: sa-pod
+    serviceAccountName: app-sa
+
+k apply -f sa-pod.yaml
 ```
 </details>
 
