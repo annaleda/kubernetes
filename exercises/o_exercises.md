@@ -20,7 +20,9 @@
 ---
 - Application Observability and Maintenance `15%`
   
-  - [Mock Exercises - Probe](./o-ex/probe-ex.md) 
+  - [Mock Exercises - Probe](./o-ex/probe-ex.md)
+
+  - [Mock Exercises - Logs](./o-ex/logs-ex.md)   
 
 ---
 - Application Environment, Configuration and Security `25%`
