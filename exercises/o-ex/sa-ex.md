@@ -52,7 +52,18 @@ k apply -f sa-pod.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-pod
+  namespace: sa-test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+
+# non mettere sa
 ```
 </details>
 
@@ -69,7 +80,20 @@ k apply -f sa-pod.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: no-token-pod
+spec:
+  automountServiceAccountToken: false
+
+  containers:
+  - name: nginx
+    image: nginx
+
+
+kubectl exec -it no-token-pod -- ls /var/run/secrets/kubernetes.io
 ```
 </details>
 
@@ -85,7 +109,15 @@ k apply -f sa-pod.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create ns sa-test
+ k create sa sa-roling -n sa-test
+ k create role sa-role --verb=list,get --resource=pods -n sa-test
+ k create rolebinding sa-roleb --serviceaccount=sa-test:sa-roling --role=sa-role -n sa-test
+
+ k auth can-i list pods --as=system:serviceaccount:sa-test:sa-roling -n sa-test
+ k auth can-i get pods --as=system:serviceaccount:sa-test:sa-roling -n sa-test
+ 
 ```
 </details>
 
@@ -102,7 +134,37 @@ k apply -f sa-pod.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create sa custom-sa
+ k create deploy sa-deployment --replicas=2 --image=nginx --dry-run=client -o yaml > dep.yaml
+
+ vi dep.yaml
+
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: sa-deployment
+    name: sa-deployment
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: sa-deployment
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: sa-deployment
+      spec:
+        containers:
+        - image: nginx
+          name: nginx
+        serviceAccountName: custom-sa
+
+
 ```
 </details>
 
@@ -117,7 +179,14 @@ k apply -f sa-pod.yaml
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns one
+k create ns two
+k create sa sa-duplicate -n one
+k create sa sa-duplicate -n two
+
+kubectl get sa -n one
+kubectl get sa -n two
 ```
 </details>
 
