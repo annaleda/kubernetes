@@ -391,7 +391,11 @@ Creare Deployment `multi-env-app`
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create deploy multi-env-app --replicas=2 --image=nginx --dry-run=client -o yaml > multi-env-app.yaml
+# modifica labels
+
+kubectl get pods -l 'environment in (dev,staging)'
 ```
 </details>
 
