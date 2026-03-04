@@ -6,13 +6,14 @@
 - Verificare il kubeconfig corrente
 - Obiettivo
   - Elencare tutti i contesti disponibili
-- Validazione
-  - `kubectl config get-contexts`
+
 ---
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k config get-contexts
+k config current-context  
 ```
 </details>
 
@@ -30,7 +31,8 @@
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k config use-context dev-cluster
 ```
 </details>
 
@@ -47,7 +49,10 @@ per il contesto corrente
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns testing
+k config set-context --current --namespace=testing
+
 ```
 </details>
 
@@ -67,7 +72,10 @@ per il contesto corrente
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k create ns staging
+k config set-credentials staging-user --client-certificate=cert.crt --client-key=cert.key
+k config set-context staging-context --cluster=staging-cluster --user=staging-user --namespace=staging
 ```
 </details>
 
@@ -85,7 +93,13 @@ con due file kubeconfig
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+# Supponendo di avere:
+# config-dev.yaml
+# config-staging.yaml
+# esporta la variabile d'ambiente
+
+export KUBECONFIG=config-dev.yaml:config-staging.yaml
 ```
 </details>
 
@@ -103,7 +117,11 @@ con due file kubeconfig
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+k config view
+# verifica endpoints, memoria, cpu
+
+kubectl config set-cluster cluster-name --server=https://correct-api-server:6443
 ```
 </details>
 
