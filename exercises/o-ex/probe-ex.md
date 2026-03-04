@@ -235,7 +235,38 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+ k create deploy startup-app --image=nginx --dry-run=client -o yaml > deploy5.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: startup-app
+  name: startup-app
+spec:
+  selector:
+    matchLabels:
+      app: startup-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: startup-app
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 5
+
 ```
 </details>
 
@@ -257,7 +288,44 @@ spec:
 <details>
 <summary>Soluzione</summary>
   
-```  
+```
+
+ k create deploy broken-probe --image=nginx --dry-run=client -o yaml > deploy6.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: broken-probe
+  name: broken-probe
+spec:
+  selector:
+    matchLabels:
+      app: broken-probe
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: broken-probe
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+
+        livenessProbe:
+          httpGet:
+            path: /wrongpath
+            port: 80
+
+
+soluzione:
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+
 ```
 </details>
 
