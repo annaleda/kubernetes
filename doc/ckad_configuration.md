@@ -59,7 +59,7 @@ env:
   value: "production"
 ```
 
-### Da ConfigMap / Secret (montare nel container tramite envFrom)
+### Da ConfigMap / Secret (variabili d'ambiente tramite envFrom)
 
 ```yaml
 envFrom:
