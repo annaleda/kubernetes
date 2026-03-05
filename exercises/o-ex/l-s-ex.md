@@ -400,3 +400,22 @@ kubectl get pods -l 'environment in (dev,staging)'
 </details>
 
 ---
+
+Cheatsheet Label
+
+```
+
+k label node l-node key=value
+k label deploy...
+k label svc...
+k label cm...
+k label crd-ex...
+k label po...
+
+# modifica
+k label po l-po key=value --overwrite
+# delete
+k label po l-po key-
+
+```
+
