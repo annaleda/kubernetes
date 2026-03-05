@@ -34,9 +34,11 @@
 
 ### 0 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
-### 1 [Mock Exams](./exems/exams.md)
+### 1 [Practice Labs](./exercises/lab.md)
 
-### 2 [Mock Exam solutions](./exems/sol-exams.md)
+### 2 [Mock Exams](./exems/exams.md)
+
+### 3 [Mock Exam solutions](./exems/sol-exams.md)
 
 ---
 
