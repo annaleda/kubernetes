@@ -7,3 +7,5 @@
 ### 4 [Mock Exam - 4](./sol-exem-4.md)
 
 ### 5 [Mock Exam - 5](./sol-exem-5.md)
+
+### 5 [Mock Exam - 6](./sol-exem-6.md)
