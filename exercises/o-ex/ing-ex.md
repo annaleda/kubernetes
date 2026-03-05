@@ -167,7 +167,7 @@ k describe ingress secure-ingress
 
 ### ING-4 — Multiple Hosts
 
-- Ingress
+- Ingress host separati
   - app1.local
   - app2.local
 
