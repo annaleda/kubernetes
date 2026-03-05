@@ -1,264 +1,774 @@
 
 ## Mock Exam-4 
+
 ---
 
-### Multi-Container Logging Architecture
-Create pod observability-stack.
+# Q1 — Multi-Container Logging Architecture
 
-Requirements:
+## Task
 
-Container 1:
-- Name: api-service
-- Image: nginx
-- Port: 80
+Create a Pod:
 
-Container 2:
-- Name: metrics-collector
-- Image: busybox
-- Command:
+```
+observability-stack
+```
 
+### Container 1
+
+| Field | Value       |
+| ----- | ----------- |
+| Name  | api-service |
+| Image | nginx       |
+| Port  | 80          |
+
+### Container 2
+
+| Field | Value             |
+| ----- | ----------------- |
+| Name  | metrics-collector |
+| Image | busybox           |
+
+Command:
+
+```
 sh -c "while true; do echo metrics >> /var/log/metrics.txt; sleep 5; done"
+```
 
-
-Ensure containers share volume at:
-
-/var/log
+Both containers must share the same volume mounted at:
 
 ```
+/var/log
 ```
 
 ---
 
-### Namespace and RBAC
+## Solution
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: observability-stack
+
+spec:
+  volumes:
+  - name: logs
+    emptyDir: {}
+
+  containers:
+
+  - name: api-service
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: logs
+      mountPath: /var/log
+
+  - name: metrics-collector
+    image: busybox
+    command:
+    - sh
+    - -c
+    - while true; do echo metrics >> /var/log/metrics.txt; sleep 5; done
+    volumeMounts:
+    - name: logs
+      mountPath: /var/log
+```
+
+---
+
+# Q2 — Namespace + RBAC
+
+## Task
 
 Create namespace:
 
+```
 secure-apps
-
+```
 
 Create ServiceAccount:
 
+```
 app-reader-sa
-
-
-Grant read-only access to pods in namespace secure-apps.
-
-Use Role and RoleBinding.
-
 ```
-```
+
+Grant **read-only access to Pods** inside namespace `secure-apps`.
+
+Use:
+
+* Role
+* RoleBinding
+
 ---
 
-### Advanced Scheduling (Affinity + AntiAffinity)
+## Solution
 
-Create Deployment high-availability-app.
+### Create Namespace
 
-Requirements:
+```bash
+kubectl create ns secure-apps
+```
 
-- Image: nginx:1.23
-- Replicas: 3
+### Create ServiceAccount
 
-Rules:
+```bash
+kubectl create sa app-reader-sa -n secure-apps
+```
 
-- Prefer nodes with label:
+### Role
 
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: secure-apps
+
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get","list","watch"]
+```
+
+### RoleBinding
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-binding
+  namespace: secure-apps
+
+subjects:
+- kind: ServiceAccount
+  name: app-reader-sa
+  namespace: secure-apps
+
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+---
+
+# Q3 — Advanced Scheduling (Affinity)
+
+## Task
+
+Create Deployment:
+
+```
+high-availability-app
+```
+
+Specifications:
+
+| Field    | Value      |
+| -------- | ---------- |
+| Image    | nginx:1.23 |
+| Replicas | 3          |
+
+Scheduling Rules:
+
+Prefer nodes with label:
+
+```
 zone=eu-central-1a
-
-
-- Avoid scheduling pods on nodes where same app is running.
-
-Use podAffinity and podAntiAffinity.
-
 ```
-```
+
+Avoid scheduling pods on nodes where the **same app is already running**.
+
+Use:
+
+* podAffinity
+* podAntiAffinity
+
 ---
 
-### Network Security Hard Task
+## Solution
 
-Inside namespace secure-apps create NetworkPolicy deny-external.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
 
-Behavior:
+metadata:
+  name: high-availability-app
 
-Allow ingress only:
+spec:
+  replicas: 3
 
-- From namespace secure-apps
-- From pods with label:
+  selector:
+    matchLabels:
+      app: ha-app
 
+  template:
+    metadata:
+      labels:
+        app: ha-app
+
+    spec:
+
+      affinity:
+
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: zone
+                operator: In
+                values:
+                - eu-central-1a
+
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: ha-app
+              topologyKey: kubernetes.io/hostname
+
+      containers:
+      - name: nginx
+        image: nginx:1.23
+```
+
+---
+
+# Q4 — Network Security
+
+## Task
+
+Inside namespace:
+
+```
+secure-apps
+```
+
+Create NetworkPolicy:
+
+```
+deny-external
+```
+
+Allow ingress only from:
+
+* namespace `secure-apps`
+* pods with label
+
+```
 access=internal
-
-
-Block:
-- External traffic
-
 ```
-```
+
+Block all external traffic.
+
 ---
 
-### Storage Multi-Step Task
+## Solution
 
-Create:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 
-PersistentVolume:
-- Name: pv-backup-data
-- Size: 500Mi
-- AccessMode: ReadWriteOnce
-- Path: /mnt/backup
+metadata:
+  name: deny-external
+  namespace: secure-apps
 
-Then:
+spec:
+  podSelector: {}
 
-Create PersistentVolumeClaim pvc-backup-data.
+  policyTypes:
+  - Ingress
 
-Finally:
+  ingress:
+  - from:
 
-Create pod backup-worker that mounts PVC at:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: secure-apps
 
+    - podSelector:
+        matchLabels:
+          access: internal
+```
+
+---
+
+# Q5 — Storage Multi-Step
+
+## Task
+
+Create PersistentVolume:
+
+| Field      | Value          |
+| ---------- | -------------- |
+| Name       | pv-backup-data |
+| Size       | 500Mi          |
+| AccessMode | ReadWriteOnce  |
+| Path       | /mnt/backup    |
+
+Create PVC:
+
+```
+pvc-backup-data
+```
+
+Create Pod:
+
+```
+backup-worker
+```
+
+Mount volume at:
+
+```
 /backup
+```
 
-```
-```
 ---
 
-### ConfigMap Advanced Injection
+## Solution
 
-Create ConfigMap app-settings.
+### PersistentVolume
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+
+metadata:
+  name: pv-backup-data
+
+spec:
+  capacity:
+    storage: 500Mi
+
+  accessModes:
+  - ReadWriteOnce
+
+  hostPath:
+    path: /mnt/backup
+```
+
+---
+
+### PersistentVolumeClaim
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: pvc-backup-data
+
+spec:
+  accessModes:
+  - ReadWriteOnce
+
+  resources:
+    requests:
+      storage: 200Mi
+```
+
+---
+
+### Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: backup-worker
+
+spec:
+  containers:
+  - name: worker
+    image: busybox
+    command:
+    - sleep
+    - "3600"
+
+    volumeMounts:
+    - name: backup
+      mountPath: /backup
+
+  volumes:
+  - name: backup
+    persistentVolumeClaim:
+      claimName: pvc-backup-data
+```
+
+---
+
+# Q6 — ConfigMap Environment Injection
+
+## Task
+
+Create ConfigMap:
+
+```
+app-settings
+```
 
 Data:
 
+```
 APP_MODE=production
 CACHE_ENABLED=true
 LOG_LEVEL=info
+```
 
-
-Deploy pod config-app using busybox image.
-
-Inject ConfigMap as environment variables.
+Create Pod:
 
 ```
+config-app
 ```
+
+Use image:
+
+```
+busybox
+```
+
+Inject ConfigMap as **environment variables**.
+
 ---
 
-### Deployment Troubleshooting Scenario (Very Real Exam Trap)
+## Solution
 
-Deployment broken-service exists.
+### ConfigMap
 
-Symptoms:
-- Pods are created but stay in Pending state.
+```bash
+kubectl create configmap app-settings \
+--from-literal=APP_MODE=production \
+--from-literal=CACHE_ENABLED=true \
+--from-literal=LOG_LEVEL=info
+```
 
-Task:
+### Pod
 
-1. Identify root cause.
-2. Fix scheduling or resource constraint.
-3. Ensure:
-   - 2 replicas running.
+```yaml
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: config-app
+
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sleep","3600"]
+
+    envFrom:
+    - configMapRef:
+        name: app-settings
+```
+
+---
+
+# Q7 — Deployment Troubleshooting
+
+## Task
+
+Deployment:
+
+```
+broken-service
+```
+
+Problem:
+
+Pods remain in:
+
+```
+Pending
+```
+
+Fix scheduling issue and ensure:
+
+```
+2 replicas running
+```
 
 Check:
-- Node selector
-- Resource requests
-- Taints and tolerations
 
-```
-```
+* nodeSelector
+* resource requests
+* taints/tolerations
+
 ---
 
-### Helm Advanced Task
+## Possible Fix Example
+
+```bash
+kubectl edit deployment broken-service
+```
+
+Remove incorrect nodeSelector or adjust resources.
+
+Example corrected section:
+
+```yaml
+spec:
+  replicas: 2
+```
+
+---
+
+# Q8 — Helm Advanced
+
+## Task
 
 Install Helm chart:
 
-Release name:
+| Field     | Value                |
+| --------- | -------------------- |
+| Release   | secure-nginx-release |
+| Chart     | bitnami/nginx        |
+| Namespace | helm-secure          |
 
-secure-nginx-release
-
-
-Chart:
-
-bitnami/nginx
-
-
-Namespace:
-
-helm-secure
-
-
-Verify deployment.
-
-```
-```
 ---
 
-### Kustomize Multi-Overlay Architecture
+## Solution
 
-Create structure:
+```bash
+kubectl create ns helm-secure
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
 
+helm install secure-nginx-release bitnami/nginx -n helm-secure
+```
 
+Verify:
+
+```bash
+helm list -n helm-secure
+```
+
+---
+
+# Q9 — Kustomize Multi Overlay
+
+## Task
+
+Structure:
+
+```
 base/
 dev/
 prod/
+```
 
+Base image:
 
-Base:
-- nginx:1.21
+```
+nginx:1.21
+```
 
 Dev overlay:
-- namespace dev-env
-- image nginx:1.22
+
+```
+namespace: dev-env
+image: nginx:1.22
+```
 
 Prod overlay:
-- namespace prod-env
-- image nginx:1.23
 
 ```
+namespace: prod-env
+image: nginx:1.23
 ```
+
 ---
 
-### Health Probes Advanced
+## Solution
 
-Update deployment monitoring-app.
+### Base kustomization
+
+```yaml
+resources:
+- deployment.yaml
+```
+
+---
+
+### Dev overlay
+
+```yaml
+namespace: dev-env
+
+images:
+- name: nginx
+  newTag: "1.22"
+```
+
+---
+
+### Prod overlay
+
+```yaml
+namespace: prod-env
+
+images:
+- name: nginx
+  newTag: "1.23"
+```
+
+---
+
+# Q10 — Health Probes
+
+## Task
+
+Update Deployment:
+
+```
+monitoring-app
+```
 
 Add:
 
-Liveness probe:
-- HTTP GET /status
-- Port 8080
-- Initial delay: 15s
-
-Readiness probe:
-- HTTP GET /ready
-- Port 8080
+### Liveness Probe
 
 ```
+HTTP GET /status
+port 8080
+initialDelaySeconds 15
 ```
+
+### Readiness Probe
+
+```
+HTTP GET /ready
+port 8080
+```
+
 ---
 
-### Ingress Multi-Path Routing
+## Solution
 
-Create Ingress app-router.
+```yaml
+livenessProbe:
+  httpGet:
+    path: /status
+    port: 8080
+  initialDelaySeconds: 15
 
-Rules:
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+```
+
+---
+
+# Q11 — Ingress Multi-Path
+
+## Task
+
+Create Ingress:
+
+```
+app-router
+```
 
 Host:
 
+```
 app.training.local
-
+```
 
 Paths:
 
-/api → service api-service port 80
-/web → service web-service port 80
+| Path | Service     |
+| ---- | ----------- |
+| /api | api-service |
+| /web | web-service |
 
-```
-```
 ---
 
-### Debugging Multi-Container Pod
+## Solution
 
-Pod multi-debug is crashing.
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: app-router
+
+spec:
+  rules:
+  - host: app.training.local
+
+    http:
+      paths:
+
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+
+      - path: /web
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 80
+```
+
+---
+
+# Q12 — Debugging Multi-Container Pod
+
+## Task
+
+Pod:
+
+```
+multi-debug
+```
+
+Problem:
+
+Pod is **crashing**.
 
 Tasks:
 
-- Find failing container.
-- Fix startup command.
-- Ensure pod is running.
+1. Identify failing container
+2. Fix startup command
+3. Ensure pod runs correctly
 
+---
+
+## Debug Steps
+
+Check pod:
+
+```bash
+kubectl describe pod multi-debug
 ```
+
+Check logs:
+
+```bash
+kubectl logs multi-debug -c <container-name>
 ```
+
+Edit pod:
+
+```bash
+kubectl edit pod multi-debug
+```
+
+Fix incorrect command or arguments.
+
 ---
