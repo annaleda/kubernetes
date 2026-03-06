@@ -12,7 +12,7 @@
 
 ### 4 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
-### 5 [Kubernates Documentation](https://kubernetes.io/docs/home/)
+### 5 [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 
 ### 6 [Tabella comandi bash](./doc/bash.md)
 
