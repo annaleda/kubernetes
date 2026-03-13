@@ -1,7 +1,8 @@
 # CKAD Practice Labs
 
 ---
-
+- [Practice Lab 0](./lab-0.md)
+  
 - [Practice Lab 1](./lab-1.md)
 
 - [Practice Lab 2](./lab-2.md)
