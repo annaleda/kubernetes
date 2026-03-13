@@ -31,8 +31,9 @@
 ---
 
 ## 🔗 CKAD: mock exams
+### 0.0 [CKAD Practice Labs](./exercises/ckad-practice-labs.md)
 
-### 0 [KodeKlaud Free Challenges](./exercises/challenges.md)
+### 0.1 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
 ### 1 [Practice Labs](./exercises/lab.md)
 
