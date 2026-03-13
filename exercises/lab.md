@@ -7,3 +7,5 @@
 - [Practice Lab 2](./lab-2.md)
 
 - [Practice Lab 3,4](./labs.md)
+
+- [Practice Callenge Tests](https://github.com/zealvora/certified-kubernetes-application-developer/tree/master/practice-tests)  
