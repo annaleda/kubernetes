@@ -3,9 +3,9 @@
 --- 
 ### 5.1 [Services & Networking](../doc/ckad_services_networking.md)
    - (Service,Type of Service,Port,Ingress,Network Policies)
-### 5.1.2 [Network Policies examples](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+- 5.1.2 [Network Policies examples](https://github.com/ahmetb/kubernetes-network-policy-recipes)
 
-### 5.1.2 [Network Policies exexcises](esercizi-network-policies.md)
+- 5.1.3 [Network Policies exexcises](./esercizi-network-policies.md)
 ---
 
 ### 5.2 LoadBalancer
