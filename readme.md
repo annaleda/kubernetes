@@ -28,6 +28,8 @@
 
 ### 4 [Other Exercises](./exercises/o_exercises.md)
 
+### 5 [Workbooks](./exercises/workbooks.md)
+
 ---
 
 ## 🔗 CKAD: mock exams
