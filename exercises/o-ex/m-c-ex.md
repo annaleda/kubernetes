@@ -35,34 +35,37 @@ PS C:\Users\annaleda\ckad\o-ex\1\1> cat order-app.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: null
-  labels:
-    run: order-app
   name: order-app
 spec:
-  containers:
-  - image: nginx
-    name: app
-    resources: {}
-    command:
-    - sleep 5
-    volumeMounts:
-    - name: shared-logs
-      mountPath: /var/log/app.log
-    ports:
-    - containerPort: 80
-  - image: busybox
-    name: logger
-    volumeMounts:
-    - name: shared-logs
-      mountPath: /var/log/app.log
   volumes:
     - name: shared-logs
       emptyDir: {}
 
-  dnsPolicy: ClusterFirst
-  restartPolicy: Always
-status: {}
+  containers:
+    - name: app
+      image: nginx
+      ports:
+        - containerPort: 80
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          touch /var/log/app.log;
+          while true; do
+            echo "$(date) order-app running" >> /var/log/app.log;
+            sleep 5;
+          done
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log
+
+    - name: logger
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - tail -f /var/log/app.log
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log
 
 
 k apply -f order-app.yaml
