@@ -60,7 +60,7 @@ echo "second line" >> file.txt
 wc -l < file.txt
 ```
 ---
-
+ - [guide redirect bash](./exercises/bash_redirect_guide.md)
  - [esempi bash](./exercises/bash_k8s_examples.md)
  - [esercizi bash](./exercises/bash_k8s_exercises.md)
  - [soluzioni bash](./exercises/bash_k8s_solutions.md)
