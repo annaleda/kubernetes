@@ -59,3 +59,9 @@ echo "second line" >> file.txt
 # Conta il numero di righe del file e stampa il risultato
 wc -l < file.txt
 ```
+---
+
+ - [esempi bash](./exercises/bash_k8s_examples.md)
+ - [esercizi bash](./exercises/bash_k8s_exercises.md)
+
+---   
