@@ -14,4 +14,6 @@
      
 ### 4.4 [CDR: Custom Resource Definition, Operators](../doc/cdr.md)
 
+### 4.5 [API Versions, API Deprecation, CDR: Custom Resource Definition](../doc/ver_depr_cdr.md)
+
 
