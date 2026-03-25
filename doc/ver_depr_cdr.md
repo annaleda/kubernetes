@@ -1,4 +1,4 @@
-# CKAD Review: API Versions, Deprecations e CRD
+# API Versions, Deprecations e CRD
 
 ---
 
