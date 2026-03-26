@@ -6,7 +6,7 @@
 | **`cd`**                        | Cambia directory           | Spostarsi tra cartelle   | `cd ..` torna indietro           |          |   |
 | **`pwd`**                       | Mostra directory corrente  | Sapere dove sei          |                                  |          |   |
 | **`mkdir`**                     | Crea cartella              | Organizzare file         | `-p` crea path completi          |          |   |
-| **`rm`**                        | Cancella file/cartelle     | Pulizia filesystem       | `-r` ricorsivo ⚠️                |          |   |
+| **`rm`**                        | Cancella file/cartelle     | Pulizia filesystem       | `-r` ricorsivo                   |          |   |
 | **`cat`**                       | Mostra contenuto file      | Lettura veloce file      |                                  |          |   |
 | **`less`**                      | Lettura file paginata      | Log o file lunghi        | `q` per uscire                   |          |   |
 | **`head`**                      | Prime righe file           | Anteprima file           | `-n 10`                          |          |   |
