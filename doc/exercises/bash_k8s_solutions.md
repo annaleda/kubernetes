@@ -1,6 +1,6 @@
 # Bash & Kubernetes -- Soluzioni
 
-## 🟢 Facile
+
 
 ### 1. Loop infinito
 
@@ -21,7 +21,6 @@ while [ $i -le 10 ]; do
 done
 ```
 
-## 🟡 Medio
 
 ### 3. Curl semplice
 
@@ -54,7 +53,6 @@ while true; do
 done
 ```
 
-## 🟠 Difficile
 
 ### 6. Log su file
 
@@ -78,7 +76,6 @@ done
 echo "Fine tentativi"
 ```
 
-## 🔴 Avanzato (CKAD style)
 
 ### 8. Health check
 
