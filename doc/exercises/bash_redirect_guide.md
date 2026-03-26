@@ -1,6 +1,6 @@
 # Bash -- Redirect, stdout, stderr
 
-## 📦 Concetti base
+##  Concetti base
 
 In Linux ogni comando ha 3 stream:
 
@@ -12,7 +12,7 @@ In Linux ogni comando ha 3 stream:
 
 ------------------------------------------------------------------------
 
-## 🔁 Redirect base
+##  Redirect base
 
 ### ➤ stdout (output normale)
 
@@ -40,7 +40,7 @@ ls file_inesistente 2> error.txt
 
 ------------------------------------------------------------------------
 
-## 🔀 Unire stdout e stderr
+##  Unire stdout e stderr
 
 ``` bash
 comando > file.txt 2>&1
@@ -50,7 +50,7 @@ comando > file.txt 2>&1
 
 ------------------------------------------------------------------------
 
-## 🕳️ /dev/null
+##  /dev/null
 
 ### ➤ Ignorare output
 
@@ -82,7 +82,7 @@ comando > /dev/null 2>&1
 
 ------------------------------------------------------------------------
 
-## 🧪 Esempi pratici
+##  Esempi pratici
 
 ### ✔ Nascondere output ma controllare esito
 
@@ -112,7 +112,7 @@ curl localhost:80 > output.log 2>&1
 
 ------------------------------------------------------------------------
 
-## 🧠 TL;DR
+##  TL;DR
 
 -   `>` = redirect stdout
 -   `>>` = append stdout
@@ -122,7 +122,7 @@ curl localhost:80 > output.log 2>&1
 
 ------------------------------------------------------------------------
 
-## 💥 Mental model
+##  Mental model
 
 ``` text
 stdout (1) ----> output
