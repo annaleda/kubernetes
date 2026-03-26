@@ -35,6 +35,7 @@
 | **`chmod`**                     | Cambia permessi            | Sicurezza file           | `+x` per eseguire                |          |   |
 | **`chown`**                     | Cambia proprietario        | Gestione utenti          |                                  |          |   |
 | **`apk`**                       | Package manager di Alpine Linux | Installare pacchetti | usato in immagini Docker Alpine |
+| **`wc`** | Conta righe/parole/caratteri | Analisi file o output | spesso usato con pipe `\|` |
 
 
 Esempi
