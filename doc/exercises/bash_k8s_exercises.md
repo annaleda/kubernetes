@@ -1,7 +1,5 @@
 # Bash & Kubernetes -- Esercizi
 
-## 🟢 Facile
-
 ### 1. Loop infinito
 
 Scrivi uno script che stampa "hello world" ogni 3 secondi.
@@ -9,8 +7,6 @@ Scrivi uno script che stampa "hello world" ogni 3 secondi.
 ### 2. Contatore
 
 Stampa i numeri da 1 a 10 usando un loop.
-
-## 🟡 Medio
 
 ### 3. Curl semplice
 
@@ -25,7 +21,6 @@ Modifica l'esercizio sopra aggiungendo la data prima di ogni output.
 Scrivi uno script che: - chiama un endpoint - stampa "OK" se funziona -
 stampa "ERROR" se fallisce
 
-## 🟠 Difficile
 
 ### 6. Log su file
 
@@ -34,8 +29,6 @@ Salva l'output di curl in un file `log.txt` con timestamp.
 ### 7. Retry limitato
 
 Fai massimo 5 tentativi di chiamata HTTP, poi esci.
-
-## 🔴 Avanzato (CKAD style)
 
 ### 8. Health check
 
