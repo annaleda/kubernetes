@@ -1,26 +1,41 @@
-| Comando                         | Descrizione               | Quando usarlo            |                         |
-| ------------------------------- | ------------------------- | ------------------------ | ----------------------- |
-| **`ls`**                        | Lista file e cartelle     | Navigare nel filesystem  |                         |
-| **`cd`**                        | Cambia directory          | Spostarsi tra cartelle   |                         |
-| **`pwd`**                       | Mostra directory corrente | Sapere dove sei          |                         |
-| **`mkdir`**                     | Crea cartella             | Organizzare file         |                         |
-| **`rm`**                        | Cancella file/cartelle    | Pulizia filesystem       |                         |
-| **`cat`**                       | Mostra contenuto file     | Lettura veloce file      |                         |
-| **`less`**                      | Lettura file paginata     | Log o file lunghi        |                         |
-| **`head`**                      | Prime righe file          | Anteprima file           |                         |
-| **`tail`**                      | Ultime righe file         | Log realtime             |                         |
-| **`grep`**                      | Cerca testo               | Filtrare output          |                         |
-| **`awk`**                       | Estrai colonne            | Parsing dati             |                         |
-| **`sed`**                       | Modifica testo            | Replace stringhe         |                         |
-| **`while true; do ... done`**   | Loop infinito             | Task background          |                         |
-| **`for i in ...; do ... done`** | Ciclo iterativo           | Automazioni              |                         |
-| **`ps`**                        | Lista processi            | Monitor sistema          |                         |
-| **`top`**                       | Monitor processi live     | Analisi performance      |                         |
-| **`kill`**                      | Termina processo          | Gestione processi        |                         |
-| **`>`**                         | Sovrascrive output        | Scrittura file           |                         |
-| **`>>`**                        | Aggiunge output           | Logging                  |                         |
-| **`2>`**                        | Error output redirect     | Debug script             |                         |
-| **` \| ` (pipe)**               | Passa output tra comandi  | Filtri e trasformazioni  |                         |
+
+
+| Comando                         | Descrizione                | Quando usarlo            | Note utili                       |          |   |
+| ------------------------------- | -------------------------- | ------------------------ | -------------------------------- | -------- | - |
+| **`ls`**                        | Lista file e cartelle      | Navigare nel filesystem  | `-l`, `-a` per dettagli          |          |   |
+| **`cd`**                        | Cambia directory           | Spostarsi tra cartelle   | `cd ..` torna indietro           |          |   |
+| **`pwd`**                       | Mostra directory corrente  | Sapere dove sei          |                                  |          |   |
+| **`mkdir`**                     | Crea cartella              | Organizzare file         | `-p` crea path completi          |          |   |
+| **`rm`**                        | Cancella file/cartelle     | Pulizia filesystem       | `-r` ricorsivo ⚠️                |          |   |
+| **`cat`**                       | Mostra contenuto file      | Lettura veloce file      |                                  |          |   |
+| **`less`**                      | Lettura file paginata      | Log o file lunghi        | `q` per uscire                   |          |   |
+| **`head`**                      | Prime righe file           | Anteprima file           | `-n 10`                          |          |   |
+| **`tail`**                      | Ultime righe file          | Log realtime             | `-f` per live                    |          |   |
+| **`grep`**                      | Cerca testo                | Filtrare output          | `-i`, `-r`                       |          |   |
+| **`awk`**                       | Estrai colonne             | Parsing dati             | molto potente                    |          |   |
+| **`sed`**                       | Modifica testo             | Replace stringhe         | editing veloce                   |          |   |
+| **`while true; do ... done`**   | Loop infinito              | Task background          | attenzione CPU                   |          |   |
+| **`for i in ...; do ... done`** | Ciclo iterativo            | Automazioni              |                                  |          |   |
+| **`ps`**                        | Lista processi             | Monitor sistema          |                                  |          |   |
+| **`top`**                       | Monitor processi live      | Analisi performance      |                                  |          |   |
+| **`kill`**                      | Termina processo           | Gestione processi        | `kill -9` forza                  |          |   |
+| **`>`**                         | Sovrascrive output         | Scrittura file           | crea file se non esiste          |          |   |
+| **`>>`**                        | Aggiunge output            | Logging                  | append                           |          |   |
+| **`2>`**                        | Redireziona errori         | Debug script             | stderr                           |          |   |
+| **`<`**                         | Input da file              | Leggere file nei comandi | es: `done < file.txt`            |          |   |
+| **`<<`**                        | Here document              | Input multilinea         | script/bash inline               |          |   |
+| **`<<<`**                       | Here string                | Input rapido             | es: `grep ciao <<< "ciao mondo"` |          |   |
+| **`\|` (pipe)**                 | Passa output tra comandi   | Filtri e trasformazioni  | base della shell                 |          |   |
+| **`&&`**                        | Esegue se precedente OK    | Controllo flusso         | chaining                         |          |   |
+| **`\|\| `**                     | Esegue se precedente fallisce | Fallback              |                                  |
+| **`&`**                         | Esegue in background       | Task asincroni           |                                  |          |   |
+| **`wait`**                      | Aspetta processi           | Sincronizzazione         | script avanzati                  |          |   |
+| **`xargs`**                     | Passa input come argomenti | Pipeline avanzate        | spesso con `find`                |          |   |
+| **`find`**                      | Cerca file                 | Ricerca avanzata         | super usato                      |          |   |
+| **`chmod`**                     | Cambia permessi            | Sicurezza file           | `+x` per eseguire                |          |   |
+| **`chown`**                     | Cambia proprietario        | Gestione utenti          |                                  |          |   |
+| **`apk`**                       | Package manager di Alpine Linux | Installare pacchetti | usato in immagini Docker Alpine |
+
 
 Esempi
 
