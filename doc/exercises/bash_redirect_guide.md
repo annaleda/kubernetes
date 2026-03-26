@@ -4,11 +4,11 @@
 
 In Linux ogni comando ha 3 stream:
 
-  Stream   Numero   Descrizione
-  -------- -------- ----------------
-  stdin    0        input
-  stdout   1        output normale
-  stderr   2        errori
+  |Stream  | Numero  | Descrizione|
+  |--------| --------| ----------------|
+  |stdin   | 0      |  input|
+  |stdout  | 1      | output normale|
+  |stderr  | 2      |  errori|
 
 ------------------------------------------------------------------------
 
