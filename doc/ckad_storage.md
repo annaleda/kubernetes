@@ -3,8 +3,6 @@
 
 ###  Storage
 
-## Teoria
-
 ---
 
 ## Volumes
