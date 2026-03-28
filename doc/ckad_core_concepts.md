@@ -1,8 +1,7 @@
 - [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Design](../arg/first_arg.md)   |
 ---
-# CKAD Core Concepts
+### Core Concepts
 
-## Teoria
 ---
 
 <img width="1536" height="1024" alt="556be577-2371-4087-ba9a-9c58a13dcfb9" src="https://github.com/user-attachments/assets/e42ed80a-3608-4be8-be22-a474e647f695" />
