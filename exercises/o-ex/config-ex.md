@@ -1,5 +1,5 @@
 
-###  Configuration (6 esercizi)
+###  Configuration (12 esercizi)
 
 ## CONF-1 — ConfigMap
 
@@ -245,6 +245,272 @@ spec:
     secret:
       secretName: app-secret
 ```
+</details>
+
+---
+
+## CONF-7 — ConfigMap come env (envFrom)
+
+- ConfigMap: `env-config`
+  - APP_ENV=dev
+  - LOG_LEVEL=debug
+
+- Pod: `envfrom-pod`
+
+- Obiettivo
+  - Usare envFrom per caricare tutte le variabili
+
+- Validazione
+  - Variabili visibili nel container
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create cm env-config \
+  --from-literal=APP_ENV=dev \
+  --from-literal=LOG_LEVEL=debug
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: envfrom-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","env && sleep 3600"]
+    envFrom:
+    - configMapRef:
+        name: env-config
+```
+
+```sh
+k exec -it envfrom-pod -- env
+```
+
+</details>
+
+---
+
+## CONF-8 — Secret come variabili d’ambiente
+
+- Secret: `env-secret`
+  - API_KEY=12345
+
+- Pod: `secret-env-pod`
+
+- Obiettivo
+  - Usare Secret come variabile d’ambiente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create secret generic env-secret \
+  --from-literal=API_KEY=12345
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","env && sleep 3600"]
+    env:
+    - name: API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: env-secret
+          key: API_KEY
+```
+
+</details>
+
+---
+
+## CONF-9 — ConfigMap singola chiave (env)
+
+- ConfigMap: `single-config`
+  - key: MODE
+  - value: test
+
+- Pod: `single-env-pod`
+
+- Obiettivo
+  - Usare solo una chiave specifica
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create cm single-config --from-literal=MODE=test
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: single-env-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","env && sleep 3600"]
+    env:
+    - name: MODE
+      valueFrom:
+        configMapKeyRef:
+          name: single-config
+          key: MODE
+```
+
+</details>
+
+---
+
+## CONF-10 — ConfigMap con subPath
+
+- ConfigMap: `file-config`
+  - file: app.conf
+
+- Pod: `subpath-config-pod`
+
+- Obiettivo
+  - Montare SOLO un file specifico
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create cm file-config --from-literal=app.conf="hello=config"
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: subpath-config-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","cat /etc/app.conf && sleep 3600"]
+    volumeMounts:
+    - name: config
+      mountPath: /etc/app.conf
+      subPath: app.conf
+  volumes:
+  - name: config
+    configMap:
+      name: file-config
+```
+
+</details>
+
+---
+
+## CONF-11 — ResourceQuota (debug superamento)
+
+- Namespace: `quota-test`
+
+- Configurazione
+  - max pods: 1
+
+- Obiettivo
+  - Creare 2 Pod e capire perché fallisce
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns quota-test
+```
+
+```yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pod-limit
+  namespace: quota-test
+spec:
+  hard:
+    pods: "1"
+```
+
+```sh
+k apply -f quota.yaml
+k run pod1 --image=nginx -n quota-test
+k run pod2 --image=nginx -n quota-test
+```
+
+👉 il secondo fallisce
+
+```sh
+k describe quota -n quota-test
+```
+
+</details>
+
+---
+
+## CONF-12 — LimitRange (requests automatici)
+
+- Namespace: `limit-test`
+
+- Configurazione
+  - default request CPU: 100m
+  - default limit CPU: 300m
+
+- Obiettivo
+  - Pod senza risorse → valori automatici
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns limit-test
+```
+
+```yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-limit
+  namespace: limit-test
+spec:
+  limits:
+  - type: Container
+    defaultRequest:
+      cpu: 100m
+    default:
+      cpu: 300m
+```
+
+```sh
+k apply -f limit.yaml
+k run test --image=nginx -n limit-test
+k describe pod test -n limit-test
+```
+
 </details>
 
 ---
