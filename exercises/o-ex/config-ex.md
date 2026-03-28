@@ -1,5 +1,5 @@
 
-###  Configuration (12 esercizi)
+###  Configuration (24 esercizi)
 
 ## CONF-1 — ConfigMap
 
