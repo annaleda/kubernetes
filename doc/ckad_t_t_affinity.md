@@ -1,5 +1,6 @@
-# Node, Taints and Tolerations / Affinity
-## Teoria
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Environment](../arg/fourth_arg.md)   |
+---
+### Node, Taints and Tolerations / Affinity
 
 ---
 ## Node
