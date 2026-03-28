@@ -1,5 +1,5 @@
 
-###  Labels and Selectors (6 esercizi)
+###  Labels and Selectors (12 esercizi)
 
 ## LS-1 — Deployment con Label Specifiche
 
@@ -418,4 +418,238 @@ k label po l-po key=value --overwrite
 k label po l-po key-
 
 ```
+
+## LS-7 — Label mismatch tra ReplicaSet e Pod (debug)
+
+- Deployment: `mismatch-app`
+
+- Configurazione
+  - selector:
+    app=web
+  - template label:
+    app=frontend
+
+- Obiettivo
+  - Identificare perché i Pod NON vengono creati
+
+- Validazione
+  - Nessun Pod Running
+  - Fix del problema
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Problema:
+- selector ≠ label template
+
+Fix:
+
+```yaml
+selector:
+  matchLabels:
+    app: web
+
+template:
+  metadata:
+    labels:
+      app: web
+```
+
+Debug:
+
+```sh
+k describe deploy mismatch-app
+```
+
+</details>
+
+---
+
+## LS-8 — Service seleziona subset di Pod
+
+- Deployment: `multi-tier-app`
+
+- Labels:
+  - app=myapp
+  - tier=frontend
+  - tier=backend
+
+- Creare Service:
+  - Nome: `frontend-svc`
+  - Selector:
+    - tier=frontend
+
+- Obiettivo
+  - Il Service deve selezionare solo frontend
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+spec:
+  selector:
+    tier: frontend
+  ports:
+  - port: 80
+```
+
+Verifica:
+
+```sh
+k get pods --show-labels
+k get endpoints frontend-svc
+```
+
+</details>
+
+---
+
+## LS-9 — Label su Deployment già esistente
+
+- Deployment: `update-label-deploy`
+
+- Task
+  - Aggiungere label:
+    team=devops
+
+- Obiettivo
+  - Applicare label sia al Deployment che ai Pod
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k label deploy update-label-deploy team=devops
+```
+
+⚠️ per i Pod:
+
+```sh
+k edit deploy update-label-deploy
+```
+
+aggiungere:
+
+```yaml
+template:
+  metadata:
+    labels:
+      team: devops
+```
+
+</details>
+
+---
+
+## LS-10 — Selector complesso con matchExpressions
+
+- Deployment: `expr-app`
+
+- Labels:
+  - env=prod
+  - version=v1
+
+- Selector:
+  - env in (prod)
+  - version notin (v2)
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+selector:
+  matchExpressions:
+  - key: env
+    operator: In
+    values:
+    - prod
+  - key: version
+    operator: NotIn
+    values:
+    - v2
+```
+
+</details>
+
+---
+
+## LS-11 — Label filtering CLI avanzato
+
+- Obiettivo
+  - Trovare Pod:
+    - app=myapp
+    - ma NON environment=prod
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl get pods -l 'app=myapp,environment!=prod'
+```
+
+Altri esempi:
+
+```sh
+kubectl get pods -l 'environment in (dev,staging)'
+kubectl get pods -l 'tier notin (backend)'
+```
+
+</details>
+
+---
+
+## LS-12 — NodeSelector + Label dinamica
+
+- Pod: `dynamic-node-app`
+
+- Task
+  - Etichettare un nodo:
+    gpu=true
+  - Usare nodeSelector per schedulare il Pod
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k label node <node-name> gpu=true
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dynamic-node-app
+spec:
+  containers:
+  - name: app
+    image: nginx
+  nodeSelector:
+    gpu: "true"
+```
+
+Verifica:
+
+```sh
+k get pod -o wide
+```
+
+</details>
+
+---
 
