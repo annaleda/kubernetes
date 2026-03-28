@@ -460,7 +460,7 @@ k run pod1 --image=nginx -n quota-test
 k run pod2 --image=nginx -n quota-test
 ```
 
-👉 il secondo fallisce
+ il secondo fallisce
 
 ```sh
 k describe quota -n quota-test
@@ -510,6 +510,584 @@ k apply -f limit.yaml
 k run test --image=nginx -n limit-test
 k describe pod test -n limit-test
 ```
+
+</details>
+
+---
+
+## CONF-13 — ConfigMap da file
+
+- Creare un file locale `app.properties`
+  - contenuto: `color=blue`
+
+- Creare ConfigMap: `file-based-config`
+  - usando il file locale
+
+- Pod: `file-config-pod`
+  - Image: busybox
+  - Montare il ConfigMap in `/etc/config`
+
+- Validazione
+  - Il file `/etc/config/app.properties` esiste nel container
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+echo "color=blue" > app.properties
+k create cm file-based-config --from-file=app.properties
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: file-config-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","ls /etc/config && cat /etc/config/app.properties && sleep 3600"]
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+  volumes:
+  - name: config-vol
+    configMap:
+      name: file-based-config
+```
+
+```sh
+k apply -f file-config-pod.yaml
+k exec -it file-config-pod -- cat /etc/config/app.properties
+```
+
+</details>
+
+---
+
+## CONF-14 — Secret da file
+
+- Creare un file locale `password.txt`
+  - contenuto: `mypassword`
+
+- Creare Secret: `file-secret`
+  - usando il file locale
+
+- Pod: `file-secret-pod`
+  - Image: busybox
+  - Montare il Secret in `/etc/secret`
+
+- Validazione
+  - Il file montato è visibile nel container
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+echo "mypassword" > password.txt
+k create secret generic file-secret --from-file=password.txt
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: file-secret-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","ls /etc/secret && cat /etc/secret/password.txt && sleep 3600"]
+    volumeMounts:
+    - name: secret-vol
+      mountPath: /etc/secret
+      readOnly: true
+  volumes:
+  - name: secret-vol
+    secret:
+      secretName: file-secret
+```
+
+```sh
+k apply -f file-secret-pod.yaml
+k exec -it file-secret-pod -- ls /etc/secret
+```
+
+</details>
+
+---
+
+## CONF-15 — ConfigMap con env e volume insieme
+
+- ConfigMap: `dual-config`
+  - APP_MODE=prod
+  - app.conf=mode=prod
+
+- Pod: `dual-config-pod`
+
+- Obiettivo
+  - Usare lo stesso ConfigMap:
+    - come variabile d’ambiente
+    - come volume
+
+- Validazione
+  - Variabile disponibile
+  - File montato presente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create cm dual-config \
+  --from-literal=APP_MODE=prod \
+  --from-literal=app.conf=mode=prod
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dual-config-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","echo $APP_MODE && cat /etc/config/app.conf && sleep 3600"]
+    env:
+    - name: APP_MODE
+      valueFrom:
+        configMapKeyRef:
+          name: dual-config
+          key: APP_MODE
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+  volumes:
+  - name: config-vol
+    configMap:
+      name: dual-config
+```
+
+</details>
+
+---
+
+## CONF-16 — Secret con envFrom
+
+- Secret: `db-env-secret`
+  - DB_USER=admin
+  - DB_PASS=topsecret
+
+- Pod: `secret-envfrom-pod`
+
+- Obiettivo
+  - Caricare tutte le chiavi del Secret come variabili d’ambiente
+
+- Validazione
+  - `env` nel container mostra le variabili
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create secret generic db-env-secret \
+  --from-literal=DB_USER=admin \
+  --from-literal=DB_PASS=topsecret
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-envfrom-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","env && sleep 3600"]
+    envFrom:
+    - secretRef:
+        name: db-env-secret
+```
+
+```sh
+k apply -f secret-envfrom-pod.yaml
+k exec -it secret-envfrom-pod -- env
+```
+
+</details>
+
+---
+
+## CONF-17 — LimitRange con default request e default memory
+
+- Namespace: `memory-limit-ns`
+
+- Creare LimitRange
+  - defaultRequest memory: 64Mi
+  - default memory limit: 256Mi
+
+- Validazione
+  - Pod senza memory esplicita riceve i valori di default
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns memory-limit-ns
+```
+
+```yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit
+  namespace: memory-limit-ns
+spec:
+  limits:
+  - type: Container
+    defaultRequest:
+      memory: 64Mi
+    default:
+      memory: 256Mi
+```
+
+```sh
+k apply -f mem-limit.yaml
+k run mem-pod --image=nginx -n memory-limit-ns
+k describe pod mem-pod -n memory-limit-ns
+```
+
+</details>
+
+---
+
+## CONF-18 — ResourceQuota su memoria
+
+- Namespace: `mem-quota`
+
+- Creare ResourceQuota
+  - requests.memory: 256Mi
+  - limits.memory: 512Mi
+
+- Obiettivo
+  - Limitare la memoria totale del namespace
+
+- Validazione
+  - `kubectl describe quota -n mem-quota`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns mem-quota
+```
+
+```yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: memory-quota
+  namespace: mem-quota
+spec:
+  hard:
+    requests.memory: 256Mi
+    limits.memory: 512Mi
+```
+
+```sh
+k apply -f memory-quota.yaml
+k describe quota memory-quota -n mem-quota
+```
+
+</details>
+
+---
+
+## CONF-19 — Pod con requests e limits CPU+memory
+
+- Pod: `full-resources-pod`
+
+- Container
+  - Image: nginx
+  - Requests:
+    - cpu: 100m
+    - memory: 128Mi
+  - Limits:
+    - cpu: 300m
+    - memory: 256Mi
+
+- Validazione
+  - `kubectl describe pod full-resources-pod`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: full-resources-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
+```
+
+```sh
+k apply -f full-resources-pod.yaml
+k describe pod full-resources-pod
+```
+
+</details>
+
+---
+
+## CONF-20 — ConfigMap con items
+
+- ConfigMap: `multi-file-config`
+  - app.properties=mode=prod
+  - db.properties=user=admin
+
+- Pod: `items-config-pod`
+
+- Obiettivo
+  - Montare solo `db.properties`
+
+- Validazione
+  - Nel container esiste solo il file selezionato
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: multi-file-config
+data:
+  app.properties: |
+    mode=prod
+  db.properties: |
+    user=admin
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: items-config-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","ls /etc/config && cat /etc/config/db.properties && sleep 3600"]
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+  volumes:
+  - name: config-vol
+    configMap:
+      name: multi-file-config
+      items:
+      - key: db.properties
+        path: db.properties
+```
+
+</details>
+
+---
+
+## CONF-21 — Secret con chiave singola in env
+
+- Secret: `single-secret`
+  - PASSWORD=abc123
+  - USER=admin
+
+- Pod: `single-secret-env-pod`
+
+- Obiettivo
+  - Usare solo la chiave `PASSWORD` come env
+
+- Validazione
+  - La variabile PASSWORD è disponibile nel container
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create secret generic single-secret \
+  --from-literal=PASSWORD=abc123 \
+  --from-literal=USER=admin
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: single-secret-env-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","echo $PASSWORD && sleep 3600"]
+    env:
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: single-secret
+          key: PASSWORD
+```
+
+</details>
+
+---
+
+## CONF-22 — ResourceQuota con max servizi
+
+- Namespace: `svc-quota`
+
+- Creare ResourceQuota
+  - services: 2
+
+- Obiettivo
+  - Impedire la creazione di un terzo Service
+
+- Validazione
+  - Il terzo Service fallisce
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns svc-quota
+```
+
+```yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: service-quota
+  namespace: svc-quota
+spec:
+  hard:
+    services: "2"
+```
+
+```sh
+k apply -f service-quota.yaml
+k describe quota service-quota -n svc-quota
+```
+
+</details>
+
+---
+
+## CONF-23 — LimitRange con min e max CPU
+
+- Namespace: `cpu-range`
+
+- Creare LimitRange
+  - min cpu: 50m
+  - max cpu: 500m
+
+- Obiettivo
+  - Forzare i container a stare nel range CPU definito
+
+- Validazione
+  - `kubectl describe limitrange -n cpu-range`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns cpu-range
+```
+
+```yaml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-range-limit
+  namespace: cpu-range
+spec:
+  limits:
+  - type: Container
+    min:
+      cpu: 50m
+    max:
+      cpu: 500m
+```
+
+```sh
+k apply -f cpu-range-limit.yaml
+k describe limitrange cpu-range-limit -n cpu-range
+```
+
+</details>
+
+---
+
+## CONF-24 — Debug ConfigMap / Secret mancanti
+
+- Pod: `broken-config-pod`
+
+- Problema
+  - Il Pod referenzia un ConfigMap o Secret inesistente
+
+- Obiettivo
+  - Identificare il problema con i comandi giusti
+
+- Validazione
+  - Capire perché il Pod non parte correttamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Comandi utili:
+
+```sh
+k get pod broken-config-pod
+k describe pod broken-config-pod
+k get cm
+k get secret
+```
+
+Cause tipiche:
+- ConfigMap inesistente
+- Secret inesistente
+- chiave sbagliata in `configMapKeyRef` o `secretKeyRef`
+- nome errato nel volume mount
 
 </details>
 
