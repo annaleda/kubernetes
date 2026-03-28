@@ -45,6 +45,8 @@
  
   - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md)
 
+  - [Mock Exercises - OCI Images](./o-ex/oci.md) 
+
 
 
 ---
