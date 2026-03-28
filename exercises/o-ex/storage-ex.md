@@ -453,3 +453,322 @@ spec:
 </details>
 
 ---
+## ST-7 — PVC in Deployment
+
+- PVC
+  - Nome: `web-pvc`
+  - Storage: `200Mi`
+  - AccessMode: ReadWriteOnce
+  - StorageClass: standard
+
+- Deployment
+  - Nome: `web-storage-deploy`
+  - Replicas: 1
+  - Image: nginx
+  - Monta il PVC in `/usr/share/nginx/html`
+
+- Validazione
+  - PVC Bound
+  - Pod Running
+  - Il Pod del Deployment monta correttamente il volume
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: web-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 200Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-storage-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-storage
+  template:
+    metadata:
+      labels:
+        app: web-storage
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: web-content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: web-content
+        persistentVolumeClaim:
+          claimName: web-pvc
+```
+
+```sh
+k apply -f web-storage-deploy.yaml
+k get pvc
+k get po
+k describe pod <pod-name>
+```
+
+</details>
+
+---
+
+## ST-8 — emptyDir tra due container
+
+- Pod: `shared-emptydir-pod`
+
+- Container 1
+  - Name: `writer`
+  - Image: busybox
+  - Scrive ogni 5 secondi in `/shared/data.txt`
+
+- Container 2
+  - Name: `reader`
+  - Image: busybox
+  - Legge continuamente `/shared/data.txt`
+
+- Configurazione
+  - Usare `emptyDir`
+
+- Validazione
+  - I due container condividono i dati
+  - Il reader vede quello che scrive il writer
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shared-emptydir-pod
+spec:
+  volumes:
+  - name: shared-vol
+    emptyDir: {}
+
+  containers:
+  - name: writer
+    image: busybox
+    command:
+    - sh
+    - -c
+    - while true; do date >> /shared/data.txt; sleep 5; done
+    volumeMounts:
+    - name: shared-vol
+      mountPath: /shared
+
+  - name: reader
+    image: busybox
+    command:
+    - sh
+    - -c
+    - touch /shared/data.txt; tail -f /shared/data.txt
+    volumeMounts:
+    - name: shared-vol
+      mountPath: /shared
+```
+
+```sh
+k apply -f shared-emptydir-pod.yaml
+k logs shared-emptydir-pod -c reader
+```
+
+</details>
+
+---
+
+## ST-9 — ConfigMap come volume
+
+- ConfigMap
+  - Nome: `app-config`
+  - Chiave: `settings.conf`
+  - Valore: `mode=prod`
+
+- Pod
+  - Nome: `configmap-volume-pod`
+  - Image: busybox
+  - Monta il ConfigMap in `/etc/config`
+
+- Validazione
+  - Il file `/etc/config/settings.conf` esiste nel container
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  settings.conf: |
+    mode=prod
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-volume-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 3600
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+  volumes:
+  - name: config-vol
+    configMap:
+      name: app-config
+```
+
+```sh
+k apply -f configmap-volume-pod.yaml
+k exec -it configmap-volume-pod -- ls /etc/config
+k exec -it configmap-volume-pod -- cat /etc/config/settings.conf
+```
+
+</details>
+
+---
+
+## ST-10 — Secret come volume
+
+- Secret
+  - Nome: `db-secret`
+  - Chiavi:
+    - `username=admin`
+    - `password=changeme`
+
+- Pod
+  - Nome: `secret-volume-pod`
+  - Image: busybox
+  - Monta il Secret in `/etc/secret`
+
+- Validazione
+  - I file del secret esistono
+  - Il Pod è Running
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create secret generic db-secret \
+  --from-literal=username=admin \
+  --from-literal=password=changeme \
+  --dry-run=client -o yaml > db-secret.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-volume-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 3600
+    volumeMounts:
+    - name: secret-vol
+      mountPath: /etc/secret
+      readOnly: true
+  volumes:
+  - name: secret-vol
+    secret:
+      secretName: db-secret
+```
+
+```sh
+k apply -f db-secret.yaml
+k apply -f secret-volume-pod.yaml
+k exec -it secret-volume-pod -- ls /etc/secret
+k exec -it secret-volume-pod -- cat /etc/secret/username
+```
+
+</details>
+
+---
+
+## ST-11 — hostPath Volume
+
+- Pod
+  - Nome: `hostpath-pod`
+  - Image: busybox
+
+- Volume
+  - Tipo: `hostPath`
+  - Path host: `/tmp/hostdata`
+  - Mount nel container: `/data/host`
+
+- Command
+  - Scrivere `hello from hostPath` nel file `/data/host/test.txt`
+  - Poi andare in sleep
+
+- Validazione
+  - Pod Running
+  - Il file viene creato nel volume montato
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - echo "hello from hostPath" > /data/host/test.txt && sleep 3600
+    volumeMounts:
+    - name: host-vol
+      mountPath: /data/host
+  volumes:
+  - name: host-vol
+    hostPath:
+      path: /tmp/hostdata
+      type: DirectoryOrCreate
+```
+
+```sh
+k apply -f hostpath-pod.yaml
+k exec -it hostpath-pod -- cat /data/host/test.txt
+```
+
+</details>
+
+---
