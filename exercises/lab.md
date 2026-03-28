@@ -1,4 +1,6 @@
-# CKAD Practice Labs
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+--- 
+### CKAD Practice Labs
 
 ---
 - [Practice Lab 0](./lab-0.md)
