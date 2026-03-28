@@ -1,4 +1,6 @@
-# API Versions, Deprecations e CRD
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Environment](../arg/fourth_arg.md)   |
+---
+### API Versions, Deprecations e CRD
 
 ---
 
