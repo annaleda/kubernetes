@@ -1,5 +1,6 @@
-
-# CKAD Practice Labs – Esercizi con Soluzioni
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+--- 
+### CKAD Practice Labs – Esercizi con Soluzioni
 
 > Raccolta pratica in stile esame CKAD, focalizzata su:
 > probes, log analysis, Jobs/CronJobs, NetworkPolicy, ConfigMap, Secret, volumes, multi-container pods, rolling updates, resource limits, security context, Service, ingress base, OCI basics e troubleshooting.
