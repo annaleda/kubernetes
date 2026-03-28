@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+- [ Home ](./readme.md)   | [ Info Exam ](./doc/ckad_exam_strategy.md)   
 --- 
 
 ## CKAD Exam domains 
