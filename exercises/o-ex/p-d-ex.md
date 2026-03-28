@@ -1,5 +1,5 @@
 
-### Pod Design (6 esercizi)
+### Pod Design (12 esercizi)
 ---
 
 ## PD-1 — Pod Singolo (non gestito)
