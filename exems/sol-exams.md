@@ -1,3 +1,5 @@
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+--- 
 ### 1 [Mock Exam - 1](./sol-exem-1.md)
 
 ### 2 [Mock Exam - 2](./sol-exem-2.md)
