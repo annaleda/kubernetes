@@ -615,3 +615,615 @@ spec:
 </details>
 
 ---
+
+## PR-13 — Readiness Probe con timeoutSeconds
+
+- Deployment: `ready-timeout-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 2
+
+- Readiness Probe
+  - HTTP GET `/`
+  - Port: 80
+  - initialDelaySeconds: 5
+  - timeoutSeconds: 2
+
+- Validazione
+  - `kubectl describe pod` mostra timeout configurato
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ready-timeout-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ready-timeout-app
+  template:
+    metadata:
+      labels:
+        app: ready-timeout-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+```
+
+</details>
+
+---
+
+## PR-14 — Liveness Probe con failureThreshold alto
+
+- Pod: `liveness-threshold`
+
+- Specifiche
+  - Image: nginx
+
+- Liveness Probe
+  - HTTP GET `/`
+  - Port: 80
+  - failureThreshold: 5
+  - periodSeconds: 5
+
+- Obiettivo
+  - Ritardare il restart fino a 5 fallimenti consecutivi
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-threshold
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      failureThreshold: 5
+      periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-15 — Startup Probe con initialDelaySeconds
+
+- Deployment: `startup-delay-app`
+
+- Specifiche
+  - Image: nginx
+
+- Startup Probe
+  - HTTP GET `/`
+  - Port: 80
+  - initialDelaySeconds: 10
+  - periodSeconds: 5
+
+- Validazione
+  - Startup probe configurata con delay iniziale
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: startup-delay-app
+spec:
+  selector:
+    matchLabels:
+      app: startup-delay-app
+  template:
+    metadata:
+      labels:
+        app: startup-delay-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-16 — Readiness Probe su path sbagliato (debug)
+
+- Deployment: `wrong-readiness`
+- Image: nginx
+
+- Configurazione
+  - readinessProbe HTTP su `/notfound`
+
+- Obiettivo
+  - Identificare perché i Pod non diventano Ready
+  - Correggere il path
+
+- Validazione
+  - Pod Ready dopo il fix
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Problema:
+- nginx risponde su `/`
+- readiness usa `/notfound`
+
+Fix:
+
+```yaml
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+```
+
+Debug:
+
+```sh
+k describe pod <pod-name>
+k get pods
+```
+
+</details>
+
+---
+
+## PR-17 — Exec Probe con file creato da command
+
+- Pod: `exec-file-probe`
+
+- Container
+  - Image: busybox
+  - Command:
+    - crea `/tmp/alive`
+    - poi `sleep 3600`
+
+- Liveness Probe
+  - exec:
+    - `cat /tmp/alive`
+
+- Validazione
+  - Il Pod resta Running
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: exec-file-probe
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - touch /tmp/alive && sleep 3600
+    livenessProbe:
+      exec:
+        command:
+        - sh
+        - -c
+        - cat /tmp/alive
+      initialDelaySeconds: 5
+```
+
+</details>
+
+---
+
+## PR-18 — TCP Readiness Probe
+
+- Deployment: `tcp-ready-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 2
+
+- Readiness Probe
+  - TCP socket
+  - Port: 80
+
+- Validazione
+  - Readiness configurata correttamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tcp-ready-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tcp-ready-app
+  template:
+    metadata:
+      labels:
+        app: tcp-ready-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-19 — Liveness + timeout + initial delay
+
+- Pod: `combo-liveness`
+
+- Specifiche
+  - Image: nginx
+
+- Liveness Probe
+  - HTTP GET `/`
+  - Port: 80
+  - initialDelaySeconds: 10
+  - timeoutSeconds: 2
+  - periodSeconds: 5
+
+- Validazione
+  - Tutti i parametri compaiono nel describe
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: combo-liveness
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 10
+      timeoutSeconds: 2
+      periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-20 — Probe su named port
+
+- Pod: `named-port-probe`
+
+- Container
+  - Image: nginx
+  - Espone porta con nome: `http`
+
+- Readiness Probe
+  - HTTP GET `/`
+  - Port: `http`
+
+- Validazione
+  - Probe usa il nome porta invece del numero
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: named-port-probe
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - name: http
+      containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+```
+
+</details>
+
+---
+
+## PR-21 — Multi-container con startup probe solo su uno
+
+- Pod: `startup-multi`
+
+- Container 1
+  - nginx
+  - startupProbe HTTP
+
+- Container 2
+  - busybox
+  - senza probe
+
+- Obiettivo
+  - Configurare probe solo sul container web
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: startup-multi
+spec:
+  containers:
+  - name: web
+    image: nginx
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      failureThreshold: 10
+      periodSeconds: 5
+
+  - name: helper
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 3600
+```
+
+</details>
+
+---
+
+## PR-22 — Readiness Probe con failureThreshold
+
+- Deployment: `ready-threshold-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 1
+
+- Readiness Probe
+  - HTTP GET `/`
+  - failureThreshold: 4
+  - periodSeconds: 5
+
+- Obiettivo
+  - Controllare la soglia prima di marcare il pod come non pronto
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ready-threshold-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ready-threshold-app
+  template:
+    metadata:
+      labels:
+        app: ready-threshold-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          failureThreshold: 4
+          periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-23 — Exec Readiness su comando custom
+
+- Pod: `custom-readiness`
+
+- Container
+  - Image: busybox
+  - Command: sleep 3600
+
+- Readiness Probe
+  - exec:
+    - `echo ready`
+
+- Obiettivo
+  - Usare una probe exec semplice che ritorna successo
+
+- Validazione
+  - Pod Ready
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: custom-readiness
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 3600
+    readinessProbe:
+      exec:
+        command:
+        - sh
+        - -c
+        - echo ready
+      initialDelaySeconds: 5
+```
+
+</details>
+
+---
+
+## PR-24 — Debug completo: liveness e readiness entrambe errate
+
+- Deployment: `double-broken-probe`
+- Image: nginx
+
+- Configurazione errata
+  - livenessProbe su `/wrong`
+  - readinessProbe su porta `8080`
+
+- Obiettivo
+  - Identificare entrambi i problemi
+  - Correggere manifest
+
+- Validazione
+  - Deployment stabile
+  - Pod diventano Ready
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Manifest errato:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: double-broken-probe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: double-broken-probe
+  template:
+    metadata:
+      labels:
+        app: double-broken-probe
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        livenessProbe:
+          httpGet:
+            path: /wrong
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+```
+
+Fix:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: double-broken-probe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: double-broken-probe
+  template:
+    metadata:
+      labels:
+        app: double-broken-probe
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+```
+
+Debug:
+
+```sh
+k describe pod <pod-name>
+k get pods
+```
+
+</details>
+
+---
