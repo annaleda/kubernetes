@@ -371,4 +371,312 @@ spec:
 ```
 </details>
 
+## PD-8 — Da Pod a Deployment
+
+Creare un Deployment chiamato `frontend-deployment`
+
+- Specifiche
+  - Image: nginx:1.25
+  - Replicas: 2
+  - Label: `app=frontend`
+
+- Obiettivo
+  - Verificare che i Pod siano gestiti da un ReplicaSet
+  - I Pod devono avere label coerenti
+
+- Vincoli
+  - Non creare un Pod standalone
+  - Usare Deployment
+
+- Validazione
+  - `kubectl get deploy`
+  - `kubectl get rs`
+  - `kubectl get po --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create deployment frontend-deployment --image=nginx:1.25 --replicas=2 --dry-run=client -o yaml > frontend-deployment.yaml
+```
+
+Modifica il file per aggiungere la label `app=frontend` se necessario, poi:
+
+```sh
+k apply -f frontend-deployment.yaml
+k get deploy
+k get rs
+k get po --show-labels
+```
+
+Esempio YAML completo:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+```
+
+</details>
+
+---
+
+## PD-9 — Deployment con Strategy Recreate
+
+Creare un Deployment chiamato `recreate-deployment`
+
+- Specifiche
+  - Image: nginx:1.24
+  - Replicas: 3
+
+- Configurazione
+  - Usare strategy `Recreate`
+
+- Obiettivo
+  - Aggiornare successivamente l’immagine a `nginx:1.25`
+
+- Validazione
+  - `kubectl describe deploy recreate-deployment`
+  - Verificare che la strategy sia `Recreate`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create deployment recreate-deployment --image=nginx:1.24 --replicas=3 --dry-run=client -o yaml > recreate-deployment.yaml
+```
+
+Modifica il file e aggiungi:
+
+```yaml
+strategy:
+  type: Recreate
+```
+
+YAML completo:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recreate-deployment
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: recreate-deployment
+  template:
+    metadata:
+      labels:
+        app: recreate-deployment
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.24
+```
+
+Applica e aggiorna:
+
+```sh
+k apply -f recreate-deployment.yaml
+k set image deployment/recreate-deployment nginx=nginx:1.25
+k describe deploy recreate-deployment
+```
+
+</details>
+
+---
+
+## PD-10 — Job con Più Completions
+
+Creare un Job chiamato `multi-completion-job`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "echo hello from job && sleep 3"`
+  - completions: 3
+  - parallelism: 1
+  - backoffLimit: 1
+
+- Obiettivo
+  - Eseguire 3 completamenti totali, uno alla volta
+
+- Validazione
+  - `kubectl get jobs`
+  - `kubectl describe job multi-completion-job`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: multi-completion-job
+spec:
+  completions: 3
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: busybox
+        command:
+        - sh
+        - -c
+        - echo hello from job && sleep 3
+      restartPolicy: Never
+```
+
+```sh
+k apply -f multi-completion-job.yaml
+k get jobs
+k describe job multi-completion-job
+```
+
+</details>
+
+---
+
+## PD-11 — CronJob con Concurrency Policy
+
+Creare un CronJob chiamato `report-cronjob`
+
+- Specifiche
+  - Schedule: ogni minuto
+  - Image: busybox
+  - Command: `sh -c "date; echo report generated"`
+  - concurrencyPolicy: Forbid
+
+- Configurazione
+  - successfulJobsHistoryLimit: 2
+  - failedJobsHistoryLimit: 1
+
+- Obiettivo
+  - Evitare esecuzioni concorrenti
+
+- Validazione
+  - `kubectl get cronjob`
+  - `kubectl describe cronjob report-cronjob`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: report-cronjob
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: reporter
+            image: busybox
+            command:
+            - sh
+            - -c
+            - date; echo report generated
+          restartPolicy: OnFailure
+```
+
+```sh
+k apply -f report-cronjob.yaml
+k get cronjob
+k describe cronjob report-cronjob
+```
+
+</details>
+
+---
+
+## PD-12 — DaemonSet Base
+
+Creare un DaemonSet chiamato `node-agent`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "while true; do echo agent running; sleep 30; done"`
+
+- Obiettivo
+  - Eseguire un Pod su ogni nodo
+
+- Vincoli
+  - Non usare Deployment
+  - Usare `DaemonSet`
+
+- Validazione
+  - `kubectl get ds`
+  - `kubectl get po -o wide`
+  - Numero Pod uguale al numero di nodi schedulabili
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-agent
+spec:
+  selector:
+    matchLabels:
+      app: node-agent
+  template:
+    metadata:
+      labels:
+        app: node-agent
+    spec:
+      containers:
+      - name: agent
+        image: busybox
+        command:
+        - sh
+        - -c
+        - while true; do echo agent running; sleep 30; done
+```
+
+```sh
+k apply -f node-agent.yaml
+k get ds
+k get po -o wide
+```
+
+</details>
+
+---
+
 ---
