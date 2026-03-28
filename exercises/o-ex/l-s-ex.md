@@ -532,7 +532,7 @@ k get endpoints frontend-svc
 k label deploy update-label-deploy team=devops
 ```
 
-⚠️ per i Pod:
+ per i Pod:
 
 ```sh
 k edit deploy update-label-deploy
@@ -652,4 +652,442 @@ k get pod -o wide
 </details>
 
 ---
+## LS-13 — Label su Pod in fase di creazione
 
+Creare un Pod chiamato `labeled-pod`
+
+- Specifiche
+  - Image: nginx
+
+- Labels richieste
+  - app=test
+  - env=dev
+
+- Validazione
+  - `kubectl get pod labeled-pod --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k run labeled-pod --image=nginx --labels=app=test,env=dev
+k get pod labeled-pod --show-labels
+```
+
+</details>
+
+---
+
+## LS-14 — Rimuovere una label da un Pod
+
+Pod esistente: `labeled-pod`
+
+- Task
+  - Rimuovere la label `env`
+
+- Validazione
+  - `kubectl get pod labeled-pod --show-labels`
+  - La label `env` non è più presente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k label pod labeled-pod env-
+k get pod labeled-pod --show-labels
+```
+
+</details>
+
+---
+
+## LS-15 — Service con selector su singola label
+
+Creare Deployment `simple-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 2
+  - Label:
+    - app=simple
+
+Creare Service `simple-svc`
+
+- Selector
+  - app=simple
+
+- Validazione
+  - `kubectl get endpoints simple-svc`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simple
+  template:
+    metadata:
+      labels:
+        app: simple
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-svc
+spec:
+  selector:
+    app: simple
+  ports:
+  - port: 80
+    targetPort: 80
+```
+
+```sh
+k apply -f ls-15.yaml
+k get endpoints simple-svc
+```
+
+</details>
+
+---
+
+## LS-16 — Pod selector con più condizioni via CLI
+
+- Obiettivo
+  - Trovare Pod con:
+    - app=frontend
+    - tier=web
+
+- Validazione
+  - Usare selector corretto da CLI
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl get pods -l app=frontend,tier=web
+```
+
+</details>
+
+---
+
+## LS-17 — Label su Namespace
+
+Creare namespace `team-a`
+
+- Task
+  - Aggiungere label:
+    - team=blue
+
+- Validazione
+  - `kubectl get ns --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns team-a
+k label ns team-a team=blue
+k get ns --show-labels
+```
+
+</details>
+
+---
+
+## LS-18 — MatchExpressions con Exists
+
+Creare Deployment `exists-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 2
+
+- Selector
+  - key: `track`
+  - operator: `Exists`
+
+- Template labels
+  - track=stable
+
+- Validazione
+  - Deployment valido
+  - Pod creati correttamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exists-app
+spec:
+  replicas: 2
+  selector:
+    matchExpressions:
+    - key: track
+      operator: Exists
+  template:
+    metadata:
+      labels:
+        track: stable
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+```sh
+k apply -f exists-app.yaml
+k get deploy
+k get pods --show-labels
+```
+
+</details>
+
+---
+
+## LS-19 — MatchExpressions con NotIn
+
+Creare Deployment `notin-app`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 1
+
+- Selector
+  - env notin (test)
+
+- Template labels
+  - env=prod
+
+- Validazione
+  - Deployment creato correttamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notin-app
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: env
+      operator: NotIn
+      values:
+      - test
+  template:
+    metadata:
+      labels:
+        env: prod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+</details>
+
+---
+
+## LS-20 — Service senza endpoint per typo nella label
+
+Creare Deployment `typo-app`
+
+- Label nei Pod
+  - app=frontend
+
+Creare Service `typo-svc`
+
+- Selector errato
+  - app=fronend
+
+- Obiettivo
+  - Individuare il typo e correggerlo
+
+- Validazione
+  - Endpoints presenti dopo il fix
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Problema:
+- `fronend` ≠ `frontend`
+
+Debug:
+
+```sh
+kubectl get pods --show-labels
+kubectl describe svc typo-svc
+kubectl get endpoints typo-svc
+```
+
+Fix:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: typo-svc
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 80
+```
+
+</details>
+
+---
+
+## LS-21 — Label e selector su ReplicaSet
+
+Creare un ReplicaSet chiamato `label-rs`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 2
+  - Label: app=rsdemo
+
+- Validazione
+  - `kubectl get rs`
+  - `kubectl get pods --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: label-rs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rsdemo
+  template:
+    metadata:
+      labels:
+        app: rsdemo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+```sh
+k apply -f label-rs.yaml
+k get rs
+k get pods --show-labels
+```
+
+</details>
+
+---
+
+## LS-22 — Selezionare Pod senza una label
+
+- Obiettivo
+  - Trovare Pod che NON hanno la label `team`
+
+- Validazione
+  - Usare selector CLI corretto
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl get pods -l '!team'
+```
+
+</details>
+
+---
+
+## LS-23 — Aggiungere label a un Service
+
+Service esistente: `simple-svc`
+
+- Task
+  - Aggiungere label:
+    - owner=platform
+
+- Validazione
+  - `kubectl get svc simple-svc --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k label svc simple-svc owner=platform
+k get svc simple-svc --show-labels
+```
+
+</details>
+
+---
+
+## LS-24 — Selector multiplo con namespace e labels
+
+- Obiettivo
+  - Trovare Pod nel namespace `default` con:
+    - app=frontend
+    - tier=web
+    - environment!=prod
+
+- Validazione
+  - Usare comando CLI corretto
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl get pods -n default -l 'app=frontend,tier=web,environment!=prod'
+```
+
+</details>
+
+---
