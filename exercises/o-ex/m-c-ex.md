@@ -386,7 +386,51 @@ spec:
     - name: shared-data
       mountPath: /data
 ```
+Altra soluzione:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: env-sharing-app
+  name: env-sharing-app
+spec:
+  volumes:
+  - name: env
+    emptyDir: {}
+  containers:
+  - command: ["/bin/sh","-c"]
+    args:
+    - touch /mode/mode.txt; echo $MODE >> /mode/mode.txt; sleep 3600
+    env:
+    - name: MODE
+      value: production
+    image: busybox
+    name: env-app
+    volumeMounts:
+    - name: env
+      mountPath: /mode
+  - command: ["/bin/sh","-c"]
+    args:
+    - while true; do cat /mode/mode.txt; sleep 5; done
+    image: busybox
+    name: app
+    volumeMounts:
+    - name: env
+      mountPath: /mode
 
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+```
+```sh
+k apply -f env-sharing-app.yaml
+MSYS_NO_PATHCONV=1 k exec -it env-sharing-app -c app -- cat /mode/mode.txt
+
+```
 </details>
 
 ---
