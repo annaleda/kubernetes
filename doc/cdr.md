@@ -1,3 +1,5 @@
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Environment](../arg/fourth_arg.md)   |
+---
 ## CDR: Custom Resource Definition, Operators
 ---
 
