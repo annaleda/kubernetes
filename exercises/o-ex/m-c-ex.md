@@ -283,7 +283,44 @@ spec:
     - name: config-data
       mountPath: /config
 ```
+Altra soluzione:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: init-config-app
+  name: init-config-app
+spec:
+  volumes:
+  - name: config-data
+    emptyDir: {}
+  initContainers:
+  - image: busybox
+    name: init
+    command: ["/bin/sh","-c"]
+    args:
+    - touch /config/settings.conf; echo "config" >> /config/settings.conf
+    volumeMounts:
+    - name: config-data
+      mountPath: /config
 
+  containers:
+  - image: nginx
+    name: app
+    volumeMounts:
+    - name: config-data
+      mountPath: /config
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+```sh
+k apply -f init-config-app.yaml
+MSYS_NO_PATHCONV=1 k exec -it init-config-app -c app -- cat /config/settings.conf
+```
 </details>
 
 ---
