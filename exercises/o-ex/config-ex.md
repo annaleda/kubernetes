@@ -1,4 +1,5 @@
-
+- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   
+--- 
 ###  Configuration (24 esercizi)
 
 ## CONF-1 — ConfigMap
