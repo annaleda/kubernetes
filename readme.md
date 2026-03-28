@@ -2,19 +2,19 @@
 
 ## 📚 CKAD: info and teory
 
-### 0 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
+- 0 [CKAD – Exam + Cheatsheet](./doc/ckad_exam_strategy.md)
 
-### 1 [Kubernates - Kind + Kubeconfig](./doc/readme0.md)
+- 1 [Kubernates - Kind + Kubeconfig](./doc/readme0.md)
 
-### 2 [CKAD Teory](./arguments.md)
+- 2 [CKAD Teory](./arguments.md)
 
-### 3 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
+- 3 [Kubeconfig – Kube-apiserver in practice](./doc/ckad_k-k.md)
 
-### 4 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
+- 4 [Cheatsheet / Keymap](./doc/ckad_cheatsheet.md)
 
-### 5 [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+- 5 [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 
-### 6 [Tabella comandi bash](./doc/bash.md)
+- 6 [Tabella comandi bash](./doc/bash.md)
 
 ---
 
