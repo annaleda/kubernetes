@@ -1,4 +1,5 @@
-
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+---
 ## Application Deployment
 ---
 ### 2.0 [Labels, Selectors](../doc/labs_selectors.md)
