@@ -1,3 +1,6 @@
+- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other exercises ](../o-exercises.md)   
+--- 
+
 ###  Multi-Container Exercises (31 ex)
 
 ---
