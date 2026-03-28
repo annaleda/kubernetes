@@ -1,6 +1,6 @@
-# CKAD Observability
-
-## Teoria
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Observability](../arg/third_arg.md)   |
+---
+### Observability
 
 ---
 
