@@ -330,3 +330,288 @@ soluzione:
 </details>
 
 ---
+## PR-7 — Readiness con comando (exec)
+
+- Pod: `exec-readiness`
+- Container
+  - Image: busybox
+  - Command: sleep 3600
+- Readiness Probe
+  - exec:
+    
+        test -f /tmp/ready
+
+  - initialDelaySeconds: 5
+
+- Obiettivo
+  - Il Pod NON deve essere Ready finché il file non esiste
+
+- Validazione
+  - `kubectl get pod` mostra NOT READY
+  - Dopo creazione file → READY
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: exec-readiness
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","sleep 3600"]
+    readinessProbe:
+      exec:
+        command:
+        - sh
+        - -c
+        - test -f /tmp/ready
+      initialDelaySeconds: 5
+```
+
+```sh
+k apply -f exec-readiness.yaml
+k get pod
+
+# fix manuale
+k exec -it exec-readiness -- touch /tmp/ready
+```
+
+</details>
+
+---
+
+## PR-8 — TCP Probe
+
+- Deployment: `tcp-probe-app`
+- Specifiche
+  - Image: nginx
+- Liveness Probe
+  - TCP check
+  - Port: 80
+
+- Validazione
+  - Probe configurata correttamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tcp-probe-app
+spec:
+  selector:
+    matchLabels:
+      app: tcp-probe
+  template:
+    metadata:
+      labels:
+        app: tcp-probe
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-9 — Startup + Liveness interplay
+
+- Deployment: `slow-app`
+- Specifiche
+  - Image: nginx
+
+- Configurazione
+  - startupProbe (HTTP `/`)
+  - livenessProbe (HTTP `/`)
+
+- Obiettivo
+  - Evitare restart prematuri durante startup
+
+- Validazione
+  - Nessun restart durante avvio
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slow-app
+spec:
+  selector:
+    matchLabels:
+      app: slow-app
+  template:
+    metadata:
+      labels:
+        app: slow-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+```
+
+</details>
+
+---
+
+## PR-10 — Timeout + FailureThreshold
+
+- Pod: `probe-timeout`
+- Image: nginx
+
+- Configurazione
+  - livenessProbe HTTP
+  - timeoutSeconds: 2
+  - failureThreshold: 3
+
+- Obiettivo
+  - Controllare quando il container viene riavviato
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: probe-timeout
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      timeoutSeconds: 2
+      failureThreshold: 3
+      periodSeconds: 5
+```
+
+</details>
+
+---
+
+## PR-11 — Probe su porta sbagliata (debug)
+
+- Pod: `wrong-port-probe`
+- Image: nginx
+
+- Configurazione
+  - livenessProbe su porta 8080
+
+- Obiettivo
+  - Debuggare perché il Pod restarta
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Problema:
+- nginx ascolta su 80
+- probe usa 8080 → FAIL
+
+Fix:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+```
+
+Debug:
+
+```sh
+k describe pod wrong-port-probe
+```
+
+</details>
+
+---
+
+## PR-12 — Multi-container con probe
+
+- Pod: `multi-probe`
+
+- Container 1
+  - nginx
+  - readinessProbe HTTP
+
+- Container 2
+  - busybox
+  - livenessProbe exec (sleep loop)
+
+- Obiettivo
+  - Usare probe diverse nello stesso Pod
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-probe
+spec:
+  containers:
+  - name: web
+    image: nginx
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+
+  - name: worker
+    image: busybox
+    command: ["sh","-c","sleep 3600"]
+    livenessProbe:
+      exec:
+        command:
+        - sh
+        - -c
+        - echo ok
+```
+
+</details>
+
+---
