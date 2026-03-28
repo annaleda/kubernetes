@@ -188,7 +188,47 @@ spec:
 ```sh
 k apply -f metrics-adapter.yaml
 ```
+Altra soluzione:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: metrics-adapter
+  name: metrics-adapter
+spec:
+  volumes:
+  - name: data-volume
+    emptyDir: {}
+  containers:
+  - command: ["/bin/sh","-c"]
+    args:
+    - touch /data/raw.txt /data/processed.txt; while true; do echo "minuscolo" >> /data/raw.txt; done
+    image: busybox
+    name: metrics
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data
+  - command: ["/bin/sh","-c"]
+    args:
+      - while true; do tr '[:lower:]' '[:upper:]' < /data/raw.txt > /data/processed.txt; sleep 5; done
+    image: busybox
+    name: adapter
+    volumeMounts:
+    - name: data-volume
+      mountPath: /data
 
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+```
+```sh
+k apply -f metrics-adapter.yaml
+```
+```
+MSYS_NO_PATHCONV=1 k exec -it metrics-adapter -c adapter -- cat /data/processed.txt
+```
 </details>
 
 ---
