@@ -1,6 +1,6 @@
 - [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
 ---  
-
+- [ Teory Application Design ](../arg/first_arg.md)
 - Application Design and Build `20%`
   - [Mock Exercises - Multi-container](./o-ex/m-c-ex.md) `31 esercizi`
   
@@ -9,6 +9,7 @@
   - [Mock Exercises - storage](./o-ex/storage-ex.md) `23 esercizi`
 
 ---
+- [ Teory Application Deployment ](../arg/second_arg.md)
 - Application Deployment `20%`
   - [Mock Exercises - Label and Selectors](./o-ex/l-s-ex.md)  `24 esercizi`
   
@@ -21,6 +22,7 @@
   - [Mock Exercises - Kube-apiserver](./o-ex/kubeas-ex.md)
 
 ---
+- [ Teory Application Observability and Maintenance ](../arg/third_arg.md)
 - Application Observability and Maintenance `15%`
   
   - [Mock Exercises - Probe](./o-ex/probe-ex.md)  `24 esercizi`
@@ -28,6 +30,7 @@
   - [Mock Exercises - Logs](./o-ex/logs-ex.md)   
 
 ---
+- [ Teory Application Environment ](../arg/fourth_arg.md)
 - Application Environment, Configuration and Security `25%`
 
   - [Mock Exercises - Configuration](./o-ex/config-ex.md)  `24 esercizi`
@@ -51,6 +54,7 @@
 
 
 ---
+- [ Teory Service and Networking ](../arg/fifth_arg.md)
 - Services and Networking `20%`
   - [Mock Exercises - Services](./o-ex/svc-ex.md)
     
