@@ -3,7 +3,7 @@
   
   - [Mock Exercises - Pod Design](./o-ex/p-d-ex.md) `24 esercizi`
   
-  - [Mock Exercises - storage](./o-ex/storage-ex.md) `24 esercizi`
+  - [Mock Exercises - storage](./o-ex/storage-ex.md) `23 esercizi`
 
 ---
 - Application Deployment `20%`
