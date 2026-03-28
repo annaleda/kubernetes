@@ -235,3 +235,243 @@ spec:
 
 ---
 
+## SEC-7 — runAsNonRoot
+
+- Namespace: `nonroot-ns`
+- Pod: `nonroot-app`
+
+- Task:
+  - Impostare container per NON girare come root
+
+- Validazione:
+  - Pod fallisce se immagine usa root
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nonroot-app
+  namespace: nonroot-ns
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      runAsNonRoot: true
+```
+
+ Se nginx gira come root → errore
+
+```sh
+k describe pod nonroot-app -n nonroot-ns
+```
+
+</details>
+
+---
+
+## SEC-8 — fsGroup (shared volume)
+
+- Namespace: `fsgroup-ns`
+- Pod: `fsgroup-app`
+
+- Task:
+  - Volume condiviso
+  - fsGroup: 2000
+
+- Obiettivo
+  - Permessi corretti sui file
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fsgroup-app
+  namespace: fsgroup-ns
+spec:
+  securityContext:
+    fsGroup: 2000
+
+  volumes:
+  - name: data
+    emptyDir: {}
+
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","sleep 3600"]
+    volumeMounts:
+    - name: data
+      mountPath: /data
+```
+
+</details>
+
+---
+
+## SEC-9 — Capability Add
+
+- Namespace: `cap-add-ns`
+- Pod: `cap-add-app`
+
+- Task:
+  - Aggiungere capability NET_ADMIN
+
+- Validazione:
+  - Capability presente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cap-add-app
+  namespace: cap-add-ns
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+```
+
+</details>
+
+---
+
+## SEC-10 — SeccompProfile
+
+- Namespace: `seccomp-ns`
+- Pod: `seccomp-app`
+
+- Task:
+  - Usare seccompProfile RuntimeDefault
+
+- Validazione:
+  - Profilo attivo
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: seccomp-app
+  namespace: seccomp-ns
+spec:
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+
+  containers:
+  - name: app
+    image: nginx
+```
+
+</details>
+
+---
+
+## SEC-11 — ReadOnly + Writable Volume (combo)
+
+- Namespace: `mixed-fs`
+- Pod: `mixed-app`
+
+- Task:
+  - Root filesystem readOnly
+  - Volume /data scrivibile
+
+- Validazione:
+  - Scrittura possibile solo su volume
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mixed-app
+  namespace: mixed-fs
+spec:
+  volumes:
+  - name: data
+    emptyDir: {}
+
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","echo ok > /data/test && sleep 3600"]
+    securityContext:
+      readOnlyRootFilesystem: true
+    volumeMounts:
+    - name: data
+      mountPath: /data
+```
+
+</details>
+
+---
+
+## SEC-12 — Debug Security Context failure
+
+- Namespace: `debug-sec`
+- Pod: `broken-sec`
+
+- Problema:
+  - runAsUser: 99999
+  - Container non parte
+
+- Obiettivo:
+  - Identificare errore
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k describe pod broken-sec -n debug-sec
+```
+
+ Possibili errori:
+- user non valido
+- permessi filesystem
+
+Fix:
+
+```yaml
+securityContext:
+  runAsUser: 1000
+```
+
+oppure:
+
+```yaml
+runAsNonRoot: true
+```
+
+</details>
+
+---
