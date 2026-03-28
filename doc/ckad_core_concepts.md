@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Design](../args/first_arg.md)   |
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Design](../arg/first_arg.md)   |
 ---
 # CKAD Core Concepts
 
