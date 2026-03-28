@@ -1,6 +1,6 @@
 
 
-### Storage (11 esercizi)
+### Storage (23 esercizi)
 ---
 
 ## ST-1 — Static PV + PVC
@@ -768,6 +768,671 @@ spec:
 k apply -f hostpath-pod.yaml
 k exec -it hostpath-pod -- cat /data/host/test.txt
 ```
+
+</details>
+
+---
+
+## ST-12 — emptyDir con limite di memoria
+
+- Pod: `memory-emptydir-pod`
+
+- Volume
+  - Tipo: `emptyDir`
+  - medium: `Memory`
+
+- Container
+  - Image: busybox
+  - Scrive file in `/cache`
+
+- Validazione
+  - Il volume è montato correttamente
+  - `emptyDir` usa memoria
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-emptydir-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - echo "cached data" > /cache/data.txt && sleep 3600
+    volumeMounts:
+    - name: cache-vol
+      mountPath: /cache
+  volumes:
+  - name: cache-vol
+    emptyDir:
+      medium: Memory
+```
+
+```sh
+k apply -f memory-emptydir-pod.yaml
+k exec -it memory-emptydir-pod -- ls /cache
+```
+
+</details>
+
+---
+
+## ST-13 — PersistentVolume con reclaim policy Delete
+
+- PersistentVolume
+  - Nome: `pv-delete`
+  - Storage: `100Mi`
+  - AccessMode: ReadWriteOnce
+  - hostPath: `/mnt/delete-test`
+  - reclaimPolicy: `Delete`
+
+- Validazione
+  - PV creato con reclaim policy corretta
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-delete
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  hostPath:
+    path: /mnt/delete-test
+```
+
+```sh
+k apply -f pv-delete.yaml
+k get pv pv-delete
+```
+
+</details>
+
+---
+
+## ST-14 — PVC con accessMode ReadOnlyMany
+
+- PersistentVolumeClaim
+  - Nome: `readonly-claim`
+  - Storage: `50Mi`
+  - AccessMode: ReadOnlyMany
+
+- Obiettivo
+  - Creare il PVC con modalità corretta
+
+- Validazione
+  - `kubectl get pvc readonly-claim`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: readonly-claim
+spec:
+  accessModes:
+  - ReadOnlyMany
+  resources:
+    requests:
+      storage: 50Mi
+```
+
+```sh
+k apply -f readonly-claim.yaml
+k get pvc readonly-claim
+```
+
+</details>
+
+---
+
+## ST-15 — Pod con due emptyDir distinti
+
+- Pod: `dual-emptydir-pod`
+
+- Volume 1
+  - Nome: `logs-vol`
+  - Mount: `/logs`
+
+- Volume 2
+  - Nome: `cache-vol`
+  - Mount: `/cache`
+
+- Container
+  - Image: busybox
+
+- Validazione
+  - Entrambi i volumi sono montati
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dual-emptydir-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - mkdir -p /logs /cache && touch /logs/app.log /cache/data.txt && sleep 3600
+    volumeMounts:
+    - name: logs-vol
+      mountPath: /logs
+    - name: cache-vol
+      mountPath: /cache
+  volumes:
+  - name: logs-vol
+    emptyDir: {}
+  - name: cache-vol
+    emptyDir: {}
+```
+
+```sh
+k apply -f dual-emptydir-pod.yaml
+k exec -it dual-emptydir-pod -- ls /logs /cache
+```
+
+</details>
+
+---
+
+## ST-16 — ConfigMap con singolo file via subPath
+
+- ConfigMap
+  - Nome: `single-file-config`
+  - Chiave: `app.properties`
+
+- Pod
+  - Nome: `subpath-configmap-pod`
+  - Image: busybox
+
+- Configurazione
+  - Montare solo il file `app.properties` in `/etc/app.properties`
+
+- Validazione
+  - Il file è montato nel path richiesto
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: single-file-config
+data:
+  app.properties: |
+    color=blue
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: subpath-configmap-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - cat /etc/app.properties && sleep 3600
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/app.properties
+      subPath: app.properties
+  volumes:
+  - name: config-vol
+    configMap:
+      name: single-file-config
+```
+
+```sh
+k apply -f subpath-configmap-pod.yaml
+k exec -it subpath-configmap-pod -- cat /etc/app.properties
+```
+
+</details>
+
+---
+
+## ST-17 — Secret con chiave singola via items
+
+- Secret
+  - Nome: `api-secret`
+  - Chiavi:
+    - token
+    - user
+
+- Pod
+  - Nome: `secret-items-pod`
+  - Image: busybox
+
+- Configurazione
+  - Montare solo la chiave `token` come file `api-token`
+
+- Validazione
+  - Solo il file richiesto è presente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-secret
+type: Opaque
+stringData:
+  token: abc123
+  user: admin
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-items-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - ls /etc/secret && cat /etc/secret/api-token && sleep 3600
+    volumeMounts:
+    - name: secret-vol
+      mountPath: /etc/secret
+      readOnly: true
+  volumes:
+  - name: secret-vol
+    secret:
+      secretName: api-secret
+      items:
+      - key: token
+        path: api-token
+```
+
+```sh
+k apply -f secret-items-pod.yaml
+k exec -it secret-items-pod -- ls /etc/secret
+```
+
+</details>
+
+---
+
+## ST-18 — PVC con selector
+
+- PersistentVolume
+  - Nome: `labeled-pv`
+  - Label: `type=fast`
+  - Storage: `100Mi`
+
+- PersistentVolumeClaim
+  - Nome: `selected-pvc`
+  - Selector: `type=fast`
+
+- Validazione
+  - Il PVC si lega al PV con label corretta
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: labeled-pv
+  labels:
+    type: fast
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: /mnt/labeled
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: selected-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  selector:
+    matchLabels:
+      type: fast
+```
+
+```sh
+k apply -f selected-pvc.yaml
+k get pvc selected-pvc
+k get pv labeled-pv --show-labels
+```
+
+</details>
+
+---
+
+## ST-19 — Pod con projected volume
+
+- Pod: `projected-pod`
+
+- Configurazione
+  - Unire in un solo volume:
+    - ConfigMap `proj-config`
+    - Secret `proj-secret`
+
+- Mount: `/projected`
+
+- Validazione
+  - Entrambi i contenuti sono presenti
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proj-config
+data:
+  app.conf: "mode=test"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proj-secret
+type: Opaque
+stringData:
+  password: changeme
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: projected-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - ls /projected && sleep 3600
+    volumeMounts:
+    - name: projected-vol
+      mountPath: /projected
+  volumes:
+  - name: projected-vol
+    projected:
+      sources:
+      - configMap:
+          name: proj-config
+      - secret:
+          name: proj-secret
+```
+
+```sh
+k apply -f projected-pod.yaml
+k exec -it projected-pod -- ls /projected
+```
+
+</details>
+
+---
+
+## ST-20 — emptyDir condiviso con 3 container
+
+- Pod: `three-share-pod`
+
+- Container 1
+  - scrive `/shared/a.txt`
+
+- Container 2
+  - scrive `/shared/b.txt`
+
+- Container 3
+  - legge entrambi
+
+- Validazione
+  - Il terzo container vede i file creati dagli altri due
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: three-share-pod
+spec:
+  containers:
+  - name: writer-a
+    image: busybox
+    command:
+    - sh
+    - -c
+    - echo "file a" > /shared/a.txt && sleep 3600
+    volumeMounts:
+    - name: shared-vol
+      mountPath: /shared
+
+  - name: writer-b
+    image: busybox
+    command:
+    - sh
+    - -c
+    - echo "file b" > /shared/b.txt && sleep 3600
+    volumeMounts:
+    - name: shared-vol
+      mountPath: /shared
+
+  - name: reader
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 20
+    volumeMounts:
+    - name: shared-vol
+      mountPath: /shared
+
+  volumes:
+  - name: shared-vol
+    emptyDir: {}
+```
+
+```sh
+k apply -f three-share-pod.yaml
+k exec -it three-share-pod -c reader -- ls /shared
+```
+
+</details>
+
+---
+
+## ST-21 — Pod con ConfigMap readOnly
+
+- ConfigMap
+  - Nome: `readonly-config`
+
+- Pod
+  - Nome: `readonly-config-pod`
+  - Image: busybox
+
+- Configurazione
+  - Montare ConfigMap in `/etc/config`
+  - Tentativo di scrittura deve fallire
+
+- Validazione
+  - Scrittura non consentita
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: readonly-config
+data:
+  settings.conf: "readonly=true"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readonly-config-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - sleep 3600
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+      readOnly: true
+  volumes:
+  - name: config-vol
+    configMap:
+      name: readonly-config
+```
+
+```sh
+k apply -f readonly-config-pod.yaml
+k exec -it readonly-config-pod -- sh
+```
+
+</details>
+
+---
+
+## ST-22 — PVC montato con subPath
+
+- PVC: `pvc-static`
+
+- Pod
+  - Nome: `subpath-pvc-pod`
+  - Image: busybox
+
+- Configurazione
+  - Montare solo subPath `data` in `/app/data`
+
+- Validazione
+  - Il mount usa subPath del PVC
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: subpath-pvc-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - sh
+    - -c
+    - mkdir -p /app/data && sleep 3600
+    volumeMounts:
+    - name: storage
+      mountPath: /app/data
+      subPath: data
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: pvc-static
+```
+
+```sh
+k apply -f subpath-pvc-pod.yaml
+```
+
+</details>
+
+---
+
+## ST-23 — Debug PVC Pending
+
+- Scenario
+  - PVC `broken-pvc` resta in stato Pending
+
+- Obiettivo
+  - Identificare le possibili cause
+
+- Validazione
+  - Usare comandi di debug corretti
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Comandi utili:
+
+```sh
+k get pvc
+k describe pvc broken-pvc
+k get pv
+k get storageclass
+```
+
+Cause possibili:
+- nessun PV disponibile
+- storageClassName errata
+- accessMode non compatibile
+- richiesta storage troppo alta
+- provisioner dinamico assente
+- selector PVC che non matcha nessun PV
 
 </details>
 
