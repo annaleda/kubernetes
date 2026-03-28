@@ -679,4 +679,670 @@ k get po -o wide
 
 ---
 
+## PD-13 — Deployment con Pause e Resume Rollout
+
+Creare un Deployment chiamato `paused-deployment`
+
+- Specifiche iniziali
+  - Image: nginx:1.24
+  - Replicas: 2
+
+- Task
+  - Mettere in pausa il rollout
+  - Aggiornare immagine a `nginx:1.25`
+  - Riprendere il rollout
+
+- Validazione
+  - `kubectl rollout status deployment paused-deployment`
+  - L’immagine finale è `nginx:1.25`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create deployment paused-deployment --image=nginx:1.24 --replicas=2
+k rollout pause deployment paused-deployment
+k set image deployment/paused-deployment nginx=nginx:1.25
+k rollout resume deployment paused-deployment
+k rollout status deployment paused-deployment
+```
+
+</details>
+
+---
+
+## PD-14 — Deployment con Replica minime e maxSurge
+
+Creare un Deployment chiamato `controlled-rollout`
+
+- Specifiche
+  - Image: nginx:1.25
+  - Replicas: 4
+
+- Configurazione
+  - strategy: RollingUpdate
+  - maxUnavailable: 1
+  - maxSurge: 2
+
+- Validazione
+  - `kubectl describe deployment controlled-rollout`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controlled-rollout
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+  selector:
+    matchLabels:
+      app: controlled-rollout
+  template:
+    metadata:
+      labels:
+        app: controlled-rollout
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+```
+
+```sh
+k apply -f controlled-rollout.yaml
+k describe deployment controlled-rollout
+```
+
+</details>
+
+---
+
+## PD-15 — ReplicaSet Base
+
+Creare un ReplicaSet chiamato `web-rs`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 3
+  - Label: `app=web-rs`
+
+- Obiettivo
+  - Creare direttamente un ReplicaSet senza Deployment
+
+- Validazione
+  - `kubectl get rs`
+  - `kubectl get pods --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-rs
+  template:
+    metadata:
+      labels:
+        app: web-rs
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+```sh
+k apply -f web-rs.yaml
+k get rs
+k get pods --show-labels
+```
+
+</details>
+
+---
+
+## PD-16 — StatefulSet con 3 repliche
+
+Creare uno StatefulSet chiamato `cache-stateful`
+
+- Specifiche
+  - Image: nginx
+  - Replicas: 3
+  - ServiceName: `cache-headless`
+
+- Service richiesto
+  - Nome: `cache-headless`
+  - ClusterIP: None
+
+- Validazione
+  - I Pod si chiamano:
+    - `cache-stateful-0`
+    - `cache-stateful-1`
+    - `cache-stateful-2`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache-headless
+spec:
+  clusterIP: None
+  selector:
+    app: cache-stateful
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cache-stateful
+spec:
+  serviceName: cache-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cache-stateful
+  template:
+    metadata:
+      labels:
+        app: cache-stateful
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+```sh
+k apply -f cache-stateful.yaml
+k get pods
+```
+
+</details>
+
+---
+
+## PD-17 — Job con activeDeadlineSeconds
+
+Creare un Job chiamato `deadline-job`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "sleep 30"`
+  - activeDeadlineSeconds: 10
+
+- Obiettivo
+  - Il Job deve essere terminato dopo 10 secondi
+
+- Validazione
+  - `kubectl describe job deadline-job`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deadline-job
+spec:
+  activeDeadlineSeconds: 10
+  template:
+    spec:
+      containers:
+      - name: worker
+        image: busybox
+        command:
+        - sh
+        - -c
+        - sleep 30
+      restartPolicy: Never
+```
+
+```sh
+k apply -f deadline-job.yaml
+k describe job deadline-job
+```
+
+</details>
+
+---
+
+## PD-18 — Job con completions e parallelism uguali
+
+Creare un Job chiamato `fast-parallel-job`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "echo run && sleep 5"`
+  - completions: 3
+  - parallelism: 3
+
+- Obiettivo
+  - Tutti i Pod partono insieme
+
+- Validazione
+  - `kubectl get jobs`
+  - Fino a 3 Pod contemporaneamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fast-parallel-job
+spec:
+  completions: 3
+  parallelism: 3
+  template:
+    spec:
+      containers:
+      - name: runner
+        image: busybox
+        command:
+        - sh
+        - -c
+        - echo run && sleep 5
+      restartPolicy: Never
+```
+
+```sh
+k apply -f fast-parallel-job.yaml
+k get jobs
+k get pods
+```
+
+</details>
+
+---
+
+## PD-19 — CronJob sospeso
+
+Creare un CronJob chiamato `suspended-cronjob`
+
+- Specifiche
+  - Schedule: ogni minuto
+  - Image: busybox
+  - Command: `date`
+
+- Configurazione
+  - suspend: true
+
+- Obiettivo
+  - Il CronJob esiste ma non esegue Job
+
+- Validazione
+  - `kubectl get cronjob`
+  - Nessun Job creato finché è sospeso
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: suspended-cronjob
+spec:
+  schedule: "* * * * *"
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: sleeper
+            image: busybox
+            command:
+            - sh
+            - -c
+            - date
+          restartPolicy: OnFailure
+```
+
+```sh
+k apply -f suspended-cronjob.yaml
+k get cronjob
+k get jobs
+```
+
+</details>
+
+---
+
+## PD-20 — DaemonSet con label selector
+
+Creare un DaemonSet chiamato `log-agent`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "while true; do echo logging; sleep 20; done"`
+
+- Configurazione
+  - Label: `app=log-agent`
+
+- Validazione
+  - `kubectl get ds`
+  - `kubectl get pods --show-labels`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-agent
+spec:
+  selector:
+    matchLabels:
+      app: log-agent
+  template:
+    metadata:
+      labels:
+        app: log-agent
+    spec:
+      containers:
+      - name: agent
+        image: busybox
+        command:
+        - sh
+        - -c
+        - while true; do echo logging; sleep 20; done
+```
+
+```sh
+k apply -f log-agent.yaml
+k get ds
+k get pods --show-labels
+```
+
+</details>
+
+---
+
+## PD-21 — Deployment con selector e template incoerenti (debug)
+
+Creare un Deployment chiamato `broken-selector`
+
+- Problema
+  - selector: `app=broken`
+  - template label: `app=wrong`
+
+- Obiettivo
+  - Identificare e correggere il problema
+
+- Validazione
+  - I Pod vengono creati correttamente dopo il fix
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+Manifest errato:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-selector
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: broken
+  template:
+    metadata:
+      labels:
+        app: wrong
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+Fix:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-selector
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: broken
+  template:
+    metadata:
+      labels:
+        app: broken
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+
+</details>
+
+---
+
+## PD-22 — Job che fallisce e ritenta
+
+Creare un Job chiamato `retry-job`
+
+- Specifiche
+  - Image: busybox
+  - Command: `sh -c "exit 1"`
+  - backoffLimit: 3
+
+- Obiettivo
+  - Kubernetes deve ritentare il Job fino al limite
+
+- Validazione
+  - `kubectl describe job retry-job`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retry-job
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+      - name: failer
+        image: busybox
+        command:
+        - sh
+        - -c
+        - exit 1
+      restartPolicy: Never
+```
+
+```sh
+k apply -f retry-job.yaml
+k describe job retry-job
+```
+
+</details>
+
+---
+
+## PD-23 — StatefulSet con PVC automatici e 1 replica
+
+Creare uno StatefulSet chiamato `single-db`
+
+- Specifiche
+  - Replicas: 1
+  - Image: nginx
+  - ServiceName: `single-db-headless`
+
+- Storage
+  - volumeClaimTemplates
+  - Claim name: `data`
+  - Storage: `50Mi`
+  - AccessMode: `ReadWriteOnce`
+
+- Validazione
+  - Il Pod si chiama `single-db-0`
+  - Il PVC viene creato automaticamente
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-db-headless
+spec:
+  clusterIP: None
+  selector:
+    app: single-db
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: single-db
+spec:
+  serviceName: single-db-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: single-db
+  template:
+    metadata:
+      labels:
+        app: single-db
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 50Mi
+```
+
+```sh
+k apply -f single-db.yaml
+k get pods
+k get pvc
+```
+
+</details>
+
+---
+
+## PD-24 — CronJob con deadline di partenza
+
+Creare un CronJob chiamato `deadline-cronjob`
+
+- Specifiche
+  - Schedule: ogni minuto
+  - Image: busybox
+  - Command: `date`
+
+- Configurazione
+  - startingDeadlineSeconds: 30
+
+- Obiettivo
+  - Il Job deve partire solo se non “perde” la finestra di avvio
+
+- Validazione
+  - `kubectl describe cronjob deadline-cronjob`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: deadline-cronjob
+spec:
+  schedule: "* * * * *"
+  startingDeadlineSeconds: 30
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: reporter
+            image: busybox
+            command:
+            - sh
+            - -c
+            - date
+          restartPolicy: OnFailure
+```
+
+```sh
+k apply -f deadline-cronjob.yaml
+k describe cronjob deadline-cronjob
+```
+
+</details>
+
+---
 ---
