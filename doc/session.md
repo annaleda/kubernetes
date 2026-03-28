@@ -1,4 +1,6 @@
-# 📘 CKAD – 100 Esercizi e Soluzioni
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+--- 
+### 📘 CKAD – 100 Esercizi e Soluzioni
 
 
 - [Esercizi 1-20](./zero-venti.md)
