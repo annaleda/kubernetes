@@ -1,4 +1,5 @@
-
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Deployment](../arg/second_arg.md)   |
+---
 ## 📦 Helm
 
 Helm è il package manager di Kubernetes.
