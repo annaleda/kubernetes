@@ -1,5 +1,6 @@
-
-# 📘 Kubernetes in locale con Kind (Windows) + Kubeconfig
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   
+--- 
+### 📘 Kubernetes in locale con Kind (Windows) + Kubeconfig
 
 ## 1️⃣ Prerequisiti
 
