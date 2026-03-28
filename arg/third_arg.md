@@ -1,4 +1,5 @@
-
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+---
 ## Application Observability and Maintenance
 ---
 ### 3.1 [Observability](../doc/ckad_observability.md)
