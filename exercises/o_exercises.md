@@ -1,13 +1,13 @@
 - Application Design and Build `20%`
-  - [Mock Exercises - Multi-container](./o-ex/m-c-ex.md)
+  - [Mock Exercises - Multi-container](./o-ex/m-c-ex.md) `31 esercizi`
   
-  - [Mock Exercises - Pod Design](./o-ex/p-d-ex.md) 
+  - [Mock Exercises - Pod Design](./o-ex/p-d-ex.md) `24 esercizi`
   
-  - [Mock Exercises - storage](./o-ex/storage-ex.md)
+  - [Mock Exercises - storage](./o-ex/storage-ex.md) `24 esercizi`
 
 ---
 - Application Deployment `20%`
-  - [Mock Exercises - Label and Selectors](./o-ex/l-s-ex.md)
+  - [Mock Exercises - Label and Selectors](./o-ex/l-s-ex.md)  `24 esercizi`
   
   - [Mock Exercises - Helm](./o-ex/helm-ex.md)
   
@@ -20,14 +20,14 @@
 ---
 - Application Observability and Maintenance `15%`
   
-  - [Mock Exercises - Probe](./o-ex/probe-ex.md)
+  - [Mock Exercises - Probe](./o-ex/probe-ex.md)  `24 esercizi`
 
   - [Mock Exercises - Logs](./o-ex/logs-ex.md)   
 
 ---
 - Application Environment, Configuration and Security `25%`
 
-  - [Mock Exercises - Configuration](./o-ex/config-ex.md)
+  - [Mock Exercises - Configuration](./o-ex/config-ex.md)  `24 esercizi`
   
   - [Mock Exercises - Auth](./o-ex/auth-ex.md)
     
