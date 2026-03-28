@@ -1,3 +1,5 @@
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md)   | [ Teoria Application Deployment](../arg/second_arg.md)   |
+---
 ## 🧩 Kustomize
 
 Kustomize è uno strumento integrato in `kubectl` che permette di personalizzare i manifest Kubernetes **senza usare template**.
