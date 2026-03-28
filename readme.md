@@ -20,28 +20,28 @@
 
 ## 🔗 CKAD: exercises
 
-### 1 [First Teorichal exercises](./exercises/f-t-e.md)
+- 1 [First Teorichal exercises](./exercises/f-t-e.md)
 
-### 2 [Online Exercises](./exercises/ex_online.md)
+- 2 [Online Exercises](./exercises/ex_online.md)
 
-### 3 [100 Exercises](./doc/session.md)
+- 3 [100 Exercises](./doc/session.md)
 
-### 4 [Other Exercises](./exercises/o_exercises.md)
+- 4 [Other Exercises](./exercises/o_exercises.md)
 
-### 5 [Workbooks](./exercises/workbooks.md)
+- 5 [Workbooks](./exercises/workbooks.md)
 
 ---
 
 ## 🔗 CKAD: mock exams
-### 0.0 [CKAD Practice Labs](./exercises/ckad-practice-labs.md)
+- 0.0 [CKAD Practice Labs](./exercises/ckad-practice-labs.md)
 
-### 0.1 [KodeKlaud Free Challenges](./exercises/challenges.md)
+- 0.1 [KodeKlaud Free Challenges](./exercises/challenges.md)
 
-### 1 [Practice Labs](./exercises/lab.md)
+- 1 [Practice Labs](./exercises/lab.md)
 
-### 2 [Mock Exams](./exems/exams.md)
+- 2 [Mock Exams](./exems/exams.md)
 
-### 3 [Mock Exam solutions](./exems/sol-exams.md)
+- 3 [Mock Exam solutions](./exems/sol-exams.md)
 
 ---
 
