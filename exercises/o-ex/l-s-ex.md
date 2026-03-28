@@ -1,5 +1,5 @@
 
-###  Labels and Selectors (12 esercizi)
+###  Labels and Selectors (24 esercizi)
 
 ## LS-1 — Deployment con Label Specifiche
 
