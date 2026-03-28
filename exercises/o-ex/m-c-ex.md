@@ -204,7 +204,7 @@ spec:
   containers:
   - command: ["/bin/sh","-c"]
     args:
-    - touch /data/raw.txt /data/processed.txt; while true; do echo "minuscolo" >> /data/raw.txt; done
+    - touch /data/raw.txt /data/processed.txt; while true; do echo "minuscolo" >> /data/raw.txt; sleep 5; done
     image: busybox
     name: metrics
     volumeMounts:
