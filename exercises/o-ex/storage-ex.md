@@ -1,6 +1,6 @@
 
 
-### Storage (6 esercizi)
+### Storage (11 esercizi)
 ---
 
 ## ST-1 — Static PV + PVC
