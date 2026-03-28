@@ -1,4 +1,5 @@
-
+- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   
+--- 
 ###  Probe (24 esercizi)
 
 ## PR-1 — Liveness Probe HTTP
