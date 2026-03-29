@@ -36,7 +36,7 @@
 
   - [Mock Exercises - Configuration](./o-ex/config-ex.md)  `24 esercizi`
   
-  - [Mock Exercises - Auth](./o-ex/auth-ex.md)
+  - [Mock Exercises - Auth](./o-ex/auth-ex.md) `12 esercizi`
     
   - [Mock Exercises - serviceAccount](./o-ex/sa-ex.md) `12 esercizi`
 
