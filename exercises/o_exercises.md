@@ -40,17 +40,17 @@
     
   - [Mock Exercises - serviceAccount](./o-ex/sa-ex.md) `12 esercizi`
 
-  - [Mock Exercises - securityContext](./o-ex/sec-ex.md)
+  - [Mock Exercises - securityContext](./o-ex/sec-ex.md) `12 esercizi`
   
   - [Mock Exercises - Security (old)](./security-ex.md)
 
   - [Mock Exercises - Affinity](./affinity-ex.md) `15 esercizi`
   
-  - [Mock Exercises - CRD, Operators](./o-ex/cdr-op-ex.md)
+  - [Mock Exercises - CRD, Operators](./o-ex/cdr-op-ex.md) `12 esercizi`
  
-  - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md)
+  - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md) `12 esercizi`
 
-  - [Mock Exercises - OCI Images](./o-ex/oci.md) 
+  - [Mock Exercises - OCI Images](./o-ex/oci.md) `12 esercizi`
 
 
 
