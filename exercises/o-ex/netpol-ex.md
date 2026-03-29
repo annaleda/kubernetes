@@ -519,6 +519,591 @@ spec:
 
 ---
 
+## NP-13 — Allow Ingress da IP specifico
+
+* Namespace: `ip-allow`
+* Consentire traffico solo da:
+
+  * `192.168.1.0/24`
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl create ns ip-allow
+```
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ip-range
+  namespace: ip-allow
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 192.168.1.0/24
+```
+
+</details>
+
+---
+
+## NP-14 — Deny specific CIDR
+
+* Namespace: `ip-block`
+* Consentire tutto tranne:
+
+  * `192.168.1.0/24`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-specific-ip
+  namespace: ip-block
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 192.168.1.0/24
+```
+
+</details>
+
+---
+
+## NP-15 — Allow Egress HTTP
+
+* Namespace: `web-egress`
+* Consentire solo:
+
+  * TCP 80
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http-egress
+  namespace: web-egress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - protocol: TCP
+      port: 80
+```
+
+</details>
+
+---
+
+## NP-16 — Ingress su più porte
+
+* Namespace: `multi-port`
+* Consentire:
+
+  * TCP 80
+  * TCP 443
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-ports
+  namespace: multi-port
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 443
+```
+
+</details>
+
+---
+
+## NP-17 — Allow solo intra-namespace
+
+* Namespace: `internal-only`
+* Solo traffico interno
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl create ns internal-only
+```
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-internal
+  namespace: internal-only
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector: {}
+```
+
+</details>
+
+---
+
+## NP-18 — Allow Egress verso namespace specifico
+
+* Namespace: `client-ns`
+* Consentire solo verso:
+
+  * `env=prod`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-prod
+  namespace: client-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: prod
+```
+
+</details>
+
+---
+
+## NP-19 — PodSelector + Porta
+
+* Namespace: `fine-grain`
+* Consentire:
+
+  * Pod `app=client`
+  * Porta 8080
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fine-grain-policy
+  namespace: fine-grain
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: client
+    ports:
+    - port: 8080
+      protocol: TCP
+```
+
+</details>
+
+---
+
+## NP-20 — Multiple rules OR
+
+* Namespace: `multi-rule`
+* Consentire:
+
+  * frontend OR admin
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: multi-source
+  namespace: multi-rule
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+  - from:
+    - podSelector:
+        matchLabels:
+          role: admin
+```
+
+</details>
+
+---
+
+## NP-21 — AND logic namespace + pod
+
+* Namespace: `and-logic`
+* Consentire:
+
+  * namespace `team=red`
+  * Pod `app=client`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: and-logic
+  namespace: and-logic
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: red
+      podSelector:
+        matchLabels:
+          app: client
+```
+
+</details>
+
+---
+
+## NP-22 — Egress verso Pod specifici
+
+* Namespace: `egress-pod`
+* Consentire solo verso:
+
+  * `app=db`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-db
+  namespace: egress-pod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: db
+```
+
+</details>
+
+---
+
+## NP-23 — DNS + HTTP only
+
+* Namespace: `restricted-egress`
+* Consentire:
+
+  * TCP 80
+  * TCP/UDP 53
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restricted-egress
+  namespace: restricted-egress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - port: 80
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+```
+
+</details>
+
+---
+
+## NP-24 — Policy su subset Pod
+
+* Namespace: `partial`
+* Solo Pod `app=web`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-only
+  namespace: partial
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - {}
+```
+
+</details>
+
+---
+
+## NP-25 — Debug selector mismatch
+
+* Namespace: `debug-ns`
+
+<details>
+<summary>Soluzione</summary>
+
+Errore:
+
+```yaml
+podSelector:
+  matchLabels:
+    app: wrong
+```
+
+Fix:
+
+```yaml
+podSelector:
+  matchLabels:
+    app: correct
+```
+
+```sh
+kubectl get pods --show-labels
+```
+
+</details>
+
+---
+
+## NP-26 — Allow ingress + deny egress
+
+* Namespace: `mixed`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mixed-policy
+  namespace: mixed
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}
+```
+
+</details>
+
+---
+
+## NP-27 — Egress verso Service CIDR
+
+* Namespace: `svc-egress`
+* CIDR: `10.96.0.0/12`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cluster-svc
+  namespace: svc-egress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.96.0.0/12
+```
+
+</details>
+
+---
+
+## NP-28 — Solo Pod stessa label
+
+* Namespace: `self-comm`
+* Solo `app=api`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: self-communication
+  namespace: self-comm
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: api
+```
+
+</details>
+
+---
+
+## NP-29 — Multiple namespaceSelector
+
+* Namespace: `multi-ns`
+* Consentire:
+
+  * dev
+  * staging
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: multi-ns-access
+  namespace: multi-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: dev
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: staging
+```
+
+</details>
+
+---
+
+## NP-30 — Zero Trust
+
+* Namespace: `zero-trust`
+* Consentire:
+
+  * ingress: frontend
+  * egress: db
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+kubectl create ns zero-trust
+```
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zero-trust
+  namespace: zero-trust
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: db
+```
+
+</details>
+
+---
+
+
 ## Cheatsheet NetworkPolicy
 
 ```sh
