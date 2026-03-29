@@ -533,6 +533,8 @@ Creare un Job chiamato `multi-completion-job`
 <summary>Soluzione</summary>
 
 ```yaml
+ k create job multi-completion-job --image=busybox -o yaml --dry-run=client > multi-completion-job.yaml -- sh -c 'echo hello from job && sleep 3'
+
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -590,6 +592,8 @@ Creare un CronJob chiamato `report-cronjob`
 <summary>Soluzione</summary>
 
 ```yaml
+ k create cronjob report-cronjob --image=busybox --schedule="* * * * *" -o yaml --dry-run=client > report-cronjob.yaml -- sh -c 'date; echo report generated'
+
 apiVersion: batch/v1
 kind: CronJob
 metadata:
