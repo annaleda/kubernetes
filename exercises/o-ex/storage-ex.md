@@ -246,9 +246,9 @@ spec:
 k apply -f pvc-many.yaml
 
 
-k run shared-2 --image=nginx --dry-run=client -o yaml > shared-2.yaml
+k run shared-2 --image=busybox --dry-run=client -o yaml > shared-2.yaml
 
-k run shared-1 --image=nginx --dry-run=client -o yaml > shared-1.yaml
+k run shared-1 --image=busybox --dry-run=client -o yaml > shared-1.yaml
 
 vi shared-1.yaml
 
