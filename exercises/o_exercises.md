@@ -13,7 +13,7 @@
 - Application Deployment `20%`
   - [Mock Exercises - Label and Selectors](./o-ex/l-s-ex.md)  `24 esercizi`
   
-  - [Mock Exercises - Depoyment Strategies](./o-ex/d-s-ex.md)  `30 esercizi`
+  - [Mock Exercises - Deployment Strategies](./o-ex/d-s-ex.md)  `30 esercizi`
 
   - [Mock Exercises - Helm](./o-ex/helm-ex.md)
   
