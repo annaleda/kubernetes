@@ -653,6 +653,8 @@ Creare un DaemonSet chiamato `node-agent`
 <summary>Soluzione</summary>
 
 ```yaml
+ k create deploy node-agent --image=busybox -oyaml --dry-run=client > node-agent.yaml -- sh -c "while true; do echo agent running; sleep 30; done"
+
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
