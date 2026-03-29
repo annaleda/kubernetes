@@ -57,10 +57,10 @@
 ---
 - [ Teory Service and Networking ](../arg/fifth_arg.md)
 - Services and Networking `20%`
-  - [Mock Exercises - Services](./o-ex/svc-ex.md)
+  - [Mock Exercises - Services](./o-ex/svc-ex.md) `12 esercizi`
     
-  - [Mock Exercises - Ingress](./o-ex/ing-ex.md)
+  - [Mock Exercises - Ingress](./o-ex/ing-ex.md) `12 esercizi`
 
-  - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md)
+  - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md) `24 esercizi`
  
 ---
