@@ -223,7 +223,7 @@ Creare un CronJob chiamato `scheduled-task`
 
 
 ```
-k create cronjob scheduled-task --image=busybox --schedule="*/2 * * * *" --dry-run=client -o yaml > cron-job.yaml
+k create cronjob scheduled-task --image=busybox --schedule="*/2 * * * *" --dry-run=client -o yaml > cron-job.yaml -- sh -c date
 
 apiVersion: batch/v1
 kind: CronJob
