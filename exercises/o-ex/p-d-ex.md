@@ -144,6 +144,7 @@ spec:
 status: {}
 
 k apply -f job.yaml
+k logs job/batch-job
 ```
 </details>
 
