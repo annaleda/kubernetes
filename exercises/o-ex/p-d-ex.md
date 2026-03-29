@@ -172,7 +172,7 @@ Creare un Job chiamato `parallel-job`
 <summary>Soluzione</summary>
   
 ```
- k create job parallel-job --image=busybox --dry-run=client -o yaml > parallel-job.yaml
+ k create job parallel-job --image=busybox --dry-run=client -o yaml > parallel-job.yaml -- sh -c 'sleep 10'
 
 apiVersion: batch/v1
 kind: Job
