@@ -44,7 +44,7 @@
   
   - [Mock Exercises - Security (old)](./security-ex.md)
 
-  - [Mock Exercises - Affinity](./affinity-ex.md)
+  - [Mock Exercises - Affinity](./affinity-ex.md) `15 esercizi`
   
   - [Mock Exercises - CRD, Operators](./o-ex/cdr-op-ex.md)
  
