@@ -120,7 +120,7 @@ Creare un Job chiamato `batch-job`
 <summary>Soluzione</summary>
   
 ```
-k create job batch-job --image=busybox --dry-run=client -o yaml > job.yaml
+k create job batch-job --image=busybox --dry-run=client -o yaml > job.yaml -- sh -c 'echo Job execcuted && sleep 5'
 vi job.yaml
 
 apiVersion: batch/v1
