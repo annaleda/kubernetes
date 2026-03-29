@@ -124,6 +124,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-config
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
@@ -140,6 +141,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-data
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
@@ -232,6 +234,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: pvc-many
 spec:
+  storageClassName: ""
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
@@ -304,6 +307,116 @@ status: {}
 k apply -f shared-2.yaml
 
 kubectl exec -it shared-2 -- cat /many/test.txt
+```
+Altra soluzione:
+
+```
+vi pv-many.yaml
+
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-shared
+spec:
+  capacity:
+    storage: 200Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/shared
+
+k apply -f pv-many.yaml
+
+
+vi pvc-many.yaml
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-shared
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 200Mi
+
+
+k apply -f pvc-many.yaml
+
+
+k run shared-2 --image=nginx --dry-run=client -o yaml > shared-2.yaml
+
+k run shared-1 --image=nginx --dry-run=client -o yaml > shared-1.yaml
+
+vi shared-1.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: shared-2
+  name: shared-2
+spec:
+  volumes:
+  - name: pvc-shared
+    persistentVolumeClaim:
+      claimName: pvc-shared
+  containers:
+  - image: busybox
+    name: shared-2
+    command: ["/bin/sh","-c"]
+    args:
+      - while true; do echo "fuck" >> /pvc/app.log; sleep 5; done
+    volumeMounts:
+    - name: pvc-shared
+      mountPath: /pvc
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+k apply -f shared-1.yaml
+
+ vi shared-2.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: shared-1
+  name: shared-1
+spec:
+  volumes:
+  - name: pvc-shared
+    persistentVolumeClaim:
+      claimName: pvc-shared
+  containers:
+  - image: busybox
+    name: shared-1
+    command: ["/bin/sh","-c"]
+    args:
+    - touch /pvc/app.log; while true;do cat /pvc/app.log; sleep 5; done
+    volumeMounts:
+    - name: pvc-shared
+      mountPath: /pvc
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+k apply -f shared-2.yaml
+
+ k logs shared-1
+
 ```
 </details>
 
