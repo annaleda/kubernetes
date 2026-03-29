@@ -50,7 +50,7 @@
  
   - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md) `15 esercizi`
 
-  - [Mock Exercises - OCI Images](./o-ex/oci.md) `12 esercizi`
+  - [Mock Exercises - OCI Images](./o-ex/oci.md) `11 esercizi`
 
 
 
