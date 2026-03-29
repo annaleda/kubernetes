@@ -13,6 +13,8 @@
 - Application Deployment `20%`
   - [Mock Exercises - Label and Selectors](./o-ex/l-s-ex.md)  `24 esercizi`
   
+  - [Mock Exercises - Depoyment Strategies](./o-ex/d-s-ex.md)  `30 esercizi`
+
   - [Mock Exercises - Helm](./o-ex/helm-ex.md)
   
   - [Mock Exercises - Kustomize](./o-ex/kustomize-ex.md)
@@ -26,7 +28,6 @@
 - Application Observability and Maintenance `15%`
   
   - [Mock Exercises - Probe](./o-ex/probe-ex.md)  `24 esercizi`
-
   - [Mock Exercises - Logs](./o-ex/logs-ex.md)   
 
 ---
