@@ -7,15 +7,12 @@
 
 Creare un Pod chiamato `standalone-pod`
 
-- Container
-  - Image: nginx
-  - Porta: 80
+- Usa nginx
+- Deve essere accessibile sulla porta 80
+- Usa il comportamento standard di riavvio
 
-- Configurazione
-  - restartPolicy: Always (default)
-
-- Vincoli
-  Non usare Deployment
+- Vincoli  
+  Non deve essere gestito da altre risorse
 
 - Validazione
   - Il Pod è Running
@@ -37,17 +34,15 @@ k apply -f standalone-pod.yaml
 
 Creare un Deployment chiamato `web-deployment`
 
-- Specifiche
-
-Image: nginx:1.22
-  - Replicas: 3
+- Usa nginx versione 1.22
+- Deve partire con 3 istanze
 
 - Task successivo
-  - Scalare a 5 repliche
+  - Portare le istanze a 5
 
 - Validazione
-  - kubectl get pods mostra 5 pod
-  - ReplicaSet aggiornato
+  - Sono presenti 5 Pod
+  - Il sistema di replica riflette il nuovo numero
 
 ---
 <details>
@@ -69,18 +64,17 @@ k get rs -o wide
 
 Creare Deployment `api-deployment`
 
-- Specifiche iniziali
-  - Image: nginx:1.21
-  - Replicas: 4
+- 4 istanze
+- nginx versione 1.21
 
-Aggiornare l’immagine a nginx:1.23. Poi eseguire rollback alla versione precedente
+Aggiornare a nginx:1.23 e poi tornare alla versione precedente
 
 - Vincoli
-  - Usare rolling update (default strategy)
+  - L’aggiornamento deve avvenire gradualmente
 
 - Validazione
-  - kubectl rollout history deployment api-deployment
-  - Verificare versione immagine dopo rollback
+  - Verificare storico aggiornamenti
+  - Verificare versione dopo rollback
 
 ---
 <details>
@@ -102,17 +96,16 @@ k rollout history deploy api-deployment
 
 Creare un Job chiamato `batch-job`
 
-- Container
-  - Image: busybox
-  - Command: `sh -c "echo Job executed && sleep 5"`
+- Usa busybox
+- Esegue:
+  `sh -c "echo Job executed && sleep 5"`
 
-- Configurazione
-  - completions: 1
-  - backoffLimit: 2
+- Deve completarsi una sola volta
+- Ritentare massimo 2 volte
 
 - Validazione
-  - Job completato con stato Complete
-  - Pod termina correttamente
+  - Stato completato
+  - Il Pod termina correttamente
 
 ---
 
@@ -154,18 +147,14 @@ k logs job/batch-job
 
 Creare un Job chiamato `parallel-job`
 
-- Specifiche
-  - Image: busybox
-  - Command: sleep 10
-  - completions: 4
-  - parallelism: 2
+- Usa busybox
+- Esegue `sleep 10`
 
-- Obiettivo
-  - Eseguire 2 pod alla volta fino a 4 completamenti
+- Deve completarsi 4 volte
+- Massimo 2 esecuzioni contemporanee
 
 - Validazione
-  - Non più di 2 pod Running contemporaneamente
-  - Job termina con 4 completamenti
+  - Non più di 2 Pod Running contemporaneamente
 
 ---
 
@@ -205,18 +194,17 @@ spec:
 
 Creare un CronJob chiamato `scheduled-task`
 
-- Specifiche
-  - Schedule: ogni 2 minuti
-  - Image: busybox
-  - Command: date
+- Usa busybox
+- Esegue `date`
+- Deve partire ogni 2 minuti
 
 - Configurazione
-  - successfulJobsHistoryLimit: 3
-  - failedJobsHistoryLimit: 1
+  - Conservare al massimo 3 esecuzioni riuscite
+  - Conservare al massimo 1 fallita
 
 - Validazione
   - Viene creato almeno un Job
-  - kubectl get cronjob mostra schedule corretto
+  - Lo schedule è corretto
 ---
 <details>
 <summary>Soluzione</summary>
@@ -265,42 +253,32 @@ spec:
 
 StatefulSet: `db-stateful`
 
-- Specifiche
-  - Replicas: 2
-  - ServiceName: `db-headless`
-  - Image: nginx
-  - Porta: 80
+- 2 istanze
+- nginx
+- porta 80
 
 - Service richiesto
   - Nome: `db-headless`
-  - ClusterIP: None
-  - Selector coerente con il StatefulSet
+  - Senza IP cluster
+  - Deve collegarsi correttamente alle istanze
 
 - Storage
-  - Utilizzare `volumeClaimTemplates`
-  - Nome claim: data
-  - Storage richiesto: 100Mi
-  - AccessMode: ReadWriteOnce
-  - StorageClass: standard
+  - Ogni istanza deve avere il proprio volume
+  - Dimensione: 100Mi
+  - Accesso da un solo nodo
+  - Classe standard
 
 - Obiettivo
-  - Ogni replica deve avere il proprio PVC
-  - I pod devono avere nomi prevedibili:
+  - Nomi prevedibili:
     - db-stateful-0
     - db-stateful-1
 
 - Vincoli
-  - Non usare Deployment
-  - Non creare manualmente i PVC
-  - I PVC devono essere generati automaticamente
+  - Non creare manualmente i volumi
 
 - Validazione
-  - kubectl get pods mostra nomi ordinali
-  - kubectl get pvc mostra:
-    - data-db-stateful-0
-    - data-db-stateful-1
-  - Eliminando db-stateful-0 viene ricreato con lo stesso nome
-  - Il PVC associato rimane Bound
+  - I volumi sono separati
+  - Eliminando una replica mantiene lo stesso storage
 
 ---
 
@@ -373,22 +351,20 @@ spec:
 ```
 </details>
 
-## PD-8 — Da Pod a Deployment
+## PD-8 — Deployment
 
 Creare un Deployment chiamato `frontend-deployment`
 
-- Specifiche
-  - Image: nginx:1.25
-  - Replicas: 2
-  - Label: `app=frontend`
+- nginx versione 1.25
+- 2 istanze
+- Tutte le istanze devono avere etichetta `app=frontend`
 
 - Obiettivo
-  - Verificare che i Pod siano gestiti da un ReplicaSet
-  - I Pod devono avere label coerenti
+  - Le istanze devono essere gestite automaticamente
 
-- Vincoli
-  - Non creare un Pod standalone
-  - Usare Deployment
+- Validazione
+  - Presenza del sistema di replica
+  - Etichette corrette sui Pod
 
 - Validazione
   - `kubectl get deploy`
@@ -439,23 +415,21 @@ spec:
 
 ---
 
-## PD-9 — Deployment con Strategy Recreate
+## PD-9 — Deployment con aggiornamento distruttivo
 
 Creare un Deployment chiamato `recreate-deployment`
 
-- Specifiche
-  - Image: nginx:1.24
-  - Replicas: 3
+- nginx versione 1.24
+- 3 istanze
 
 - Configurazione
-  - Usare strategy `Recreate`
+  - Durante aggiornamenti, eliminare prima tutte le istanze e poi ricrearle
 
 - Obiettivo
-  - Aggiornare successivamente l’immagine a `nginx:1.25`
+  - Aggiornare successivamente a nginx 1.25
 
 - Validazione
-  - `kubectl describe deploy recreate-deployment`
-  - Verificare che la strategy sia `Recreate`
+  - Il comportamento segue quanto richiesto
 
 ---
 
@@ -509,23 +483,21 @@ k describe deploy recreate-deployment
 
 ---
 
-## PD-10 — Job con Più Completions
+## PD-10 — Job con esecuzione sequenziale
 
 Creare un Job chiamato `multi-completion-job`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "echo hello from job && sleep 3"`
-  - completions: 3
-  - parallelism: 1
-  - backoffLimit: 1
+- Usa busybox
+- Esegue:
+  `sh -c "echo hello from job && sleep 3"`
 
-- Obiettivo
-  - Eseguire 3 completamenti totali, uno alla volta
+- Configurazione
+  - Deve completarsi 3 volte
+  - Una esecuzione alla volta
+  - Ritentare massimo 1 volta
 
 - Validazione
-  - `kubectl get jobs`
-  - `kubectl describe job multi-completion-job`
+  - Numero corretto di completamenti
 
 ---
 
@@ -565,26 +537,21 @@ k describe job multi-completion-job
 
 ---
 
-## PD-11 — CronJob con Concurrency Policy
+## PD-11 — CronJob senza esecuzioni parallele
 
 Creare un CronJob chiamato `report-cronjob`
 
-- Specifiche
-  - Schedule: ogni minuto
-  - Image: busybox
-  - Command: `sh -c "date; echo report generated"`
-  - concurrencyPolicy: Forbid
+- Deve partire ogni minuto
+- Usa busybox
+- Esegue:
+  `sh -c "date; echo report generated"`
 
 - Configurazione
-  - successfulJobsHistoryLimit: 2
-  - failedJobsHistoryLimit: 1
-
-- Obiettivo
-  - Evitare esecuzioni concorrenti
+  - Non deve permettere esecuzioni contemporanee
+  - Conservare 2 successi e 1 fallimento
 
 - Validazione
-  - `kubectl get cronjob`
-  - `kubectl describe cronjob report-cronjob`
+  - Nessuna sovrapposizione tra esecuzioni
 
 ---
 
@@ -631,21 +598,15 @@ k describe cronjob report-cronjob
 
 Creare un DaemonSet chiamato `node-agent`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "while true; do echo agent running; sleep 30; done"`
+- Usa busybox
+- Esegue continuamente:
+  `echo agent running` ogni 30 secondi
 
 - Obiettivo
-  - Eseguire un Pod su ogni nodo
-
-- Vincoli
-  - Non usare Deployment
-  - Usare `DaemonSet`
+  - Un’istanza per ogni nodo
 
 - Validazione
-  - `kubectl get ds`
-  - `kubectl get po -o wide`
-  - Numero Pod uguale al numero di nodi schedulabili
+  - Numero Pod uguale al numero di nodi
 
 ---
 
@@ -687,22 +648,20 @@ k get po -o wide
 
 ---
 
-## PD-13 — Deployment con Pause e Resume Rollout
+## PD-13 — Deployment con pausa e ripresa aggiornamenti
 
 Creare un Deployment chiamato `paused-deployment`
 
-- Specifiche iniziali
-  - Image: nginx:1.24
-  - Replicas: 2
+- nginx versione 1.24
+- 2 istanze
 
 - Task
-  - Mettere in pausa il rollout
-  - Aggiornare immagine a `nginx:1.25`
-  - Riprendere il rollout
+  - Mettere in pausa gli aggiornamenti
+  - Aggiornare a nginx 1.25
+  - Riprendere aggiornamento
 
 - Validazione
-  - `kubectl rollout status deployment paused-deployment`
-  - L’immagine finale è `nginx:1.25`
+  - Versione finale corretta
 
 ---
 
@@ -721,21 +680,20 @@ k rollout status deployment paused-deployment
 
 ---
 
-## PD-14 — Deployment con Replica minime e maxSurge
+## PD-14 — Deployment con controllo rollout
 
 Creare un Deployment chiamato `controlled-rollout`
 
-- Specifiche
-  - Image: nginx:1.25
-  - Replicas: 4
+- nginx versione 1.25
+- 4 istanze
 
 - Configurazione
-  - strategy: RollingUpdate
-  - maxUnavailable: 1
-  - maxSurge: 2
+  - Durante aggiornamenti:
+    - massimo 1 istanza non disponibile
+    - massimo 2 istanze extra temporanee
 
 - Validazione
-  - `kubectl describe deployment controlled-rollout`
+  - Comportamento corretto durante rollout
 
 ---
 
@@ -780,17 +738,15 @@ k describe deployment controlled-rollout
 
 Creare un ReplicaSet chiamato `web-rs`
 
-- Specifiche
-  - Image: nginx
-  - Replicas: 3
-  - Label: `app=web-rs`
+- nginx
+- 3 istanze
+- Etichetta `app=web-rs`
 
 - Obiettivo
-  - Creare direttamente un ReplicaSet senza Deployment
+  - Creazione diretta senza Deployment
 
 - Validazione
-  - `kubectl get rs`
-  - `kubectl get pods --show-labels`
+  - Pod con etichetta corretta
 
 ---
 
@@ -831,20 +787,18 @@ k get pods --show-labels
 
 Creare uno StatefulSet chiamato `cache-stateful`
 
-- Specifiche
-  - Image: nginx
-  - Replicas: 3
-  - ServiceName: `cache-headless`
+- nginx
+- 3 istanze
 
 - Service richiesto
   - Nome: `cache-headless`
-  - ClusterIP: None
+  - Senza IP cluster
 
 - Validazione
-  - I Pod si chiamano:
-    - `cache-stateful-0`
-    - `cache-stateful-1`
-    - `cache-stateful-2`
+  - Nomi:
+    - cache-stateful-0
+    - cache-stateful-1
+    - cache-stateful-2
 
 ---
 
@@ -895,20 +849,18 @@ k get pods
 
 ---
 
-## PD-17 — Job con activeDeadlineSeconds
+## PD-17 — Job con limite temporale
 
 Creare un Job chiamato `deadline-job`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "sleep 30"`
-  - activeDeadlineSeconds: 10
+- busybox
+- Esegue `sleep 30`
 
-- Obiettivo
-  - Il Job deve essere terminato dopo 10 secondi
+- Configurazione
+  - Deve essere terminato dopo 10 secondi
 
 - Validazione
-  - `kubectl describe job deadline-job`
+  - Interruzione forzata del Job
 
 ---
 
@@ -943,22 +895,20 @@ k describe job deadline-job
 
 ---
 
-## PD-18 — Job con completions e parallelism uguali
+## PD-18 — Job completamente parallelo
 
 Creare un Job chiamato `fast-parallel-job`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "echo run && sleep 5"`
-  - completions: 3
-  - parallelism: 3
+- busybox
+- Esegue:
+  `sh -c "echo run && sleep 5"`
 
-- Obiettivo
-  - Tutti i Pod partono insieme
+- Configurazione
+  - 3 completamenti
+  - Tutti contemporaneamente
 
 - Validazione
-  - `kubectl get jobs`
-  - Fino a 3 Pod contemporaneamente
+  - Fino a 3 Pod attivi insieme
 
 ---
 
@@ -999,20 +949,15 @@ k get pods
 
 Creare un CronJob chiamato `suspended-cronjob`
 
-- Specifiche
-  - Schedule: ogni minuto
-  - Image: busybox
-  - Command: `date`
+- Ogni minuto
+- busybox
+- Esegue `date`
 
 - Configurazione
-  - suspend: true
-
-- Obiettivo
-  - Il CronJob esiste ma non esegue Job
+  - Deve essere sospeso
 
 - Validazione
-  - `kubectl get cronjob`
-  - Nessun Job creato finché è sospeso
+  - Nessun Job creato
 
 ---
 
@@ -1051,20 +996,17 @@ k get jobs
 
 ---
 
-## PD-20 — DaemonSet con label selector
+## PD-20 — DaemonSet con etichette
 
 Creare un DaemonSet chiamato `log-agent`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "while true; do echo logging; sleep 20; done"`
-
-- Configurazione
-  - Label: `app=log-agent`
+- busybox
+- Esegue continuamente:
+  `echo logging` ogni 20 secondi
+- Etichetta `app=log-agent`
 
 - Validazione
-  - `kubectl get ds`
-  - `kubectl get pods --show-labels`
+  - Pod con etichette corrette
 
 ---
 
@@ -1104,19 +1046,18 @@ k get pods --show-labels
 
 ---
 
-## PD-21 — Deployment con selector e template incoerenti (debug)
+## PD-21 — Debug selector incoerente
 
 Creare un Deployment chiamato `broken-selector`
 
 - Problema
-  - selector: `app=broken`
-  - template label: `app=wrong`
+  - Le etichette usate per selezionare e quelle nei Pod non coincidono
 
 - Obiettivo
-  - Identificare e correggere il problema
+  - Correggere il problema
 
 - Validazione
-  - I Pod vengono creati correttamente dopo il fix
+  - I Pod vengono creati correttamente
 
 ---
 
@@ -1171,20 +1112,18 @@ spec:
 
 ---
 
-## PD-22 — Job che fallisce e ritenta
+## PD-22 — Job con retry
 
 Creare un Job chiamato `retry-job`
 
-- Specifiche
-  - Image: busybox
-  - Command: `sh -c "exit 1"`
-  - backoffLimit: 3
+- busybox
+- Esegue un comando che fallisce sempre
 
-- Obiettivo
-  - Kubernetes deve ritentare il Job fino al limite
+- Configurazione
+  - Ritentare fino a 3 volte
 
 - Validazione
-  - `kubectl describe job retry-job`
+  - Tentativi multipli visibili
 
 ---
 
@@ -1219,24 +1158,24 @@ k describe job retry-job
 
 ---
 
-## PD-23 — StatefulSet con PVC automatici e 1 replica
+## PD-23 — StatefulSet con storage (1 replica)
 
 Creare uno StatefulSet chiamato `single-db`
 
-- Specifiche
-  - Replicas: 1
-  - Image: nginx
-  - ServiceName: `single-db-headless`
+- 1 istanza
+- nginx
+
+- Service richiesto
+  - Nome: `single-db-headless`
 
 - Storage
-  - volumeClaimTemplates
-  - Claim name: `data`
-  - Storage: `50Mi`
-  - AccessMode: `ReadWriteOnce`
+  - Volume automatico
+  - 50Mi
+  - Accesso da un solo nodo
 
 - Validazione
-  - Il Pod si chiama `single-db-0`
-  - Il PVC viene creato automaticamente
+  - Nome `single-db-0`
+  - Volume creato automaticamente
 
 ---
 
@@ -1300,23 +1239,19 @@ k get pvc
 
 ---
 
-## PD-24 — CronJob con deadline di partenza
+## PD-24 — CronJob con deadline
 
 Creare un CronJob chiamato `deadline-cronjob`
 
-- Specifiche
-  - Schedule: ogni minuto
-  - Image: busybox
-  - Command: `date`
+- Ogni minuto
+- busybox
+- Esegue `date`
 
 - Configurazione
-  - startingDeadlineSeconds: 30
-
-- Obiettivo
-  - Il Job deve partire solo se non “perde” la finestra di avvio
+  - Deve partire solo se non supera 30 secondi di ritardo
 
 - Validazione
-  - `kubectl describe cronjob deadline-cronjob`
+  - Comportamento corretto rispetto al tempo
 
 ---
 
