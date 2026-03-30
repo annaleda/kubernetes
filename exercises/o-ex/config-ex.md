@@ -124,7 +124,7 @@ spec:
 
 ---
 
-### CONF-4 — LimitRange
+## CONF-4 — LimitRange
 
 - Namespace: `limit-ns`
 - Creare LimitRange
@@ -157,7 +157,7 @@ spec:
 
 ---
 
-### CONF-5 — Requests vs Limits
+## CONF-5 — Requests vs Limits
 
 - Deployment: `resource-test`
 - Container
@@ -199,7 +199,7 @@ spec:
 
 ---
 
-### CONF-6 — ConfigMap + Secret insieme
+## CONF-6 — ConfigMap + Secret insieme
 
 - Pod: `env-app`
 - Usare
