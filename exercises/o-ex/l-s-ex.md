@@ -309,7 +309,7 @@ spec:
 
 k get po ssd-app -o wide
 NAME      READY   STATUS    RESTARTS   AGE   IP       NODE                   
-ssd-app   0/1     Pending   0          24s   <none>   ckad-exam-control-plane
+ssd-app   0/1     Running   0          24s   <none>   ckad-exam-control-plane
 
 ```
 </details>
@@ -338,6 +338,26 @@ Creare Deployment `multi-env-app`
 ```
 k create deploy multi-env-app --replicas=2 --image=nginx --dry-run=client -o yaml > multi-env-app.yaml
 # modifica labels
+# Modificare il file per aggiungere label di default:
+
+template:
+  metadata:
+    labels:
+      app: multi-env-app
+      environment: dev
+k apply -f multi-env-app.yaml
+
+# Modifica manuale delle label dei Pod
+
+
+
+k get pods
+
+# Prendi i nomi dei Pod e modifica le label:
+
+k label pod <pod1> environment=dev --overwrite
+k label pod <pod2> environment=staging --overwrite
+k label pod <pod3> environment=prod --overwrite
 
 kubectl get pods -l 'environment in (dev,staging)'
 ```
@@ -384,9 +404,37 @@ k label po l-po key-
 
 <details>
 <summary>Soluzione</summary>
+```
+k create deploy mismatch-app --image=nginx --replicas=2 --dry-run=client -o yaml > mismatch-app.yaml
+```
+Modificare il file introducendo l'errore:  
+
+```
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mismatch-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+
+k apply -f mismatch-app.yaml
+```
 
 Problema:
 - selector ≠ label template
+
 
 Fix:
 
@@ -434,6 +482,7 @@ k describe deploy mismatch-app
 <summary>Soluzione</summary>
 
 ```yaml
+
 apiVersion: v1
 kind: Service
 metadata:
