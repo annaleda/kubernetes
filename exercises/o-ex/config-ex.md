@@ -117,7 +117,10 @@ spec:
 <summary>Soluzione</summary>
   
 ```
- k create ns quota-ns 
+ k create ns quota-ns
+
+k create quota quota -n quota-ns --hard=pods=2,requests.cpu=500m -oyaml --dry-run=client > quota1.yaml
+
 
 apiVersion: v1
 kind: ResourceQuota
