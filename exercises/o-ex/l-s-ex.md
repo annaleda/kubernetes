@@ -589,7 +589,7 @@ k get endpoints frontend-svc
 ```sh
 k label deploy update-label-deploy team=devops
 ```
-
+Aggiungendo solo tramite k label non basta per i pod
  per i Pod:
 
 ```sh
