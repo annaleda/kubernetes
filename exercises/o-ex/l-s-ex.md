@@ -160,74 +160,7 @@ Creare Pod `temp-app`
 ```
  k run temp-app --image=nginx -l environment=dev -o yaml > pod-label.yaml
 
- vi pod-label.yaml
-
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: "2026-03-04T10:28:14Z"
-  generation: 1
-  labels:
-    environment: prod
-  name: temp-app
-  namespace: default
-  resourceVersion: "379101"
-  uid: 9d6f384e-317e-4986-afe7-5f3691bc8d2c
-spec:
-  containers:
-  - image: nginx
-    imagePullPolicy: Always
-    name: temp-app
-    resources: {}
-    terminationMessagePath: /dev/termination-log
-    terminationMessagePolicy: File
-    volumeMounts:
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-rd47r
-      readOnly: true
-  dnsPolicy: ClusterFirst
-  enableServiceLinks: true
-  preemptionPolicy: PreemptLowerPriority
-  priority: 0
-  restartPolicy: Always
-  schedulerName: default-scheduler
-  securityContext: {}
-  serviceAccount: default
-  serviceAccountName: default
-  terminationGracePeriodSeconds: 30
-  tolerations:
-  - effect: NoExecute
-    key: node.kubernetes.io/not-ready
-    operator: Exists
-    tolerationSeconds: 300
-  - effect: NoExecute
-    key: node.kubernetes.io/unreachable
-    operator: Exists
-    tolerationSeconds: 300
-  volumes:
-  - name: kube-api-access-rd47r
-    projected:
-      defaultMode: 420
-      sources:
-      - serviceAccountToken:
-          expirationSeconds: 3607
-          path: token
-      - configMap:
-          items:
-          - key: ca.crt
-            path: ca.crt
-          name: kube-root-ca.crt
-      - downwardAPI:
-          items:
-          - fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-            path: namespace
-status:
-  phase: Pending
-  qosClass: BestEffort
-
-k replace -f pod-label.yaml --force
+ k label po temp-app environment=prod --overwrite
 
 k get pod temp-app --show-labels
 
