@@ -225,6 +225,8 @@ k expose deploy api-app --name api-service --port=80 --dry-run=client -o yaml > 
 
 vi api-service.yaml
 
+# Modificare selector con label app: backend
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -239,6 +241,14 @@ spec:
     targetPort: 80
   selector:
     app: backend
+
+k get pods --show-labels
+k get svc api-service -o wide
+k describe svc api-service
+k get endpoints api-service
+
+# fix rimettere selector con label app: api
+
 
 k get svc api-service
 NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
