@@ -161,9 +161,13 @@ spec:
   spec:
     limits:
     - type: Container
-    default:
-      cpu: 200m
-      memory: 128Mi
+      default:
+        cpu: 200m
+        memory: 128Mi
+
+k run test-pod --image=nginx -n limit-ns
+#  son stati messi i limits,requests nel resorces del container del pod test-pod
+k get po test-pod -n limit-ns -oyaml
 
 ```
 </details>
