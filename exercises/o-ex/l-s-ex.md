@@ -481,6 +481,69 @@ k describe deploy mismatch-app
 <details>
 <summary>Soluzione</summary>
 
+Creare il Deployment frontend:
+
+```sh
+k create deploy frontend-app --image=nginx --replicas=2 --dry-run=client -o yaml > frontend-app.yaml
+```
+ Modificare frontend-app.yaml:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: myapp
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+ Applicare:
+```
+k apply -f frontend-app.yaml
+```
+ Creare il Deployment backend:
+```
+k create deploy backend-app --image=nginx --replicas=2 --dry-run=client -o yaml > backend-app.yaml
+```
+Modificare backend-app.yaml:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: myapp
+        tier: backend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
+Applicare:
+```
+k apply -f backend-app.yaml
+```
+Creare il Service:
+
 ```yaml
 
 apiVersion: v1
@@ -492,6 +555,8 @@ spec:
     tier: frontend
   ports:
   - port: 80
+
+k apply -f frontend-svc.yaml
 ```
 
 Verifica:
