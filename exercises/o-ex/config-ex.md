@@ -25,26 +25,35 @@ vi config-pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: null
   labels:
     run: config-pod
   name: config-pod
   namespace: configuration
 spec:
+  volumes:
+  - name: config
+    configMap:
+      name: app-config
   containers:
   - image: nginx
     name: config-pod
-    volumeMounts:
-    - name: app-config-volume
-      mountPath: /etc/config
-  volumes:
-    - name: app-config-volume
-      configMap:
+    command:
+    - sh
+    - -c
+    - echo $APP_MODE; sleep 3600
+    envFrom:
+    - configMapRef:
         name: app-config
+    volumeMounts:
+    - name: config
+      mountPath: /config
+
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
 
  k apply -f config-pod.yaml
- k describe po config-pod -n configuration
- k exec -n configuration config-pod -- ls /etc/config
+ 
+ k logs -n configuration config-pod
 ```
 </details>
 
