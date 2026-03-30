@@ -130,7 +130,7 @@ metadata:
 spec:
   hard:
     pods: "2"
-    requests.cpu: "500m"
+    requests.cpu: 500m
  
 ```
 </details>
