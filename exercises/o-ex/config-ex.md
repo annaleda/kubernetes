@@ -236,32 +236,45 @@ k run env-app --image=nginx --dry-run=client -o yaml > env-app.yaml
 apiVersion: v1
 kind: Pod
 metadata:
+  labels:
+    run: env-app
   name: env-app
 spec:
+  volumes:
+  - name: config
+    configMap:
+      name: app-config
+  - name: secret
+    secret:
+      secretName: app-secret
   containers:
-  - name: app
-    image: nginx
+  - image: nginx
+    name: env-app
+    command:
+    - sh
+    - -c
+    - echo $APP_MODE; echo $DB_USER; echo $DB_PASS; sleep 3600
+    volumeMounts:
+    - name: config
+      mountPath: /config
+    - name: secret
+      mountPath: /etc/secret
     envFrom:
     - configMapRef:
         name: app-config
     - secretRef:
         name: app-secret
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
 
-    volumeMounts:
-    - name: config-volume
-      mountPath: /etc/config
-    - name: secret-volume
-      mountPath: /etc/secret
-      readOnly: true
-      
-  volumes:
-  - name: config-volume
-    configMap:
-      name: app-config
 
-  - name: secret-volume
-    secret:
-      secretName: app-secret
+$ k logs env-app
+production
+admin
+pass123
+
 ```
 </details>
 
