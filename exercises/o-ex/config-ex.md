@@ -95,9 +95,10 @@ spec:
   volumes:
     - name: db-secret-volume
       secret:
-        name: db-secret
+         secretName: db-secret
 
- k exec -n configuration secret-pod -- ls /etc/secret
+ k exec -it -n configuration secret-pod -- sh
+ #ls /etc/secret
 ```
 </details>
 
