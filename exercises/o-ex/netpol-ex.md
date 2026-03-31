@@ -122,6 +122,16 @@ spec:
 kubectl apply -f np-2.yaml
 kubectl run frontend --image=busybox --labels=role=frontend -n net-secure -- sleep 3600
 kubectl run backend --image=busybox --labels=role=backend -n net-secure -- sleep 3600
+
+# Verifica
+kubectl run server -n net-secure --image=busybox --labels=app=server -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n net-secure --port=8080 --name=server-svc
+
+kubectl exec frontend -n net-secure -- nc -vz server-svc 8080
+kubectl exec backend -n net-secure -- nc -vz server-svc 8080
+server-svc (10.96.15.44:8080) open
+command terminated with exit code 1
+
 ```
 
 </details>
