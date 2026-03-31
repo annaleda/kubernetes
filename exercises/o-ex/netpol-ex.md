@@ -1578,9 +1578,6 @@ spec:
         matchLabels:
           app: external
 ```
-</details>
-
----
 
 ```sh
 kubectl create ns project-net
@@ -1622,6 +1619,9 @@ kubectl exec frontend -n project-net -- nc -vz external-svc 9090
 # database -> backend FAIL
 kubectl exec database -n project-net -- nc -vz backend-svc 8080
 ```
+</details>
+
+
 
 ---
 
@@ -1634,6 +1634,15 @@ namespaceSelector  -> filtra namespace
 podSelector        -> filtra Pod
 ports              -> limita le porte
 ipBlock            -> limita CIDR/IP
+
+server pod:
+  nc -lk -p 8080   → ascolta
+
+client pod:
+  nc -vz server 8080 → testa connessione
+
+nc -lk -p 8080
+= apri porta 8080 e resta in ascolto per sempre
 
 Se una policy seleziona un Pod:
 - Ingress non esplicitamente consentito = negato
