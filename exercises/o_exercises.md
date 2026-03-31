@@ -61,6 +61,6 @@
     
   - [Mock Exercises - Ingress](./o-ex/ing-ex.md) `12 esercizi`
 
-  - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md) `30 esercizi`
+  - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md) `31 esercizi`
  
 ---
