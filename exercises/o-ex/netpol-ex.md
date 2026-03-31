@@ -43,6 +43,15 @@ spec:
 ```sh
 kubectl apply -f np-0.yaml
 kubectl get netpol -n net-open
+
+# Pod test
+kubectl run server -n net-open --image=busybox --restart=Never --labels=app=server -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n net-open --port=8080 --name=server-svc
+
+kubectl run client -n net-open --image=busybox --restart=Never -- sleep 3600
+
+# Test
+kubectl exec client -n net-open -- nc -vz server-svc 8080
 ```
 
 </details>
@@ -51,7 +60,7 @@ kubectl get netpol -n net-open
 
 ## NP-1 — Default Deny Ingress
 
-- Namespace: `net-secure`
+- Namespace: `net-secure1`
 
 - Creare NetworkPolicy
   - Nessun traffico in ingresso consentito
@@ -63,7 +72,7 @@ kubectl get netpol -n net-open
 <summary>Soluzione</summary>
 
 ```sh
-kubectl create ns net-secure
+kubectl create ns net-secure1
 ```
 
 ```yaml
@@ -71,7 +80,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny
-  namespace: net-secure
+  namespace: net-secure1
 spec:
   podSelector: {}
   policyTypes:
@@ -80,8 +89,16 @@ spec:
 
 ```sh
 kubectl apply -f np-1.yaml
-kubectl get netpol -n net-secure
-kubectl describe netpol default-deny -n net-secure
+kubectl get netpol -n net-secure1
+kubectl describe netpol default-deny -n net-secure1
+
+kubectl run server -n net-secure1 --image=busybox --restart=Never --labels=app=server -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n net-secure1 --port=8080 --name=server-svc
+
+kubectl run client -n net-secure1 --image=busybox --restart=Never -- sleep 3600
+
+# Test
+kubectl exec client -n net-secure1 -- nc -vz server-svc 8080
 ```
 
 </details>
@@ -90,7 +107,7 @@ kubectl describe netpol default-deny -n net-secure
 
 ## NP-2 — Allow Ingress da label
 
-- Namespace: `net-secure`
+- Namespace: `net-secure2`
 
 - Consentire traffico in ingresso solo da Pod con label:
   - `role=frontend`
@@ -106,7 +123,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-frontend
-  namespace: net-secure
+  namespace: net-secure2
 spec:
   podSelector: {}
   policyTypes:
@@ -120,15 +137,15 @@ spec:
 
 ```sh
 kubectl apply -f np-2.yaml
-kubectl run frontend --image=busybox --labels=role=frontend -n net-secure -- sleep 3600
-kubectl run backend --image=busybox --labels=role=backend -n net-secure -- sleep 3600
+kubectl run frontend --image=busybox --labels=role=frontend -n net-secure2 -- sleep 3600
+kubectl run backend --image=busybox --labels=role=backend -n net-secure2 -- sleep 3600
 
 # Verifica
-kubectl run server -n net-secure --image=busybox --labels=app=server -- sh -c "nc -lk -p 8080"
-kubectl expose pod server -n net-secure --port=8080 --name=server-svc
+kubectl run server -n net-secure2 --image=busybox --labels=app=server -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n net-secure2 --port=8080 --name=server-svc
 
-kubectl exec frontend -n net-secure -- nc -vz server-svc 8080
-kubectl exec backend -n net-secure -- nc -vz server-svc 8080
+kubectl exec frontend -n net-secure2 -- nc -vz server-svc 8080
+kubectl exec backend -n net-secure2 -- nc -vz server-svc 8080
 server-svc (10.96.15.44:8080) open
 command terminated with exit code 1
 
@@ -140,7 +157,7 @@ command terminated with exit code 1
 
 ## NP-3 — Allow Egress DNS
 
-- Namespace: `net-secure`
+- Namespace: `net-secure3`
 
 - Consentire solo traffico egress verso DNS
   - porta UDP 53
@@ -158,7 +175,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns-egress
-  namespace: net-secure
+  namespace: net-secure3
 spec:
   podSelector: {}
   policyTypes:
@@ -169,6 +186,16 @@ spec:
       port: 53
     - protocol: TCP
       port: 53
+
+kubectl create ns net-secure3
+kubectl apply -f np-3.yaml
+kubectl run test -n net-secure3 --image=busybox --restart=Never -- sleep 3600
+
+# DNS deve funzionare
+kubectl exec test -n net-secure3 -- nslookup kubernetes.default
+
+# HTTP deve fallire
+kubectl exec test -n net-secure3 -- wget -qO- http://google.com
 ```
 
 </details>
@@ -177,7 +204,7 @@ spec:
 
 ## NP-4 — Namespace Selector
 
-- Namespace target: `net-secure`
+- Namespace target: `net-secure4`
 
 - Consentire traffico in ingresso solo da namespace con label:
   - `access=trusted`
@@ -194,7 +221,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-from-trusted-ns
-  namespace: net-secure
+  namespace: net-secure4
 spec:
   podSelector: {}
   policyTypes:
@@ -207,7 +234,24 @@ spec:
 ```
 
 ```sh
+kubectl create ns net-secure4
+kubectl create ns trusted
+kubectl create ns untrusted
+
 kubectl label ns trusted access=trusted
+
+kubectl apply -f np-4.yaml
+
+# server
+kubectl run server -n net-secure4 --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n net-secure4 --port=8080 --name=svc
+
+# client
+kubectl run client-ok -n trusted --image=busybox --restart=Never -- sleep 3600
+kubectl run client-bad -n untrusted --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client-ok -n trusted -- nc -vz svc.net-secure4 8080
+kubectl exec client-bad -n untrusted -- nc -vz svc.net-secure4 8080
 ```
 
 </details>
@@ -216,7 +260,7 @@ kubectl label ns trusted access=trusted
 
 ## NP-5 — Port Restriction
 
-- Namespace: `net-secure`
+- Namespace: `net-secure5`
 
 - Consentire traffico in ingresso solo su:
   - TCP 80
@@ -233,7 +277,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-port-80
-  namespace: net-secure
+  namespace: net-secure5
 spec:
   podSelector: {}
   policyTypes:
@@ -242,6 +286,18 @@ spec:
   - ports:
     - protocol: TCP
       port: 80
+
+kubectl create ns net-secure5
+kubectl apply -f np-5.yaml
+
+kubectl run server -n net-secure5 --image=busybox --restart=Never -- sh -c "nc -lk -p 80 & nc -lk -p 8080"
+kubectl expose pod server -n net-secure5 --port=80 --name=svc80
+kubectl expose pod server -n net-secure5 --port=8080 --name=svc8080
+
+kubectl run client -n net-secure5 --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n net-secure5 -- nc -vz svc80 80
+kubectl exec client -n net-secure5 -- nc -vz svc8080 8080
 ```
 
 </details>
@@ -250,7 +306,7 @@ spec:
 
 ## NP-6 — Combined Policy
 
-- Namespace: `net-secure`
+- Namespace: `net-secure6`
 
 - Consentire:
   - Ingress da namespace con label `access=trusted`
@@ -267,7 +323,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-trusted-443
-  namespace: net-secure
+  namespace: net-secure6
 spec:
   podSelector: {}
   policyTypes:
@@ -280,6 +336,21 @@ spec:
     ports:
     - protocol: TCP
       port: 443
+
+kubectl create ns net-secure6
+kubectl create ns trusted
+kubectl label ns trusted access=trusted
+
+kubectl apply -f np-6.yaml
+
+kubectl run server -n net-secure6 --image=busybox --restart=Never -- sh -c "nc -lk -p 443 & nc -lk -p 80"
+kubectl expose pod server -n net-secure6 --port=443 --name=svc443
+kubectl expose pod server -n net-secure6 --port=80 --name=svc80
+
+kubectl run client -n trusted --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n trusted -- nc -vz svc443.net-secure6 443
+kubectl exec client -n trusted -- nc -vz svc80.net-secure6 80
 ```
 
 </details>
@@ -316,8 +387,15 @@ spec:
 ```
 
 ```sh
+
+kubectl create ns egress-lock
 kubectl apply -f np-7.yaml
 kubectl describe netpol default-deny-egress -n egress-lock
+
+kubectl run test -n egress-lock --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n egress-lock -- nslookup kubernetes.default
+kubectl exec test -n egress-lock -- wget -qO- http://google.com
 ```
 
 </details>
@@ -361,6 +439,18 @@ spec:
     - podSelector:
         matchLabels:
           tier: frontend
+
+kubectl create ns app-net
+kubectl apply -f np-8.yaml
+
+kubectl run backend -n app-net --image=busybox --labels=tier=backend --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod backend -n app-net --port=8080 --name=svc
+
+kubectl run frontend -n app-net --image=busybox --labels=tier=frontend --restart=Never -- sleep 3600
+kubectl run other -n app-net --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec frontend -n app-net -- nc -vz svc 8080
+kubectl exec other -n app-net -- nc -vz svc 8080
 ```
 
 </details>
@@ -369,7 +459,7 @@ spec:
 
 ## NP-9 — Namespace + Pod selector combinati
 
-- Namespace target: `app-net`
+- Namespace target: `app-net2`
 
 - Consentire traffico solo da:
   - namespace con label `team=blue`
@@ -386,7 +476,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-blue-clients
-  namespace: app-net
+  namespace: app-net2
 spec:
   podSelector: {}
   policyTypes:
@@ -399,6 +489,23 @@ spec:
       podSelector:
         matchLabels:
           role: client
+
+kubectl create ns app-net2
+kubectl create ns blue
+kubectl create ns red
+
+kubectl label ns blue team=blue
+
+kubectl apply -f np-9.yaml
+
+kubectl run server -n app-net2 --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n app-net2 --port=8080 --name=svc
+
+kubectl run ok -n blue --image=busybox --labels=role=client --restart=Never -- sleep 3600
+kubectl run bad -n red --image=busybox --labels=role=client --restart=Never -- sleep 3600
+
+kubectl exec ok -n blue -- nc -vz svc.app-net2 8080
+kubectl exec bad -n red -- nc -vz svc.app-net2 8080
 ```
 
 </details>
@@ -407,7 +514,7 @@ spec:
 
 ## NP-10 — Allow egress verso un CIDR specifico
 
-- Namespace: `egress-lock`
+- Namespace: `egress-lock2`
 
 - Consentire egress solo verso:
   - `10.0.0.0/24`
@@ -423,7 +530,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-egress-cidr
-  namespace: egress-lock
+  namespace: egress-lock2
 spec:
   podSelector: {}
   policyTypes:
@@ -432,6 +539,14 @@ spec:
   - to:
     - ipBlock:
         cidr: 10.0.0.0/24
+
+kubectl create ns egress-lock2
+kubectl apply -f np-10.yaml
+
+kubectl run test -n egress-lock2 --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n egress-lock2 -- wget -qO- http://10.0.0.5
+kubectl exec test -n egress-lock2 -- wget -qO- http://8.8.8.8
 ```
 
 </details>
@@ -476,6 +591,18 @@ spec:
     - podSelector:
         matchLabels:
           app: api
+
+kubectl create ns db-net
+kubectl apply -f np-11.yaml
+
+kubectl run db -n db-net --image=busybox --labels=app=db --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod db -n db-net --port=8080 --name=svc
+
+kubectl run api -n db-net --image=busybox --labels=app=api --restart=Never -- sleep 3600
+kubectl run other -n db-net --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec api -n db-net -- nc -vz svc 8080
+kubectl exec other -n db-net -- nc -vz svc 8080
 ```
 
 </details>
@@ -523,6 +650,23 @@ spec:
       port: 53
     - protocol: TCP
       port: 53
+
+kubectl create ns full-lock
+kubectl apply -f np-12.yaml
+
+kubectl run server -n full-lock --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n full-lock --port=8080 --name=svc
+
+kubectl run frontend -n full-lock --image=busybox --labels=role=frontend --restart=Never -- sleep 3600
+kubectl run other -n full-lock --image=busybox --restart=Never -- sleep 3600
+
+# ingress test
+kubectl exec frontend -n full-lock -- nc -vz svc 8080
+kubectl exec other -n full-lock -- nc -vz svc 8080
+
+# egress test
+kubectl exec frontend -n full-lock -- nslookup kubernetes.default
+kubectl exec other -n full-lock -- wget -qO- http://google.com
 ```
 
 </details>
@@ -557,6 +701,16 @@ spec:
   - from:
     - ipBlock:
         cidr: 192.168.1.0/24
+
+kubectl create ns ip-allow
+kubectl apply -f np-13.yaml
+
+kubectl run server -n ip-allow --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n ip-allow --port=8080 --name=svc
+
+kubectl run client -n ip-allow --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n ip-allow -- nc -vz svc 8080
 ```
 
 </details>
@@ -589,6 +743,16 @@ spec:
         cidr: 0.0.0.0/0
         except:
         - 192.168.1.0/24
+
+kubectl create ns ip-block
+kubectl apply -f np-14.yaml
+
+kubectl run server -n ip-block --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n ip-block --port=8080 --name=svc
+
+kubectl run client -n ip-block --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n ip-block -- nc -vz svc 8080
 ```
 
 </details>
@@ -619,6 +783,14 @@ spec:
   - ports:
     - protocol: TCP
       port: 80
+
+kubectl create ns web-egress
+kubectl apply -f np-15.yaml
+
+kubectl run test -n web-egress --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n web-egress -- wget -qO- http://google.com
+kubectl exec test -n web-egress -- nslookup kubernetes.default
 ```
 
 </details>
@@ -652,6 +824,21 @@ spec:
       port: 80
     - protocol: TCP
       port: 443
+
+kubectl create ns multi-port
+kubectl apply -f np-16.yaml
+
+kubectl run server -n multi-port --image=busybox --restart=Never -- sh -c "nc -lk -p 80 & nc -lk -p 443 & nc -lk -p 8080"
+
+kubectl expose pod server -n multi-port --port=80 --name=svc80
+kubectl expose pod server -n multi-port --port=443 --name=svc443
+kubectl expose pod server -n multi-port --port=8080 --name=svc8080
+
+kubectl run client -n multi-port --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n multi-port -- nc -vz svc80 80
+kubectl exec client -n multi-port -- nc -vz svc443 443
+kubectl exec client -n multi-port -- nc -vz svc8080 8080
 ```
 
 </details>
@@ -683,6 +870,18 @@ spec:
   ingress:
   - from:
     - podSelector: {}
+
+kubectl create ns internal-only
+kubectl apply -f np-17.yaml
+
+kubectl run server -n internal-only --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n internal-only --port=8080 --name=svc
+
+kubectl run client -n internal-only --image=busybox --restart=Never -- sleep 3600
+kubectl run external -n default --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n internal-only -- nc -vz svc 8080
+kubectl exec external -n default -- nc -vz svc.internal-only 8080
 ```
 
 </details>
@@ -714,6 +913,19 @@ spec:
     - namespaceSelector:
         matchLabels:
           env: prod
+
+kubectl create ns client-ns
+kubectl create ns prod
+kubectl label ns prod env=prod
+
+kubectl apply -f np-18.yaml
+
+kubectl run server -n prod --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n prod --port=8080 --name=svc
+
+kubectl run test -n client-ns --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n client-ns -- nc -vz svc.prod 8080
 ```
 
 </details>
@@ -749,6 +961,18 @@ spec:
     ports:
     - port: 8080
       protocol: TCP
+
+kubectl create ns fine-grain
+kubectl apply -f np-19.yaml
+
+kubectl run server -n fine-grain --image=busybox --labels=app=server --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n fine-grain --port=8080 --name=svc
+
+kubectl run client -n fine-grain --image=busybox --labels=app=client --restart=Never -- sleep 3600
+kubectl run other -n fine-grain --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client -n fine-grain -- nc -vz svc 8080
+kubectl exec other -n fine-grain -- nc -vz svc 8080
 ```
 
 </details>
@@ -784,6 +1008,20 @@ spec:
     - podSelector:
         matchLabels:
           role: admin
+
+kubectl create ns multi-rule
+kubectl apply -f np-20.yaml
+
+kubectl run server -n multi-rule --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n multi-rule --port=8080 --name=svc
+
+kubectl run f -n multi-rule --image=busybox --labels=role=frontend --restart=Never -- sleep 3600
+kubectl run a -n multi-rule --image=busybox --labels=role=admin --restart=Never -- sleep 3600
+kubectl run o -n multi-rule --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec f -n multi-rule -- nc -vz svc 8080
+kubectl exec a -n multi-rule -- nc -vz svc 8080
+kubectl exec o -n multi-rule -- nc -vz svc 8080
 ```
 
 </details>
@@ -819,6 +1057,21 @@ spec:
       podSelector:
         matchLabels:
           app: client
+
+kubectl create ns and-logic
+kubectl create ns red
+kubectl label ns red team=red
+
+kubectl apply -f np-21.yaml
+
+kubectl run server -n and-logic --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n and-logic --port=8080 --name=svc
+
+kubectl run ok -n red --image=busybox --labels=app=client --restart=Never -- sleep 3600
+kubectl run bad -n red --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec ok -n red -- nc -vz svc.and-logic 8080
+kubectl exec bad -n red -- nc -vz svc.and-logic 8080
 ```
 
 </details>
@@ -850,6 +1103,16 @@ spec:
     - podSelector:
         matchLabels:
           app: db
+
+kubectl create ns egress-pod
+kubectl apply -f np-22.yaml
+
+kubectl run db -n egress-pod --image=busybox --labels=app=db --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod db -n egress-pod --port=8080 --name=svc
+
+kubectl run test -n egress-pod --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n egress-pod -- nc -vz svc 8080
 ```
 
 </details>
@@ -885,6 +1148,14 @@ spec:
       protocol: UDP
     - port: 53
       protocol: TCP
+
+kubectl create ns restricted-egress
+kubectl apply -f np-23.yaml
+
+kubectl run test -n restricted-egress --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n restricted-egress -- nslookup kubernetes.default
+kubectl exec test -n restricted-egress -- wget -qO- http://google.com
 ```
 
 </details>
@@ -913,6 +1184,16 @@ spec:
   - Ingress
   ingress:
   - {}
+
+kubectl create ns partial
+kubectl apply -f np-24.yaml
+
+kubectl run web -n partial --image=busybox --labels=app=web --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod web -n partial --port=8080 --name=svc
+
+kubectl run other -n partial --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec other -n partial -- nc -vz svc 8080
 ```
 
 </details>
@@ -943,7 +1224,17 @@ podSelector:
 ```
 
 ```sh
-kubectl get pods --show-labels
+kubectl create ns debug-ns
+
+# controlla le label reali
+kubectl get pods -n debug-ns --show-labels
+
+# controlla la policy
+kubectl describe netpol -n debug-ns
+
+# se la policy non matcha nessun pod, correggi il selector e riapplica
+kubectl apply -f np-25.yaml
+kubectl get netpol -n debug-ns
 ```
 
 </details>
@@ -970,6 +1261,14 @@ spec:
   - Egress
   ingress:
   - {}
+
+kubectl create ns mixed
+kubectl apply -f np-26.yaml
+
+kubectl run test -n mixed --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec test -n mixed -- nc -vz kubernetes.default 443
+kubectl exec test -n mixed -- wget -qO- http://google.com
 ```
 
 </details>
@@ -998,6 +1297,18 @@ spec:
   - to:
     - ipBlock:
         cidr: 10.96.0.0/12
+
+kubectl create ns svc-egress
+kubectl apply -f np-27.yaml
+
+kubectl run test -n svc-egress --image=busybox --restart=Never -- sleep 3600
+
+# verso Service ClusterIP deve funzionare
+kubectl exec test -n svc-egress -- nslookup kubernetes.default
+kubectl exec test -n svc-egress -- nc -vz kubernetes.default 443
+
+# verso IP esterno deve fallire
+kubectl exec test -n svc-egress -- wget -qO- http://8.8.8.8
 ```
 
 </details>
@@ -1029,6 +1340,18 @@ spec:
     - podSelector:
         matchLabels:
           app: api
+
+kubectl create ns self-comm
+kubectl apply -f np-28.yaml
+
+kubectl run api1 -n self-comm --image=busybox --labels=app=api --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod api1 -n self-comm --port=8080 --name=svc
+
+kubectl run api2 -n self-comm --image=busybox --labels=app=api --restart=Never -- sleep 3600
+kubectl run other -n self-comm --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec api2 -n self-comm -- nc -vz svc 8080
+kubectl exec other -n self-comm -- nc -vz svc 8080
 ```
 
 </details>
@@ -1037,7 +1360,7 @@ spec:
 
 ## NP-29 — Multiple namespaceSelector
 
-* Namespace: `multi-ns`
+* Namespace: `multi-ns2`
 * Consentire:
 
   * dev
@@ -1051,7 +1374,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: multi-ns-access
-  namespace: multi-ns
+  namespace: multi-ns2
 spec:
   podSelector: {}
   policyTypes:
@@ -1065,6 +1388,27 @@ spec:
     - namespaceSelector:
         matchLabels:
           env: staging
+
+kubectl create ns multi-ns2
+kubectl create ns dev
+kubectl create ns staging
+kubectl create ns other
+
+kubectl label ns dev env=dev
+kubectl label ns staging env=staging
+
+kubectl apply -f np-29.yaml
+
+kubectl run server -n multi-ns2 --image=busybox --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod server -n multi-ns2 --port=8080 --name=svc
+
+kubectl run client-dev -n dev --image=busybox --restart=Never -- sleep 3600
+kubectl run client-staging -n staging --image=busybox --restart=Never -- sleep 3600
+kubectl run client-other -n other --image=busybox --restart=Never -- sleep 3600
+
+kubectl exec client-dev -n dev -- nc -vz svc.multi-ns2 8080
+kubectl exec client-staging -n staging -- nc -vz svc.multi-ns2 8080
+kubectl exec client-other -n other -- nc -vz svc.multi-ns2 8080
 ```
 
 </details>
@@ -1107,6 +1451,27 @@ spec:
     - podSelector:
         matchLabels:
           app: db
+
+
+kubectl create ns zero-trust
+kubectl apply -f np-30.yaml
+
+kubectl run db -n zero-trust --image=busybox --labels=app=db --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod db -n zero-trust --port=8080 --name=db-svc
+
+kubectl run target -n zero-trust --image=busybox --restart=Never -- sh -c "nc -lk -p 8081"
+kubectl expose pod target -n zero-trust --port=8081 --name=target-svc
+
+kubectl run frontend -n zero-trust --image=busybox --labels=role=frontend --restart=Never -- sleep 3600
+kubectl run other -n zero-trust --image=busybox --restart=Never -- sleep 3600
+
+# ingress verso pod protetti
+kubectl exec frontend -n zero-trust -- nc -vz target-svc 8081
+kubectl exec other -n zero-trust -- nc -vz target-svc 8081
+
+# egress dai pod protetti
+kubectl exec frontend -n zero-trust -- nc -vz db-svc 8080
+kubectl exec frontend -n zero-trust -- nc -vz target-svc 8081
 ```
 
 </details>
@@ -1219,22 +1584,43 @@ spec:
 
 ```sh
 kubectl create ns project-net
+kubectl apply -f np-31.yaml
 
+kubectl run backend -n project-net --image=busybox --labels=app=backend --restart=Never -- sh -c "nc -lk -p 8080"
+kubectl expose pod backend -n project-net --port=8080 --name=backend-svc
 
-## Cheatsheet NetworkPolicy
+kubectl run database -n project-net --image=busybox --labels=app=database --restart=Never -- sh -c "nc -lk -p 5432"
+kubectl expose pod database -n project-net --port=5432 --name=database-svc
 
-```sh
-# vedere le networkpolicy
-kubectl get netpol -A
+kubectl run external -n project-net --image=busybox --labels=app=external --restart=Never -- sh -c "nc -lk -p 9090"
+kubectl expose pod external -n project-net --port=9090 --name=external-svc
 
-# descrivere una policy
-kubectl describe netpol <name> -n <namespace>
+kubectl run frontend -n project-net --image=busybox --labels=app=frontend --restart=Never -- sleep 3600
+kubectl run other -n project-net --image=busybox --restart=Never -- sleep 3600
 
-# vedere labels namespace
-kubectl get ns --show-labels
+# frontend -> backend OK
+kubectl exec frontend -n project-net -- nc -vz backend-svc 8080
 
-# vedere labels pod
-kubectl get pods --show-labels -n <namespace>
+# frontend -> database FAIL
+kubectl exec frontend -n project-net -- nc -vz database-svc 5432
+
+# other -> backend FAIL
+kubectl exec other -n project-net -- nc -vz backend-svc 8080
+
+# other -> database FAIL
+kubectl exec other -n project-net -- nc -vz database-svc 5432
+
+# backend -> database OK
+kubectl exec backend -n project-net -- nc -vz database-svc 5432
+
+# backend -> external FAIL
+kubectl exec backend -n project-net -- nc -vz external-svc 9090
+
+# frontend -> external OK
+kubectl exec frontend -n project-net -- nc -vz external-svc 9090
+
+# database -> backend FAIL
+kubectl exec database -n project-net -- nc -vz backend-svc 8080
 ```
 
 ---
