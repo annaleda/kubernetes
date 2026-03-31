@@ -1,6 +1,6 @@
 - [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   
 ---
-### Network Policies (12 esercizi)
+### Network Policies (31 esercizi)
 
 ---
 
@@ -1102,6 +1102,113 @@ spec:
 </details>
 
 ---
+
+## NP-31 — Frontend ↔ Backend ↔ Database Control
+
+- Namespace: `project-net`
+
+- Creare una o più NetworkPolicy
+  - Consentire ai Pod `backend` di ricevere traffico **solo** dai Pod `frontend`
+  - Consentire ai Pod `database` di ricevere traffico **solo** dai Pod `backend`
+  - Consentire ai Pod `backend` di uscire **solo** verso i Pod `database`
+  - Consentire ai Pod `frontend` di uscire **solo** verso i Pod `backend` e `external`
+  - Impedire ai Pod `database` qualsiasi traffico in uscita
+
+- Specifiche
+  - Usare solo label selector
+  - Label coinvolte:
+    - `app=frontend`
+    - `app=backend`
+    - `app=database`
+    - `app=external`
+  - Usare `Ingress` ed `Egress`
+  - È possibile creare più di una NetworkPolicy
+  - Non usare indirizzi IP
+
+- Validazione
+  - `frontend` → `backend` consentito
+  - `frontend` → `database` negato
+  - `backend` → `database` consentito
+  - `backend` → altri Pod negato
+  - `database` → qualsiasi destinazione negato
+  - Pod diversi da `frontend` → `backend` negato
+  - Pod diversi da `backend` → `database` negato
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns project-net
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  namespace: project-net
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: database
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: database-policy
+  namespace: project-net
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: backend
+  egress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-policy
+  namespace: project-net
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: backend
+  - to:
+    - podSelector:
+        matchLabels:
+          app: external
+```
+</details>
+
+---
+
+```sh
+kubectl create ns project-net
 
 
 ## Cheatsheet NetworkPolicy
