@@ -1635,16 +1635,26 @@ podSelector        -> filtra Pod
 ports              -> limita le porte
 ipBlock            -> limita CIDR/IP
 
+Se una policy seleziona un Pod:
+- Ingress non esplicitamente consentito = negato
+- Egress non esplicitamente consentito = negato
+
 server pod:
   nc -lk -p 8080   → ascolta
 
 client pod:
   nc -vz server 8080 → testa connessione
 
-nc -lk -p 8080
-= apri porta 8080 e resta in ascolto per sempre
+nc -vz host port
+nc → netcat (un tool che apre connessioni TCP/UDP)
+-v → verbose
+-z → scan (non manda dati, solo test connessione)
 
-Se una policy seleziona un Pod:
-- Ingress non esplicitamente consentito = negato
-- Egress non esplicitamente consentito = negato
+nc -lk -p 8080  → apri porta 8080 e resta in ascolto per sempre
+
+-l → listen [il pod si mette in ascolto (diventa un “server”)]
+-k → keep alive (resta in ascolto anche dopo una connessione senza questo → si chiude dopo 1 connessione)
+-p 8080 → porta su cui ascoltare
+
+
 ```
