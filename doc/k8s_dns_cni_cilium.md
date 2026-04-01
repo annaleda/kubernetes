@@ -1,3 +1,6 @@
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./ckad_exam_strategy.md) | [Teoria base DNS, ip + Kubernates](./dns.md)
+
+
 # 🌐 Kubernetes DNS & Networking — CoreDNS, CNI, Cilium
 
 ---
