@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md) | [Teoria base DNS, ip + Kubernates](../doc/dns.md)
 
 ---
 
@@ -393,6 +393,9 @@ Stai proteggendo:
  Le NetworkPolicy si definiscono sempre:
 
 > **dove stanno i Pod da proteggere**
+
+
+###  [Teoria base DNS, ip + Kubernates](../doc/dns.md)
 
 ---
 
