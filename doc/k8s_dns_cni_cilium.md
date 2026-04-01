@@ -151,7 +151,7 @@ Quando crei un Pod:
 
 Cilium è un CNI avanzato basato su:
 
-👉 eBPF (Extended Berkeley Packet Filter)
+> eBPF (Extended Berkeley Packet Filter)
 
 ---
 
@@ -166,8 +166,8 @@ Cilium è un CNI avanzato basato su:
 
 ## Perché è speciale
 
-👉 Non usa iptables  
-👉 Usa eBPF (kernel Linux)
+> Non usa iptables  
+> Usa eBPF (kernel Linux)
 
 Vantaggi:
 
@@ -255,7 +255,7 @@ Pod target
 
 ---
 
-# ⚡ Riassunto finale
+### Riassunto finale
 
 - CoreDNS → DNS interno Kubernetes
 - CNI → networking Pod
