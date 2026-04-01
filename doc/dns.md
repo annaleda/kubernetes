@@ -211,5 +211,5 @@ Permettere porta 53 (UDP/TCP)
   - DNS → CoreDNS
  
 ---
-### [ CoreDNS k8s ](./k8s_dns_cni_cilium.md)
+### [ CoreDNS - CNI k8s ](./k8s_dns_cni_cilium.md)
 ---
