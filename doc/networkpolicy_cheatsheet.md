@@ -15,6 +15,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
+  namespace: backend-ns
 spec:
   podSelector: {}
   policyTypes:
@@ -37,6 +38,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-all-ingress
+  namespace: backend-ns
 spec:
   podSelector: {}
   policyTypes:
@@ -64,6 +66,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-all-egress
+  namespace: backend-ns
 spec:
   podSelector: {}
   policyTypes:
@@ -89,6 +92,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-frontend
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -116,6 +120,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: backend-egress
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -141,6 +146,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: backend-full
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -176,6 +182,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: backend-advanced
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -220,6 +227,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-all
+  namespace: backend-ns
 spec:
   podSelector: {}
   policyTypes:
@@ -268,6 +276,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-from-frontend-ns
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -299,6 +308,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-frontend-from-web
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -398,6 +408,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-egress-ip
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
@@ -430,6 +441,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-role-expression
+  namespace: backend-ns
 spec:
   podSelector:
     matchLabels:
