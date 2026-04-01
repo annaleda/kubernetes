@@ -4,8 +4,6 @@
 
 ## 🔹 1. CoreDNS — Teoria
 
-## Cos’è CoreDNS
-
 CoreDNS è il **DNS server interno di Kubernetes**.
 
 Traduce:
@@ -116,8 +114,6 @@ forward → DNS esterno
 
 ## 🔹 2. CNI — Container Network Interface
 
-## Cos’è CNI
-
 Il CNI è il componente che gestisce:
 
 - assegnazione IP ai Pod
@@ -125,8 +121,6 @@ Il CNI è il componente che gestisce:
 - networking cluster
 
 ---
-
-## Cosa fa
 
 Quando crei un Pod:
 
@@ -147,8 +141,6 @@ Quando crei un Pod:
 
 ## 🔹 3. Cilium — Teoria
 
-## Cos’è Cilium
-
 Cilium è un CNI avanzato basato su:
 
 > eBPF (Extended Berkeley Packet Filter)
@@ -163,8 +155,6 @@ Cilium è un CNI avanzato basato su:
 - Observability (monitoring traffico)
 
 ---
-
-## Perché è speciale
 
 > Non usa iptables  
 > Usa eBPF (kernel Linux)
