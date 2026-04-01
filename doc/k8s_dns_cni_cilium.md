@@ -2,7 +2,7 @@
 
 ---
 
-# 🔹 1. CoreDNS — Teoria
+## 🔹 1. CoreDNS — Teoria
 
 ## Cos’è CoreDNS
 
@@ -114,7 +114,7 @@ forward → DNS esterno
 
 ---
 
-# 🔹 2. CNI — Container Network Interface
+## 🔹 2. CNI — Container Network Interface
 
 ## Cos’è CNI
 
@@ -145,7 +145,7 @@ Quando crei un Pod:
 
 ---
 
-# 🔹 3. Cilium — Teoria
+## 🔹 3. Cilium — Teoria
 
 ## Cos’è Cilium
 
@@ -226,7 +226,7 @@ Pod → eBPF → Pod
 
 ---
 
-# 🔹 4. DNS + CNI + Kubernetes
+## 🔹 4. DNS + CNI + Kubernetes
 
 ---
 
