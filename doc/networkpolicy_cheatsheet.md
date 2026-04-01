@@ -102,7 +102,10 @@ spec:
           role: frontend
 ```
 
- frontend → backend ✅
+Risultato:
+
+- frontend → backend ✅
+- altri → backend ❌
 
 ---
 
@@ -125,9 +128,10 @@ spec:
         matchLabels:
           app: database
 ```
+Risultato:
 
- backend → database ✅
-
+ - backend → database ✅
+ - backend → altri ❌
 ---
 
 ##  6. Full control
@@ -156,9 +160,16 @@ spec:
           app: database
 ```
 
+Risultato:
+
+- frontend → backend ✅
+- altri → backend ❌
+- backend → database ✅
+- backend → altri ❌
+
 ---
 
-##  7. Allow tutto
+##  7. Allow all
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -176,9 +187,22 @@ spec:
   - {}
 ```
 
+Risultato:
+
+- ingresso: tutto ✅
+- uscita: tutto ✅
+
 ---
 
-#  Considerazioni generali
+| Scenario       | Ingress | Egress |
+| -------------- | ------- | ------ |
+| Default deny   | ❌       | ❌      |
+| Allow ingress  | ✅       | ❌      |
+| Allow egress   | ❌       | ✅      |
+| Allow specific | 🔒      | 🔒     |
+| Allow all      | ✅       | ✅      |
+
+## Considerazioni generali
 
 - Le policy sono additive
 - Si applicano ai Pod selezionati
