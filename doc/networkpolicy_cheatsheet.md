@@ -246,6 +246,236 @@ Risultato:
 | Allow specific | 🔒      | 🔒     |
 | Allow all      | ✅       | ✅      |
 
+---
+
+## Esempi di NetworkPolicy che usano selector diversi da `podSelector`:
+
+- namespaceSelector
+- ipBlock
+- combinazione namespaceSelector + podSelector
+- matchExpressions
+
+---
+
+##  1. namespaceSelector (ingress da namespace specifico)
+
+Permette traffico ai Pod `backend` solo da namespace con label:
+
+- team=frontend
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-frontend-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: frontend
+```
+
+ Risultato:
+- Pod in namespace `team=frontend` → backend ✅
+- altri namespace → backend ❌
+
+---
+
+##  2. namespaceSelector + podSelector (AND logico)
+
+Permette traffico solo da Pod con:
+
+- role=frontend
+- nel namespace team=web
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-from-web
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: web
+      podSelector:
+        matchLabels:
+          role: frontend
+```
+
+ Risultato:
+- frontend nel ns web → backend ✅
+- frontend in altri ns → ❌
+- altri pod nel ns web → ❌
+
+---
+
+ Le **NetworkPolicy sono namespaced**
+
+- Vivono dentro un namespace
+- Si applicano solo ai Pod di quel namespace
+
+---
+
+>  Le NetworkPolicy non sono globali
+
+- Non controllano tutto il cluster
+- Controllano solo i Pod selezionati nel loro namespace
+
+Esempio base:
+
+```yaml
+metadata:
+  namespace: backend-ns
+```
+ Questa policy:
+- protegge solo i Pod in `backend-ns`
+- non ha effetto su altri namespace
+
+---
+
+Quando si usa:
+
+```yaml
+namespaceSelector:
+```
+
+> Serve solo a selezionare **da dove arriva il traffico**
+
+---
+
+```yaml
+podSelector:
+  matchLabels:
+    app: backend
+```
+
+Stai proteggendo:
+- Pod `backend` nel namespace della policy
+
+> La policy resta sempre nel namespace del **destinatario** non nel namespace della sorgente
+
+---
+
+### Schema mentale
+
+```
+[Namespace frontend]   --->   [Namespace backend]
+        (source)                (destination)
+                                  ↑
+                           NetworkPolicy QUI
+```
+
+---
+
+ Le NetworkPolicy si definiscono sempre:
+
+> **dove stanno i Pod da proteggere**
+
+---
+
+##  3. ipBlock (egress verso rete esterna)
+
+Permette uscita solo verso subnet:
+
+- 10.0.0.0/24
+- escludendo 10.0.0.5
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-ip
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+        except:
+        - 10.0.0.5/32
+```
+
+ Risultato:
+- backend → subnet ✅
+- backend → 10.0.0.5 ❌
+- backend → altri IP ❌
+
+---
+
+##  4. matchExpressions (selector avanzato)
+
+Permette ingress da Pod con:
+
+- role IN (frontend, monitoring)
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-role-expression
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchExpressions:
+        - key: role
+          operator: In
+          values:
+          - frontend
+          - monitoring
+```
+
+ Risultato:
+- frontend → backend ✅
+- monitoring → backend ✅
+- altri → ❌
+
+---
+
+##  Tabella riassuntiva
+
+| Selector | Uso | Note |
+|---------|-----|-----|
+| podSelector | Pod stesso namespace | default |
+| namespaceSelector | Namespace | tutti i Pod del ns |
+| ipBlock | IP/CIDR | traffico esterno |
+| matchExpressions | Logica avanzata | In, NotIn, Exists |
+
+---
+
+##  Regole importanti
+
+- namespaceSelector → seleziona namespace
+- podSelector → seleziona Pod nello stesso namespace
+- insieme nello stesso blocco → AND
+- liste → OR
+- matchLabels multipli → AND
+
+---
+---
+
 ## Considerazioni generali
 
 - Le policy sono additive
