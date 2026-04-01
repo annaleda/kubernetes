@@ -1,8 +1,8 @@
-# 🔐 NetworkPolicy — Esempi progressivi (Ingress + Egress + Considerazioni)
+## NetworkPolicy — Esempi progressivi (Ingress + Egress )
 
 ---
 
-## 🟥 1. Default Deny (blocca tutto)
+##  1. Default Deny (blocca tutto)
 
 Blocca **tutto il traffico in ingresso e uscita** per tutti i Pod nel namespace.
 
@@ -18,18 +18,13 @@ spec:
   - Egress
 ```
 
-👉 Nessun Pod può:
+ Nessun Pod può:
 - ricevere traffico ❌
 - inviare traffico ❌
 
-💡 Considerazioni:
-- Punto di partenza per la sicurezza
-- Tutto va esplicitamente permesso
-- Se dimentichi regole → niente funziona
-
 ---
 
-## 🟧 2. Allow All Ingress (egress bloccato)
+##  2. Allow All Ingress (egress bloccato)
 
 Permette tutto il traffico in ingresso, ma blocca l’uscita.
 
@@ -47,16 +42,16 @@ spec:
   - {}
 ```
 
-👉 Risultato:
+ Risultato:
 - ingresso: tutto permesso ✅
 - uscita: tutto bloccato ❌
 
-💡 Considerazioni:
+ Considerazioni:
 - Le richieste arrivano ma le risposte possono fallire
 
 ---
 
-## 🟨 3. Allow All Egress (ingress bloccato)
+##  3. Allow All Egress (ingress bloccato)
 
 Permette uscita verso tutti, ma blocca ingresso.
 
@@ -74,16 +69,16 @@ spec:
   - {}
 ```
 
-👉 Risultato:
+ Risultato:
 - ingresso: bloccato ❌
 - uscita: tutto permesso ✅
 
-💡 Considerazioni:
+ Considerazioni:
 - Utile per job/batch
 
 ---
 
-## 🟩 4. Allow specific Ingress (da frontend)
+##  4. Allow specific Ingress (da frontend)
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -103,11 +98,11 @@ spec:
           role: frontend
 ```
 
-👉 frontend → backend ✅
+ frontend → backend ✅
 
 ---
 
-## 🟦 5. Allow specific Egress (verso database)
+##  5. Allow specific Egress (verso database)
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -127,11 +122,11 @@ spec:
           app: database
 ```
 
-👉 backend → database ✅
+ backend → database ✅
 
 ---
 
-## 🟪 6. Full control
+##  6. Full control
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -159,7 +154,7 @@ spec:
 
 ---
 
-## 🟫 7. Allow tutto
+##  7. Allow tutto
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -179,7 +174,7 @@ spec:
 
 ---
 
-# 🧠 Considerazioni generali
+#  Considerazioni generali
 
 - Le policy sono additive
 - Si applicano ai Pod selezionati
