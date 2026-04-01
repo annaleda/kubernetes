@@ -169,7 +169,51 @@ Risultato:
 
 ---
 
-##  7. Allow all
+##  7. Ingress + Egress da più label
+
+```
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-advanced
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+
+  policyTypes:
+  - Ingress
+  - Egress
+
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+    - podSelector:
+        matchLabels:
+          role: monitoring
+
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: database
+    - podSelector:
+        matchLabels:
+          app: cache
+```
+
+Risultato:
+
+- frontend → backend ✅
+- monitoring → backend ✅
+- altri → backend ❌
+- backend → database ✅
+- backend → cache ✅
+- backend → altri ❌
+
+##  8. Allow all
 
 ```yaml
 apiVersion: networking.k8s.io/v1
