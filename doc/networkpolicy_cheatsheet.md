@@ -433,7 +433,7 @@ spec:
 
 ---
 
-##  4. matchExpressions (selector avanzato)
+##  4. matchExpressions
 
 Permette ingress da Pod con:
 
