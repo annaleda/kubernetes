@@ -174,6 +174,10 @@ Se esiste una NetworkPolicy, il traffico non permesso viene bloccato.
 
 ---
 
+### [Network Policy Patterns](./networkpolicy_cheatsheet.md)
+
+---
+
 ## Ingress
 
 Permette routing HTTP/HTTPS basato su:
