@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./doc/ckad_exam_strategy.md) | [Teoria base DNS, ip + Kubernates](./doc/dns.md)
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./doc/ckad_exam_strategy.md) | [ CoreDNS - CNI k8s ](./doc/k8s_dns_cni_cilium.md)
 --- 
 
 ## DNS & IP — Fondamenti + Kubernetes
