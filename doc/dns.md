@@ -1,3 +1,5 @@
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](./doc/ckad_exam_strategy.md) | [Teoria base DNS, ip + Kubernates](./doc/dns.md)
+--- 
 
 ## DNS & IP — Fondamenti + Kubernetes
 
