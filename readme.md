@@ -16,7 +16,7 @@
 
 - 6 [Tabella comandi bash](./doc/bash.md)
 
-- 7 [Teoria base DNS, ip + Kubernates](../doc/dns.md) 
+- 7 [Teoria base DNS, ip + Kubernates](./doc/dns.md) 
 
 ---
 
