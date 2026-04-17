@@ -2,7 +2,7 @@
 
 ---
 
-### Deployment Strategies (30 esercizi)
+### Deployment Strategies (31 esercizi)
 
 ---
 
@@ -838,3 +838,109 @@ k delete deployment app-stable
 
 ---
 
+## DS-31 — Blue/green deployment
+
+In this task, we have to create two identical environments that are running different versions of the application. The team decided to use the Blue/green deployment method to deploy a total of 10 application pods which can mitigate common risks such as downtime and rollback capability.
+
+Also, we have to route traffic in such a way that 30% of the traffic is sent to the green-apd environment and the rest is sent to the blue-apd environment. All the development processes will happen on cluster 3 because it has enough resources for scalability and utility consumption.
+
+Specification details for creating a blue-apd deployment are listed below: -
+
+The name of the deployment is blue-apd.
+
+Use the label type-one: blue.
+
+Use the image kodekloud/webapp-color:v1.
+
+Add labels to the pod type-one: blue and version: v1.
+
+Specification details for creating a green-apd deployment are listed below: -
+
+The name of the deployment is green-apd.
+
+Use the label type-two: green.
+
+Use the image kodekloud/webapp-color:v2.
+
+Add labels to the pod type-two: green and version: v1.
+
+We have to create a service called route-apd-svc for these deployments. Details are here: -
+
+The name of the service is route-apd-svc.
+
+Use the correct service type to access the application from outside the cluster and application should listen on port 8080.
+
+Use the selector label version: v1.
+
+NOTE: - We do not need to increase replicas for the deployments, and all the resources should be created in the default namespace.
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-apd
+  labels:
+    type-one: blue
+spec:
+  replicas: 7
+  selector:
+    matchLabels:
+      type-one: blue
+  template:
+    metadata:
+      labels:
+        type-one: blue
+        version: v1
+    spec:
+      containers:
+      - name: webapp-color
+        image: kodekloud/webapp-color:v1
+        ports:
+        - containerPort: 8080
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-apd
+  labels:
+    type-two: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type-two: green
+  template:
+    metadata:
+      labels:
+        type-two: green
+        version: v1
+    spec:
+      containers:
+      - name: webapp-color
+        image: kodekloud/webapp-color:v2
+        ports:
+        - containerPort: 8080
+```
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: route-apd-svc
+spec:
+  type: NodePort
+  selector:
+    version: v1
+  ports:
+  - port: 8080
+    targetPort: 8080
+```
+</details>
+---
