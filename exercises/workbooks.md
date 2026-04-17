@@ -4,3 +4,5 @@
   - [Workbook 1](./o-ex/set-esercizi/k8s-workbook-exercises.md)
 
    - [Solutions 1](./o-ex/set-esercizi/k8s-workbook-solutions.md)
+ 
+- [Generic Workbook](./o-ex/set-esercizi/exam-1.md)
