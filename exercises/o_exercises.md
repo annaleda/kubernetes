@@ -15,7 +15,7 @@
   
   - [Mock Exercises - Deployment Strategies](./o-ex/d-s-ex.md)  `30 esercizi`
 
-  - [Mock Exercises - Helm](./o-ex/helm-ex.md)
+  - [Mock Exercises - Helm](./o-ex/helm-ex.md) `24 esercizi`
   
   - [Mock Exercises - Kustomize](./o-ex/kustomize-ex.md)
 
