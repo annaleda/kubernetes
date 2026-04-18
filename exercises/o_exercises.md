@@ -30,7 +30,8 @@
 - Application Observability and Maintenance `15%`
   
   - [Mock Exercises - Probe](./o-ex/probe-ex.md)  `24 esercizi`
-  - [Mock Exercises - Logs](./o-ex/logs-ex.md)   
+  - [Mock Exercises - Logs](./o-ex/logs-ex.md)
+  - [Mock Exercises - Cli Task](./o-exckad_cli_tasks.md)  `10 esercizi` 
 
 ---
 - [ Teory Application Environment ](../arg/fourth_arg.md)
