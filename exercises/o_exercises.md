@@ -8,7 +8,7 @@
   
   - [Mock Exercises - storage](./o-ex/storage-ex.md) `23 esercizi`
     
-  - [Mock Exercises - storageClass](./o-ex/storageclass_exercises.md) `23 esercizi`
+  - [Mock Exercises - storageClass](./o-ex/storageclass_exercises.md) `10 esercizi`
 
 ---
 - [ Teory Application Deployment ](../arg/second_arg.md)
@@ -59,7 +59,7 @@
 - Services and Networking `20%`
   - [Mock Exercises - Services](./o-ex/svc-ex.md) `12 esercizi`
     
-  - [Mock Exercises - LoadBalancer e ExternalName](./o-ex/loadbalancer_externalname_exercises.md) `12 esercizi`
+  - [Mock Exercises - LoadBalancer e ExternalName](./o-ex/loadbalancer_externalname_exercises.md) `10 esercizi`
 
   - [Mock Exercises - Ingress](./o-ex/ing-ex.md) `12 esercizi`
 
