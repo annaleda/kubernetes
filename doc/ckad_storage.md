@@ -263,7 +263,53 @@ Se un PVC specifica una StorageClass, il PV viene creato automaticamente.
 <img width="1229" height="638" alt="Immagine 2026-02-24 231300" src="https://github.com/user-attachments/assets/e68d5ca8-59a7-48b3-9cc5-a88ba6f404cb" />
 
 ---
+- Esempio completo StorageClass (Dynamic Provisioning)
+  
+ Definizione StorageClass
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: demo-sc
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+```
+Creazione PVC che usa la StorageClass
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: demo-sc
+  resources:
+    requests:
+      storage: 1Gi
+```
 
+ Uso nel Pod
+ ```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-pod
+spec:
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - mountPath: /data
+      name: storage
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: demo-pvc
+ ```
+
+   ---
+   
 ## Static vs Dynamic Provisioning
 
 | Static | Dynamic |
