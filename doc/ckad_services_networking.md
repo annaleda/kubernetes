@@ -24,6 +24,15 @@ Il Service crea un IP virtuale stabile (ClusterIP).
 
 ## Tipi di Service
 
+| Tipo         | Espone             | IP | Uso                     |
+| ------------ | ------------------ | -- | ----------------------- |
+| ClusterIP    | Interno            | ✅  | Comunicazione interna   |
+| NodePort     | Esterno (via nodo) | ✅  | Test / accesso semplice |
+| LoadBalancer | Esterno (cloud)    | ✅  | Produzione              |
+| Headless     | DNS diretto        | ❌  | Stateful                |
+| ExternalName | Esterno (DNS)      | ❌  | Alias                   |
+
+
 <img width="1159" height="577" alt="Immagine 2026-02-24 122325" src="https://github.com/user-attachments/assets/74725b98-3bd5-49da-b0a0-6fa81c2a0e45" />
 
 ### ClusterIP (default)
@@ -90,6 +99,35 @@ spec:
 
 ---
 
+### ExternalName
+
+- Non espone Pod
+- Non crea ClusterIP
+- Non crea Endpoints
+- Funziona come **alias DNS**
+
+Serve per puntare a un servizio **esterno al cluster**.
+
+---
+
+
+Kubernetes crea un record DNS:
+
+<service-name> → externalName
+
+---
+
+Esempio
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-db
+spec:
+  type: ExternalName
+  externalName: mydatabase.example.com
+```
 ## Service Discovery & DNS Interno
 
 Kubernetes fornisce DNS interno automatico.
