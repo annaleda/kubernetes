@@ -7,6 +7,8 @@
   - [Mock Exercises - Pod Design](./o-ex/p-d-ex.md) `24 esercizi`
   
   - [Mock Exercises - storage](./o-ex/storage-ex.md) `23 esercizi`
+    
+  - [Mock Exercises - storageClass](./o-ex/storageclass_exercises.md) `23 esercizi`
 
 ---
 - [ Teory Application Deployment ](../arg/second_arg.md)
