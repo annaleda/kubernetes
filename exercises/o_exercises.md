@@ -49,7 +49,7 @@
   
   - [Mock Exercises - CRD, Operators](./o-ex/cdr-op-ex.md) `22 esercizi`
  
-  - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md) `15 esercizi`
+  - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md) `14 esercizi`
 
   - [Mock Exercises - OCI Images](./o-ex/oci.md) `11 esercizi`
 
