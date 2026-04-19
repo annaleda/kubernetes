@@ -19,7 +19,7 @@
 
   - [Mock Exercises - Helm](./o-ex/helm-ex.md) `24 esercizi`
   
-  - [Mock Exercises - Kustomize](./o-ex/kustomize-ex.md)
+  - [Mock Exercises - Kustomize](./o-ex/kustomize-ex.md)  `12 esercizi`
 
   - [Mock Exercises - Kubeconfig](./o-ex/kubec-ex.md)
     
