@@ -1,5 +1,5 @@
 
-###  Kustomize (6 esercizi)
+###  Kustomize (12 esercizi)
 
 ## KUS-1 — Base Configuration
 
@@ -276,3 +276,220 @@ k get deploy -n dev -o yaml | grep image
 </details>
 
 ---
+
+## KUS-7 — Common Labels
+
+- Applicare label comune:
+  - env: dev
+
+- Usare `commonLabels`
+
+- Validazione
+  - Tutte le risorse hanno la label `env=dev`
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+commonLabels:
+  env: dev
+
+k apply -k .
+k get deploy --show-labels
+```
+
+</details>
+
+---
+
+## KUS-8 — Namespace override
+
+- Impostare namespace: `kustom-ns`
+
+- Validazione
+  - Tutte le risorse sono nel namespace corretto
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+k create ns kustom-ns
+
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kustom-ns
+resources:
+- deployment.yaml
+- service.yaml
+
+k apply -k .
+k get deploy -n kustom-ns
+```
+
+</details>
+
+---
+
+## KUS-9 — Secret Generator
+
+- Generare Secret:
+  - username=admin
+  - password=secret
+
+- Usare `secretGenerator`
+
+- Validazione
+  - Secret creato
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+secretGenerator:
+- name: db-secret
+  literals:
+  - username=admin
+  - password=secret
+
+k apply -k .
+k get secret
+```
+
+</details>
+
+---
+
+## KUS-10 — Name Suffix
+
+- Applicare suffix:
+  - `-test`
+
+- Validazione
+  - Nome risorse modificato
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+nameSuffix: -test
+
+k apply -k .
+k get deploy
+```
+
+</details>
+
+---
+
+## KUS-11 — Patch JSON6902
+
+- Modificare Deployment
+  - replicas: 5
+
+- Usare `patchesJson6902`
+
+- Validazione
+  - Replica aggiornata
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+vi patch.json
+
+[
+  {
+    "op": "replace",
+    "path": "/spec/replicas",
+    "value": 5
+  }
+]
+
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+patchesJson6902:
+- target:
+    version: apps/v1
+    kind: Deployment
+    name: deploy
+  path: patch.json
+
+k apply -k .
+k get deploy
+```
+
+</details>
+
+---
+
+## KUS-12 — Multiple Resources
+
+- Aggiungere risorsa:
+  - configmap.yaml
+
+- Validazione
+  - Tutte le risorse applicate
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```
+vi configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: extra-config
+data:
+  key: value
+
+vi kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+- service.yaml
+- configmap.yaml
+
+k apply -k .
+k get all
+```
+
+</details>
+
+---
+
