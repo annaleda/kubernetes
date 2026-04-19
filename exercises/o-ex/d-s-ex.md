@@ -976,7 +976,7 @@ k delete deployment app-stable
 
 ---
 
-## DS-31 — Blue/green deployment
+## DS-31 — Canary Deployment (Replica-Based Traffic Split)
 
 In this task, we have to create two identical environments that are running different versions of the application. 
 
