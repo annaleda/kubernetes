@@ -689,6 +689,37 @@ Service esistente:
 
 ```sh
 k edit svc app-service
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2026-04-19T12:03:55Z"
+  labels:
+    app: app-green
+  name: app-svc
+  namespace: default
+  resourceVersion: "836875"
+  uid: 35745d18-2730-4f0e-b8ee-337f427d08fc
+spec:
+  clusterIP: 10.96.161.40
+  clusterIPs:
+  - 10.96.161.40
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: app-green
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+
 ```
 
 </details>
