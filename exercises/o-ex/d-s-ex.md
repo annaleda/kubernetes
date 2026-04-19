@@ -812,9 +812,94 @@ Creare un Service chiamato `app-service`
 <summary>Soluzione</summary>
 
 ```sh
-k create deploy app-stable --image=nginx:1.21 --replicas=4
-k create deploy app-canary --image=nginx:1.25 --replicas=1
-k expose deploy app-stable --name app-service --port=80
+k create deploy app-stable --image=nginx:1.21 --replicas=4 --dry-run=client -oyaml > stable.yaml
+vi stable.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo
+    version: app-stable
+  name: app-stable
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: demo
+      version: app-stable
+  template:
+    metadata:
+      labels:
+        app: demo
+        version: app-stable
+    spec:
+      containers:
+      - image: nginx:1.21
+        imagePullPolicy: IfNotPresent
+        name: nginx
+
+k create deploy app-canary --image=nginx:1.25 --replicas=1 --dry-run=client -oyaml > canary.yaml
+vi canary.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo
+    version: app-canary
+  name: app-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+      version: app-canary
+  template:
+    metadata:
+      labels:
+        app: demo
+        version: app-canary
+    spec:
+      containers:
+      - image: nginx:1.25
+        imagePullPolicy: IfNotPresent
+        name: nginx
+
+
+k expose deploy app-stable --name app-service --port=80 --dry-run=client -oyaml > service.yaml
+
+vi service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2026-04-19T12:16:56Z"
+  labels:
+    app: app-demo
+  name: app-service
+  namespace: default
+  resourceVersion: "838432"
+  uid: 3a57823b-a3c8-447f-b0ec-7e4da65f6c56
+spec:
+  clusterIP: 10.96.55.22
+  clusterIPs:
+  - 10.96.55.22
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: app-demo
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
 ```
 
 </details>
