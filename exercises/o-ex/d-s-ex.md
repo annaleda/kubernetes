@@ -751,6 +751,28 @@ Scenario:
 
 ```sh
 k edit svc app-service
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app-blue
+  name: app-svc
+spec:
+  clusterIP: 10.96.161.40
+  clusterIPs:
+  - 10.96.161.40
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: app-blue
+  type: ClusterIP
 ```
 
 </details>
