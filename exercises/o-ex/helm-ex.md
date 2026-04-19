@@ -1,4 +1,4 @@
-* [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)
+* [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md) | [ Helm_Cheatsheet ](../../doc/helm_cheatsheet.md)
 
 ---
 ### Helm (24 esercizi)
