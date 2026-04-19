@@ -786,11 +786,11 @@ Creare due Deployment:
 * `app-stable`
 
   * nginx versione 1.21
-  * 4 istanze
+  * 4 istanze `80%`
 * `app-canary`
 
   * nginx versione 1.25
-  * 1 istanza
+  * 1 istanza `20%`
 
 Creare un Service chiamato `app-service`
 
@@ -910,13 +910,13 @@ status:
 
 Deployment esistenti:
 
-* `app-stable`
+* `app-stable` 80%
 
-* `app-canary`
+* `app-canary` 20%
 
 * Task
 
-  * Aumentare la quota di traffico verso la nuova versione
+  * Aumentare la quota di traffico verso la nuova versione del 40%
   * Ridurre proporzionalmente quella verso la versione stabile
 
 * Obiettivo
