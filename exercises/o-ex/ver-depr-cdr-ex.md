@@ -583,7 +583,6 @@ Quando un manifest non funziona, controlla quasi sempre:
 - `apiVersion` sbagliata
 - `selector` mancante o incoerente
 - campi rinominati
-- struttura `backend` vecchia negli Ingress
 - `served/storage` mancanti nelle CRD
 - schema CRD incompleto
 
