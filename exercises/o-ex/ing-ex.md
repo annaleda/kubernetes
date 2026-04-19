@@ -1,6 +1,40 @@
 - [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   
 ---
-  ### Ingress (12 esercizi)
+  ### Ingress (13 esercizi)
+
+---
+
+## ING-0 — Ingress con host
+
+**Task:** crea un Ingress moderno chiamato `web-ingress` che inoltri:
+- host: `example.local`
+- path: `/`
+- service: `web`
+- port: `80`
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+spec:
+  rules:
+  - host: example.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web
+            port:
+              number: 80
+```
+
+</details>
 
 ---
 
