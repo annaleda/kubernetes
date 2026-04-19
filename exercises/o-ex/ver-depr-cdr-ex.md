@@ -392,41 +392,8 @@ spec:
 
 ---
 
-## AP-10 — Ingress con host
 
-**Task:** crea un Ingress moderno chiamato `web-ingress` che inoltri:
-- host: `example.local`
-- path: `/`
-- service: `web`
-- port: `80`
-
-<details>
-<summary>Soluzione</summary>
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: web-ingress
-spec:
-  rules:
-  - host: example.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: web
-            port:
-              number: 80
-```
-
-</details>
-
----
-
-## AP-11 — CRD con campo spec richiesto
+## AP-10 — CRD con campo spec richiesto
 
 **Task:** definisci una CRD `widgets.demo.example.com` con:
 - group: `demo.example.com`
@@ -471,7 +438,7 @@ spec:
 
 ---
 
-## AP-12 — Crea una Custom Resource valida
+## AP-11 — Crea una Custom Resource valida
 
 **Dato:**
 - group: `demo.example.com`
@@ -497,7 +464,7 @@ spec:
 
 ---
 
-## AP-13 — CRD con due versioni
+## AP-12 — CRD con due versioni
 
 **Task:** scrivi una CRD `gadgets.demo.example.com` con:
 - kind: `Gadget`
@@ -539,7 +506,7 @@ spec:
 
 ---
 
-## AP-14 — Kubectl explain su CRD
+## AP-13 — Kubectl explain su CRD
 
 **Task:** dopo aver creato la CRD `myapps.stable.example.com`, usa `kubectl explain` per ispezionare:
 - la risorsa custom
@@ -557,7 +524,7 @@ kubectl explain myapps.spec
 
 ---
 
-## AP-15 — Debug CRD non valida
+## AP-14 — Debug CRD non valida
 
 Manifest iniziale:
 
