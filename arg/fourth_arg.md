@@ -13,8 +13,8 @@
 ### 4.3 [Node,Taints and Tolerations/ Affinity](../doc/ckad_t_t_affinity.md)
    - (Node, Taints and Tolerations, Affinity)
      
-### 4.4 [CDR: Custom Resource Definition, Operators](../doc/cdr.md)
+### 4.4 [CRD: Custom Resource Definition, Operators](../doc/cdr.md)
 
-### 4.5 [API Versions, API Deprecation, CDR: Custom Resource Definition](../doc/ver_depr_cdr.md)
+### 4.5 [API Versions, API Deprecation, CRD: Custom Resource Definition](../doc/ver_depr_cdr.md)
 
 
