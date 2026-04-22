@@ -1,6 +1,9 @@
-# Kubernetes Exercises — Services and Networking
+- [ Home ](../../../readme.md)   | [ Teoria ](../../../arguments.md)   | [ Info Exam ](../../../doc/ckad_exam_strategy.md) | [Home Workbooks](../../workbooks.md)
+  
+--- 
 
-Questa raccolta contiene esercizi in stile CKAD focalizzati su servizi, DNS, network troubleshooting ed esposizione applicativa.
+### Kubernetes Exercises — Services and Networking
+
 
 ---
 
