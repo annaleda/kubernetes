@@ -1,6 +1,4 @@
-# Kubernetes Exercises — Application Environment, Configuration and Security
-
-Questa raccolta contiene esercizi in stile CKAD focalizzati su env vars, ConfigMap, Secret, ServiceAccount, SecurityContext e QoS.
+### Kubernetes Exercises — Application Environment, Configuration and Security
 
 ---
 
