@@ -2,7 +2,7 @@
 --- 
 - Application Design and Build WorkBooks `20%`
   - [WORKBOOK 1](./o-ex/set-esercizi/k8s-workbook-exercises.md)
-   - [Solutions 1](./o-ex/set-esercizi/k8s-workbook-solutions.md)
+    - [Solutions 1](./o-ex/set-esercizi/k8s-workbook-solutions.md)
  
 - Application Deplyment WorkBooks `20%`
   - [WORKBOOK 1](./o-ex/set-esercizi/A_D_E.md)
