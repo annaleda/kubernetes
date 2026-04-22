@@ -1,6 +1,4 @@
-# Kubernetes Exercises — Application Deployment
-
-Questa raccolta contiene esercizi in stile CKAD focalizzati su deployment, Helm, rollout e gestione applicativa.
+### Kubernetes Exercises — Application Deployment
 
 ---
 
