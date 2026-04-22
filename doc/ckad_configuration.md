@@ -343,7 +343,11 @@ Esempio:
 - `1Gi = 1024Mi`
 - `1G = 1000M`
 
-⚠ In Kubernetes si usa quasi sempre `Mi` e `Gi`.
+ In Kubernetes si usa quasi sempre `Mi` e `Gi`.
+
+---
+
+- [Resources Schema](./res-schema.md)
 
 ---
 
