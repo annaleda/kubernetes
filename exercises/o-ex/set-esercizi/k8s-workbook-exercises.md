@@ -1,4 +1,8 @@
-# Kubernetes Practice Workbook (CKA / CKAD)
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md) | []()
+  
+--- 
+
+### Kubernetes Practice Workbook 
 
 ## Instructions
 
