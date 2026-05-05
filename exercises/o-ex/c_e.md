@@ -990,6 +990,9 @@ MINUTO ORA GIORNO_DEL_MESE MESE GIORNO_DELLA_SETTIMANA
 | `0 12 15 * *` | giorno 15 del mese alle 12:00 |
 | `0 8 * * 1` | ogni lunedì alle 08:00 |
 | `0 8,18 * * *` | ogni giorno alle 08:00 e alle 18:00 |
+| `0 0 * 1 *` | ogni giorno di GENNAIO a mezzanotte|
+| `0 12 * 6 *` | ogni giorno di GIUGNO alle 12|
+| `0 9 * 12 *` | ogni giorno di DICEMBRE alle 09|
 
 ---
 
