@@ -5,6 +5,8 @@
   - [Mock Exercises - Multi-container](./o-ex/m-c-ex.md) `31 esercizi`
   
   - [Mock Exercises - Pod Design](./o-ex/p-d-ex.md) `24 esercizi`
+
+  - [Mock Exercises -Cronjob](./o-ex/p-d-ex.md) `24 esercizi`
   
   - [Mock Exercises - storage](./o-ex/storage-ex.md) `23 esercizi`
     
