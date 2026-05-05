@@ -85,6 +85,36 @@ spec:
 
 ---
 
+## 3.1 Allow specific ingress + implicit deny egress
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-only
+  namespace: backend-ns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+```
+Risultato:
+
+Ingress:
+- solo frontend → pod ✅
+- altri → ❌
+
+Egress:
+- tutto bloccato ❌
+
+---
+
 ##  4. Allow specific Ingress (da frontend)
 
 ```yaml
@@ -329,6 +359,33 @@ spec:
 - frontend nel ns web → backend ✅
 - frontend in altri ns → ❌
 - altri pod nel ns web → ❌
+
+---
+
+## 3 Allow traffico da namespace specifico (label automatica)
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-frontend-ns
+  namespace: backend-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: frontend-ns
+```
+Risultato:
+
+- TUTTI i Pod in frontend-ns → backend ✅
+- altri namespace → ❌
 
 ---
 
