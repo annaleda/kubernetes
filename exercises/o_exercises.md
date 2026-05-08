@@ -61,6 +61,8 @@
 - [ Teory Service and Networking ](../arg/fifth_arg.md)
 - Services and Networking `20%`
   - [Mock Exercises - Services](./o-ex/svc-ex.md) `12 esercizi`
+
+  - [Mock Exercises - EndpointSlice](./o-ex/endpointslice.md) `10 esercizi`  
     
   - [Mock Exercises - LoadBalancer e ExternalName](./o-ex/loadbalancer_externalname_exercises.md) `10 esercizi`
 
