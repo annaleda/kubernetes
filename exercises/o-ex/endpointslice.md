@@ -206,3 +206,188 @@ k describe endpointslice web-external-1
 ```
 
 </details>
+
+---
+
+## ES-5 — Namespace dedicato
+
+- Namespace: `external-services`
+
+- Configurazione
+  - Creare Service ed EndpointSlice nel namespace dedicato
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k create ns external-services
+```
+
+```yaml
+metadata:
+  namespace: external-services
+```
+
+</details>
+
+---
+
+## ES-6 — Verifica EndpointSlice
+
+- Service: `external-db`
+
+- Configurazione
+  - Verificare l'associazione tra Service ed EndpointSlice
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k get endpointslice -l kubernetes.io/service-name=external-db
+```
+
+```sh
+k describe endpointslice external-db-1
+```
+
+</details>
+
+---
+
+## ES-7 — Test DNS dal Pod
+
+- Pod: `dns-test`
+  - Image: `busybox`
+
+- Configurazione
+  - Verificare DNS del Service `external-api`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+k run dns-test --image=busybox --restart=Never -it --rm -- nslookup external-api
+```
+
+</details>
+
+---
+
+## ES-8 — Correggere label errata
+
+- Service: `payment-api`
+
+- Problema
+  - Label errata nella EndpointSlice
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+labels:
+  kubernetes.io/service-name: payment-api
+```
+
+```sh
+k patch endpointslice payment-api-1 \
+  --type merge \
+  -p '{"metadata":{"labels":{"kubernetes.io/service-name":"payment-api"}}}'
+```
+
+</details>
+
+---
+
+## ES-9 — Convertire Endpoints deprecated
+
+- Convertire:
+
+```yaml
+apiVersion: v1
+kind: Endpoints
+```
+
+in:
+
+```yaml
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+```
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: cache-external-1
+  labels:
+    kubernetes.io/service-name: cache-external
+addressType: IPv4
+ports:
+- port: 6379
+  protocol: TCP
+endpoints:
+- addresses:
+  - 172.16.0.10
+```
+
+</details>
+
+---
+
+## ES-10 — Porta nominata
+
+- Service: `metrics-external`
+
+- Configurazione
+  - Porta nominata: `metrics`
+  - Porta: `9090`
+  - Backend: `10.99.0.15`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-external
+spec:
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: metrics-external-1
+  labels:
+    kubernetes.io/service-name: metrics-external
+addressType: IPv4
+ports:
+- name: metrics
+  port: 9090
+  protocol: TCP
+endpoints:
+- addresses:
+  - 10.99.0.15
+```
+
+</details>
+
+---
