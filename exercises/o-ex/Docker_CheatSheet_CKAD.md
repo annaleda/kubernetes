@@ -1,4 +1,7 @@
-# Docker Cheat Sheet - CKAD
+- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md) |  [ Exercises ](./oci.md)
+--- 
+
+## Docker Cheat Sheet - CKAD
 
 > Cheatsheet pratica per l'esame CKAD, con particolare attenzione ai
 > comandi Docker più richiesti.
