@@ -32,8 +32,11 @@
 - Application Observability and Maintenance `15%`
   
   - [Mock Exercises - Probe](./o-ex/probe-ex.md)  `24 esercizi`
+    
   - [Mock Exercises - Logs](./o-ex/logs-ex.md)
+    
   - [Mock Exercises - Cli Task](./o-ex/ckad_cli_tasks.md)  `10 esercizi`
+    
   - [Mock Exercises - jsonpath Task](./o-ex/jsonpath_tasks_25.md) `25 esercizi`
 
 ---
@@ -70,5 +73,7 @@
   - [Mock Exercises - Ingress](./o-ex/ing-ex.md) `13 esercizi`
 
   - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md) `31 esercizi`
+ 
+  - [Mock Exercises - Network-debug](./o-ex/network_debug_tasks.md) `31 esercizi`
  
 ---
