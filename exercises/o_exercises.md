@@ -74,6 +74,6 @@
 
   - [Mock Exercises - Network-policies](./o-ex/netpol-ex.md) `31 esercizi`
  
-  - [Mock Exercises - Network-debug](./o-ex/network_debug_tasks.md) `31 esercizi`
+  - [Mock Exercises - Network-debug](./o-ex/network_debug_tasks.md) `20 esercizi`
  
 ---
