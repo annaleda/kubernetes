@@ -139,14 +139,14 @@ docker volume rm data
 docker volume prune
 ```
 
-## Save / Load ⭐
+## Save / Load 
 
 ``` bash
 docker save -o nginx.tar nginx
 docker load -i nginx.tar
 ```
 
-## Export / Import ⭐
+## Export / Import 
 
 ``` bash
 docker export container > container.tar
