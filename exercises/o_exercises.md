@@ -57,7 +57,7 @@
  
   - [Mock Exercises - Versions, Deprecations, CRD](./o-ex/ver-depr-cdr-ex.md) `14 esercizi`
 
-  - [Mock Exercises - OCI Images](./o-ex/oci.md) `26 esercizi`
+  - [Mock Exercises - OCI Images, Docker](./o-ex/oci.md) `21 esercizi`
 
 
 
