@@ -321,3 +321,240 @@ k describe pod crash-pod
 </details>
 
 ---
+
+---
+
+## Docker (CKAD) - 10 esercizi
+
+> Esercizi pratici sull'utilizzo di Docker per la gestione delle immagini OCI.
+
+---
+
+## Docker-1 — Build Image
+
+Nella directory corrente è presente un Dockerfile.
+
+- Costruire l'immagine:
+  - `myapp:v1`
+
+- Validazione
+
+```sh
+docker images
+```
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker build -t myapp:v1 .
+```
+
+</details>
+
+---
+
+## Docker-2 — Tag Image
+
+Esiste già l'immagine:
+
+- `myapp:v1`
+
+Creare il tag:
+
+- `registry.local/myapp:v1`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker tag myapp:v1 registry.local/myapp:v1
+```
+
+</details>
+
+---
+
+## Docker-3 — Salvare immagine
+
+Salvare l'immagine:
+
+- `myapp:v1`
+
+nel file
+
+- `/tmp/myapp.tar`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker save -o /tmp/myapp.tar myapp:v1
+```
+
+</details>
+
+---
+
+## Docker-4 — Caricare immagine
+
+Importare
+
+- `/tmp/myapp.tar`
+
+e verificare che l'immagine sia presente.
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker load -i /tmp/myapp.tar
+docker images
+```
+
+</details>
+
+---
+
+## Docker-5 — Avviare container
+
+Avviare un container:
+
+- nome: `web`
+- immagine: `nginx`
+- porta: `8080:80`
+- modalità detached
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker run -d --name web -p 8080:80 nginx
+```
+
+</details>
+
+---
+
+## Docker-6 — Entrare nel container
+
+Entrare nel container
+
+- `web`
+
+ed elencare il contenuto di
+
+- `/usr/share/nginx/html`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker exec -it web sh
+ls /usr/share/nginx/html
+```
+
+</details>
+
+---
+
+## Docker-7 — Visualizzare logs
+
+Mostrare i log del container:
+
+- `web`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker logs web
+```
+
+</details>
+
+---
+
+## Docker-8 — Esportare container
+
+Esportare il container
+
+- `web`
+
+nel file
+
+- `/tmp/web.tar`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker export web > /tmp/web.tar
+```
+
+</details>
+
+---
+
+## Docker-9 — Commit
+
+Creare una nuova immagine
+
+- `web:v2`
+
+partendo dal container
+
+- `web`
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker commit web web:v2
+```
+
+</details>
+
+---
+
+## Docker-10 — Cleanup
+
+Eliminare:
+
+- tutti i container
+- tutte le immagini
+
+---
+
+<details>
+<summary>Soluzione</summary>
+
+```sh
+docker rm -f $(docker ps -aq)
+
+docker rmi -f $(docker images -q)
+```
+
+</details>
+
+---
+
+---
