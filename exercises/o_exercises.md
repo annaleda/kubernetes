@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md)   
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md) | [ Cheatsheet installed tools ](../doc/c-i-t.md)  
 ---  
 - [ Teory Application Design ](../arg/first_arg.md)
 - Application Design and Build `20%`
