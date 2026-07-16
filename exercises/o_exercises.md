@@ -59,6 +59,7 @@
 
   - [Mock Exercises - OCI Images, Docker](./o-ex/oci.md) `21 esercizi`
 
+  - [Mock Exercises - Docker, Podman, Tool CKAD](./o-ex/D-P-T.md) `25 esercizi`
 
 
 ---
