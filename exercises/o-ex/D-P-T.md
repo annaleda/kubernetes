@@ -4,39 +4,75 @@
 
 ---
 
-### Docker — 5 esercizi
+# Docker — 5 esercizi
 
 ---
 
 ## Docker-1 — Build e verifica immagine
 
-Nella directory corrente sono presenti:
-[index.html](https://github.com/user-attachments/files/30087454/index.html)
+### Preparazione ambiente
 
+```bash
+mkdir -p /tmp/docker-1
+cd /tmp/docker-1
 ```
+
+Creare il `Dockerfile`:
+
+```bash
+cat > Dockerfile <<'EOF'
 FROM nginx:1.27
 
 COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
+EOF
 ```
 
+Creare `index.html`:
 
-* `Dockerfile`
-* `index
-.html`
+```bash
+cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Docker CKAD Exercise</title>
+</head>
+<body>
+  <h1>Welcome to the CKAD Docker Exercises!</h1>
+  <p>The image was built successfully.</p>
+</body>
+</html>
+EOF
+```
 
+Verificare:
 
+```bash
+ls -l
+cat Dockerfile
+```
+
+### Task
 
 Creare l’immagine:
 
-* `webapp:v1`
+- `webapp:v1`
 
 ### Validazione
 
-```sh
-docker images
+```bash
+docker images webapp:v1
 docker inspect webapp:v1
+```
+
+Test facoltativo:
+
+```bash
+docker run --rm -d --name webapp-test -p 8080:80 webapp:v1
+curl http://localhost:8080
+docker rm -f webapp-test
 ```
 
 ---
@@ -44,9 +80,10 @@ docker inspect webapp:v1
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
+cd /tmp/docker-1
 docker build -t webapp:v1 .
-docker images
+docker images webapp:v1
 docker inspect webapp:v1
 ```
 
@@ -56,19 +93,30 @@ docker inspect webapp:v1
 
 ## Docker-2 — Avvio container con porta
 
+### Preparazione ambiente
+
+Rimuovere un eventuale container omonimo e scaricare l’immagine necessaria:
+
+```bash
+docker rm -f web 2>/dev/null || true
+docker pull nginx:1.27
+```
+
+### Task
+
 Avviare un container:
 
-* nome: `web`
-* immagine: `nginx:1.27`
-* modalità: detached
-* porta host: `8080`
-* porta container: `80`
+- nome: `web`
+- immagine: `nginx:1.27`
+- modalità: detached
+- porta host: `8080`
+- porta container: `80`
 
 ### Validazione
 
-```sh
-docker ps
-curl localhost:8080
+```bash
+docker ps --filter name=web
+curl http://localhost:8080
 ```
 
 ---
@@ -76,14 +124,14 @@ curl localhost:8080
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 docker run -d \
   --name web \
   -p 8080:80 \
   nginx:1.27
 
-docker ps
-curl localhost:8080
+docker ps --filter name=web
+curl http://localhost:8080
 ```
 
 </details>
@@ -92,21 +140,38 @@ curl localhost:8080
 
 ## Docker-3 — Variabili d’ambiente e inspect
 
+### Preparazione ambiente
+
+```bash
+docker rm -f env-container 2>/dev/null || true
+docker pull alpine
+```
+
+### Task
+
 Avviare un container:
 
-* nome: `env-container`
-* immagine: `alpine`
-* variabile `APP_ENV=production`
-* comando: `sleep 3600`
+- nome: `env-container`
+- immagine: `alpine`
+- variabile: `APP_ENV=production`
+- comando: `sleep 3600`
 
-Verificare la variabile dall’interno del container.
+Verificare la variabile dall’interno del container e tramite `docker inspect`.
+
+### Validazione
+
+```bash
+docker ps --filter name=env-container
+docker exec env-container printenv APP_ENV
+docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' env-container
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 docker run -d \
   --name env-container \
   -e APP_ENV=production \
@@ -114,12 +179,10 @@ docker run -d \
   sleep 3600
 
 docker exec env-container printenv APP_ENV
-```
 
-Alternativa:
-
-```sh
-docker inspect env-container | grep APP_ENV
+docker inspect -f \
+  '{{range .Config.Env}}{{println .}}{{end}}' \
+  env-container
 ```
 
 </details>
@@ -128,42 +191,46 @@ docker inspect env-container | grep APP_ENV
 
 ## Docker-4 — Save, remove e load
 
-Salvare l’immagine:
+### Preparazione ambiente
 
-* `nginx:1.27`
+Assicurarsi che non esistano container basati sull’immagine e scaricarla:
 
-nel file:
+```bash
+docker rm -f web 2>/dev/null || true
+docker pull nginx:1.27
+rm -f /tmp/nginx.tar
+```
 
-* `/tmp/nginx.tar`
+### Task
 
-Successivamente:
+1. Salvare `nginx:1.27` nel file `/tmp/nginx.tar`.
+2. Verificare il file.
+3. Eliminare l’immagine locale.
+4. Ricaricarla dall’archivio.
+5. Verificarne la presenza.
 
-1. eliminare l’immagine;
-2. ricaricarla dal file;
-3. verificarne la presenza.
+### Validazione
+
+```bash
+ls -lh /tmp/nginx.tar
+docker images nginx:1.27
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
-docker pull nginx:1.27
-
+```bash
 docker save -o /tmp/nginx.tar nginx:1.27
+
+ls -lh /tmp/nginx.tar
 
 docker rmi nginx:1.27
 
 docker load -i /tmp/nginx.tar
 
-docker images
-```
-
-Se l’immagine è usata da un container:
-
-```sh
-docker rm -f web
-docker rmi nginx:1.27
+docker images nginx:1.27
 ```
 
 </details>
@@ -213,22 +280,67 @@ docker system prune -a --volumes -f
 
 ---
 
-### Podman — 5 esercizi
+# Podman — 5 esercizi
 
 ---
 
 ## Podman-1 — Build immagine
 
-Nella directory corrente è presente un `Dockerfile`.
+### Preparazione ambiente
+
+```bash
+mkdir -p /tmp/podman-1
+cd /tmp/podman-1
+```
+
+Creare il `Dockerfile`:
+
+```bash
+cat > Dockerfile <<'EOF'
+FROM nginx:1.27-alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+EOF
+```
+
+Creare `index.html`:
+
+```bash
+cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Podman CKAD Exercise</title>
+</head>
+<body>
+  <h1>Welcome to the CKAD Podman Exercises!</h1>
+</body>
+</html>
+EOF
+```
+
+### Task
 
 Creare l’immagine:
 
-* `api:v1`
+- `api:v1`
 
 ### Validazione
 
-```sh
-podman images
+```bash
+podman images api:v1
+podman inspect api:v1
+```
+
+Test facoltativo:
+
+```bash
+podman run --rm -d --name api-test -p 8081:80 api:v1
+curl http://localhost:8081
+podman rm -f api-test
 ```
 
 ---
@@ -236,9 +348,11 @@ podman images
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
+cd /tmp/podman-1
 podman build -t api:v1 .
-podman images
+podman images api:v1
+podman inspect api:v1
 ```
 
 </details>
@@ -247,18 +361,27 @@ podman images
 
 ## Podman-2 — Avvio container
 
+### Preparazione ambiente
+
+```bash
+podman rm -f podman-web 2>/dev/null || true
+podman pull nginx:1.27
+```
+
+### Task
+
 Avviare un container:
 
-* nome: `podman-web`
-* immagine: `nginx`
-* modalità detached
-* porta `8081:80`
+- nome: `podman-web`
+- immagine: `nginx:1.27`
+- modalità detached
+- porta `8081:80`
 
 ### Validazione
 
-```sh
-podman ps
-curl localhost:8081
+```bash
+podman ps --filter name=podman-web
+curl http://localhost:8081
 ```
 
 ---
@@ -266,14 +389,14 @@ curl localhost:8081
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 podman run -d \
   --name podman-web \
   -p 8081:80 \
-  nginx
+  nginx:1.27
 
-podman ps
-curl localhost:8081
+podman ps --filter name=podman-web
+curl http://localhost:8081
 ```
 
 </details>
@@ -282,13 +405,38 @@ curl localhost:8081
 
 ## Podman-3 — Conteggio container
 
-Contare tutti i container presenti sull’host:
+### Preparazione ambiente
 
-* running;
-* stopped;
-* exited.
+Creare container in stati differenti:
 
-Mostrare anche solo quelli in esecuzione.
+```bash
+podman rm -f count-running count-stopped count-exited 2>/dev/null || true
+
+podman run -d \
+  --name count-running \
+  alpine \
+  sleep 3600
+
+podman create \
+  --name count-stopped \
+  alpine \
+  sleep 3600
+
+podman run \
+  --name count-exited \
+  alpine \
+  true
+```
+
+### Task
+
+1. Contare tutti i container presenti sull’host.
+2. Contare solo quelli in esecuzione.
+3. Mostrare la lista completa con il relativo stato.
+
+### Validazione
+
+Nell’ambiente appena creato devono essere presenti tre container, di cui uno in esecuzione.
 
 ---
 
@@ -297,19 +445,19 @@ Mostrare anche solo quelli in esecuzione.
 
 Tutti i container:
 
-```sh
+```bash
 podman ps -aq | wc -l
 ```
 
 Solo quelli in esecuzione:
 
-```sh
+```bash
 podman ps -q | wc -l
 ```
 
 Lista completa:
 
-```sh
+```bash
 podman ps -a
 ```
 
@@ -319,31 +467,41 @@ podman ps -a
 
 ## Podman-4 — Salvare immagine OCI
 
-Salvare l’immagine:
+### Preparazione ambiente
 
-* `api:v1`
+Se `api:v1` non esiste, crearla rapidamente:
 
-nel file:
+```bash
+podman image exists api:v1 || \
+  podman pull nginx:1.27-alpine
 
-* `/tmp/api.tar`
+podman image exists api:v1 || \
+  podman tag nginx:1.27-alpine api:v1
 
-usando il formato OCI archive.
+rm -f /tmp/api.tar
+```
+
+### Task
+
+Salvare l’immagine `api:v1` nel file `/tmp/api.tar` usando il formato OCI archive.
+
+### Validazione
+
+```bash
+ls -lh /tmp/api.tar
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 podman save \
   --format oci-archive \
   -o /tmp/api.tar \
   api:v1
-```
 
-Verifica:
-
-```sh
 ls -lh /tmp/api.tar
 ```
 
@@ -386,28 +544,65 @@ podman system prune -a -f
 
 ---
 
-### yq — 5 esercizi
+# yq — 5 esercizi
 
 ---
 
 ## YQ-1 — Leggere nome e immagine
 
-Dato il file `pod.yaml`, mostrare:
+### Preparazione ambiente
 
-* nome del Pod;
-* namespace;
-* immagini di tutti i container.
+```bash
+mkdir -p /tmp/yq-exercises
+cd /tmp/yq-exercises
+```
+
+Creare `pod.yaml`:
+
+```bash
+cat > pod.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-pod
+  namespace: ckad-tools
+spec:
+  containers:
+  - name: web
+    image: nginx:1.27
+  - name: sidecar
+    image: busybox:1.36
+    command: ["sh", "-c", "sleep 3600"]
+EOF
+```
+
+### Task
+
+Mostrare con `yq`:
+
+- nome del Pod;
+- namespace;
+- immagini di tutti i container.
+
+### Validazione
+
+Output atteso:
+
+```text
+multi-container-pod
+ckad-tools
+nginx:1.27
+busybox:1.36
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 yq '.metadata.name' pod.yaml
-
 yq '.metadata.namespace' pod.yaml
-
 yq '.spec.containers[].image' pod.yaml
 ```
 
@@ -417,18 +612,52 @@ yq '.spec.containers[].image' pod.yaml
 
 ## YQ-2 — Cambiare immagine
 
-Dato il file `deployment.yaml`, modificare l’immagine del primo container in:
+### Preparazione ambiente
+
+```bash
+mkdir -p /tmp/yq-exercises
+cd /tmp/yq-exercises
+
+cat > deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+EOF
+```
+
+### Task
+
+Modificare direttamente `deployment.yaml` impostando l’immagine del primo container a:
 
 ```text
 nginx:1.27
 ```
 
-La modifica deve essere effettuata direttamente nel file.
-
 ### Validazione
 
-```sh
-grep -n image deployment.yaml
+```bash
+yq '.spec.template.spec.containers[0].image' deployment.yaml
+```
+
+Output atteso:
+
+```text
+nginx:1.27
 ```
 
 ---
@@ -436,16 +665,8 @@ grep -n image deployment.yaml
 <details>
 <summary>Soluzione</summary>
 
-```sh
-yq -i \
-  '.spec.template.spec.containers[0].image = "nginx:1.27"' \
-  deployment.yaml
-```
-
-Verifica:
-
-```sh
-yq '.spec.template.spec.containers[0].image' deployment.yaml
+```bash
+yq -i   '.spec.template.spec.containers[0].image = "nginx:1.27"'   deployment.yaml
 ```
 
 </details>
@@ -454,28 +675,63 @@ yq '.spec.template.spec.containers[0].image' deployment.yaml
 
 ## YQ-3 — Cambiare repliche e namespace
 
+### Preparazione ambiente
+
+```bash
+mkdir -p /tmp/yq-exercises
+cd /tmp/yq-exercises
+
+cat > deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+EOF
+```
+
+### Task
+
 Nel file `deployment.yaml`:
 
-* impostare `replicas` a `4`;
-* impostare il namespace a `production`.
+- impostare `replicas` a `4`;
+- impostare il namespace a `production`.
+
+### Validazione
+
+```bash
+yq '.spec.replicas' deployment.yaml
+yq '.metadata.namespace' deployment.yaml
+```
+
+Output atteso:
+
+```text
+4
+production
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 yq -i '.spec.replicas = 4' deployment.yaml
-
 yq -i '.metadata.namespace = "production"' deployment.yaml
-```
-
-Verifica:
-
-```sh
-yq '.spec.replicas' deployment.yaml
-
-yq '.metadata.namespace' deployment.yaml
 ```
 
 </details>
@@ -484,26 +740,47 @@ yq '.metadata.namespace' deployment.yaml
 
 ## YQ-4 — Aggiungere una variabile d’ambiente
 
+### Preparazione ambiente
+
+```bash
+mkdir -p /tmp/yq-exercises
+cd /tmp/yq-exercises
+
+cat > pod.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-pod
+spec:
+  containers:
+  - name: app
+    image: alpine
+    command: ["sh", "-c", "sleep 3600"]
+EOF
+```
+
+### Task
+
 Nel primo container di `pod.yaml`, aggiungere:
 
-* nome: `APP_ENV`
-* valore: `production`
+- nome: `APP_ENV`
+- valore: `production`
+
+### Validazione
+
+```bash
+yq '.spec.containers[0].env' pod.yaml
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 yq -i \
   '.spec.containers[0].env += [{"name":"APP_ENV","value":"production"}]' \
   pod.yaml
-```
-
-Verifica:
-
-```sh
-yq '.spec.containers[0].env' pod.yaml
 ```
 
 </details>
@@ -512,19 +789,54 @@ yq '.spec.containers[0].env' pod.yaml
 
 ## YQ-5 — Pulire un manifest esportato
 
-Dato un file `pod-export.yaml`, eliminare:
+### Preparazione ambiente
 
-* `.metadata.creationTimestamp`
-* `.metadata.resourceVersion`
-* `.metadata.uid`
-* `.status`
+```bash
+mkdir -p /tmp/yq-exercises
+cd /tmp/yq-exercises
+
+cat > pod-export.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2026-07-16T10:00:00Z"
+  name: exported-pod
+  namespace: default
+  resourceVersion: "12345"
+  uid: 11111111-2222-3333-4444-555555555555
+spec:
+  containers:
+  - name: app
+    image: nginx:1.27
+status:
+  phase: Running
+  podIP: 10.244.0.10
+EOF
+```
+
+### Task
+
+Eliminare dal file:
+
+- `.metadata.creationTimestamp`
+- `.metadata.resourceVersion`
+- `.metadata.uid`
+- `.status`
+
+### Validazione
+
+```bash
+yq pod-export.yaml
+```
+
+I campi indicati non devono più essere presenti.
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 yq -i '
   del(
     .metadata.creationTimestamp,
@@ -533,11 +845,7 @@ yq -i '
     .status
   )
 ' pod-export.yaml
-```
 
-Verifica:
-
-```sh
 yq pod-export.yaml
 ```
 
@@ -545,36 +853,55 @@ yq pod-export.yaml
 
 ---
 
-### curl — 5 esercizi
-
----
-
 ## CURL-1 — Verificare un Service
 
-Nel namespace `frontend` esiste un Service chiamato:
+### Preparazione ambiente
 
-* `web-service`
+Creare namespace, Deployment e Service:
 
-Avviare un Pod temporaneo e verificare la risposta HTTP del Service.
+```bash
+kubectl create namespace frontend \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl create deployment web \
+  -n frontend \
+  --image=nginx:1.27
+
+kubectl expose deployment web \
+  -n frontend \
+  --name=web-service \
+  --port=80 \
+  --target-port=80
+
+kubectl rollout status deployment/web -n frontend
+```
+
+### Task
+
+Avviare un Pod temporaneo e verificare la risposta HTTP del Service `web-service`.
+
+### Validazione
+
+La risposta deve contenere la pagina predefinita di NGINX.
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
-k run curl-test \
+```bash
+kubectl run curl-test \
   -n frontend \
   --image=curlimages/curl \
   --rm -it \
   --restart=Never \
-  -- curl http://web-service
+  -- curl -s http://web-service
 ```
 
 Alternativa con BusyBox:
 
-```sh
-k run test \
+```bash
+kubectl run test \
   -n frontend \
   --image=busybox \
   --rm -it \
@@ -584,9 +911,30 @@ k run test \
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace frontend
+```
+
 ---
 
 ## CURL-2 — Mostrare status e header
+
+### Preparazione ambiente
+
+Creare un server HTTP locale sulla porta `8080`:
+
+```bash
+docker rm -f curl-web 2>/dev/null || true
+
+docker run -d \
+  --name curl-web \
+  -p 8080:80 \
+  nginx:1.27
+```
+
+### Task
 
 Effettuare una richiesta verso:
 
@@ -596,33 +944,46 @@ http://localhost:8080
 
 Mostrare:
 
-* status HTTP;
-* header;
-* body.
+- status HTTP;
+- header;
+- body.
+
+### Validazione
+
+Lo status atteso è `200`.
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+Header e body:
+
+```bash
 curl -i http://localhost:8080
 ```
 
 Solo gli header:
 
-```sh
+```bash
 curl -I http://localhost:8080
 ```
 
 Solo lo status code:
 
-```sh
-curl -s -o /dev/null -w '%{http_code}\n' \
+```bash
+curl -s -o /dev/null -w '%{http_code}
+' \
   http://localhost:8080
 ```
 
 </details>
+
+### Cleanup
+
+```bash
+docker rm -f curl-web
+```
 
 ---
 
@@ -726,41 +1087,98 @@ Dove:
 
 ---
 
-### Helm — 5 esercizi
+# Helm — 5 esercizi
 
 ---
 
 ## Helm-1 — Validare un chart
 
-Nella directory:
+### Preparazione ambiente
 
-```text
-/opt/webapp
+```bash
+rm -rf /opt/webapp
+mkdir -p /opt/webapp/templates
+
+cat > /opt/webapp/Chart.yaml <<'EOF'
+apiVersion: v2
+name: webapp
+description: Minimal CKAD Helm chart
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+
+cat > /opt/webapp/values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+EOF
+
+cat > /opt/webapp/templates/deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+EOF
+
+cat > /opt/webapp/templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: 80
+EOF
 ```
 
-è presente un chart Helm.
+### Task
 
 Eseguire:
 
-* validazione sintattica;
-* rendering dei manifest senza installare il chart.
+- validazione sintattica;
+- rendering dei manifest senza installare il chart.
+
+### Validazione
+
+Entrambi i comandi devono terminare senza errori.
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
+```bash
 helm lint /opt/webapp
 
-helm template webapp /opt/webapp
-```
-
-Con namespace:
-
-```sh
-helm template webapp /opt/webapp \
-  -n frontend
+helm template webapp /opt/webapp   -n frontend
 ```
 
 </details>
@@ -769,38 +1187,101 @@ helm template webapp /opt/webapp \
 
 ## Helm-2 — Installare una release
 
-Installare il chart:
+### Preparazione ambiente
 
-```text
-/opt/webapp
+```bash
+rm -rf /opt/webapp
+mkdir -p /opt/webapp/templates
+
+cat > /opt/webapp/Chart.yaml <<'EOF'
+apiVersion: v2
+name: webapp
+description: Minimal CKAD Helm chart
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+
+cat > /opt/webapp/values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+EOF
+
+cat > /opt/webapp/templates/deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+EOF
+
+cat > /opt/webapp/templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: 80
+EOF
 ```
 
-con:
+Rimuovere un’eventuale release precedente:
 
-* release: `webapp`
-* namespace: `frontend`
-* creazione automatica del namespace.
+```bash
+helm uninstall webapp -n frontend 2>/dev/null || true
+```
+
+### Task
+
+Installare il chart `/opt/webapp` con:
+
+- release: `webapp`;
+- namespace: `frontend`;
+- creazione automatica del namespace.
+
+### Validazione
+
+```bash
+helm list -n frontend
+helm status webapp -n frontend
+kubectl get all -n frontend
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
-helm install webapp \
-  /opt/webapp \
-  -n frontend \
-  --create-namespace
-```
-
-Verifica:
-
-```sh
-helm list -n frontend
-
-helm status webapp -n frontend
-
-k get all -n frontend
+```bash
+helm install webapp   /opt/webapp   -n frontend   --create-namespace
 ```
 
 </details>
@@ -809,35 +1290,117 @@ k get all -n frontend
 
 ## Helm-3 — Installare con valori personalizzati
 
-Installare il chart `/opt/webapp` usando:
+### Preparazione ambiente
 
-* release: `webapp-prod`
-* namespace: `production`
-* file: `/opt/webapp/prod-values.yaml`
-* replica count: `3`
+```bash
+rm -rf /opt/webapp
+mkdir -p /opt/webapp/templates
 
-Il valore delle repliche deve sovrascrivere quello presente nel file values.
+cat > /opt/webapp/Chart.yaml <<'EOF'
+apiVersion: v2
+name: webapp
+description: Minimal CKAD Helm chart
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+
+cat > /opt/webapp/values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+EOF
+
+cat > /opt/webapp/templates/deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+EOF
+
+cat > /opt/webapp/templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: 80
+EOF
+```
+
+Creare `/opt/webapp/prod-values.yaml`:
+
+```bash
+cat > /opt/webapp/prod-values.yaml <<'EOF'
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 80
+EOF
+```
+
+Rimuovere un’eventuale release precedente:
+
+```bash
+helm uninstall webapp-prod -n production 2>/dev/null || true
+```
+
+### Task
+
+Installare il chart usando:
+
+- release: `webapp-prod`;
+- namespace: `production`;
+- file: `/opt/webapp/prod-values.yaml`;
+- `replicaCount=3` tramite riga di comando.
+
+Il valore passato con `--set` deve prevalere sul file values.
+
+### Validazione
+
+```bash
+helm get values webapp-prod -n production
+kubectl get deployment webapp-prod -n production
+```
+
+Il Deployment deve avere tre repliche desiderate.
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
-helm install webapp-prod \
-  /opt/webapp \
-  -n production \
-  --create-namespace \
-  -f /opt/webapp/prod-values.yaml \
-  --set replicaCount=3
-```
-
-Verifica:
-
-```sh
-helm get values webapp-prod -n production
-
-k get deploy -n production
+```bash
+helm install webapp-prod   /opt/webapp   -n production   --create-namespace   -f /opt/webapp/prod-values.yaml   --set replicaCount=3
 ```
 
 </details>
@@ -846,25 +1409,97 @@ k get deploy -n production
 
 ## Helm-4 — Upgrade e rollback
 
-La release:
+### Preparazione ambiente
 
-```text
-webapp
+```bash
+rm -rf /opt/webapp
+mkdir -p /opt/webapp/templates
+
+cat > /opt/webapp/Chart.yaml <<'EOF'
+apiVersion: v2
+name: webapp
+description: Minimal CKAD Helm chart
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+
+cat > /opt/webapp/values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+EOF
+
+cat > /opt/webapp/templates/deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+EOF
+
+cat > /opt/webapp/templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: 80
+EOF
 ```
 
-è installata nel namespace:
+Installare la prima revisione:
 
-```text
-frontend
+```bash
+helm uninstall webapp -n frontend 2>/dev/null || true
+
+helm install webapp   /opt/webapp   -n frontend   --create-namespace   --set image.tag=1.26-alpine
 ```
 
-Aggiornare il tag dell’immagine a:
+### Task
 
-```text
-1.27
+1. Aggiornare il tag dell’immagine a `1.27-alpine`.
+2. Verificare la cronologia.
+3. Eseguire il rollback alla revisione precedente.
+4. Verificare l’immagine finale del Deployment.
+
+### Validazione
+
+```bash
+helm history webapp -n frontend
+
+kubectl get deployment webapp   -n frontend   -o jsonpath='{.spec.template.spec.containers[0].image}{"
+"}'
 ```
 
-Successivamente eseguire il rollback alla revisione precedente.
+Dopo il rollback, l’immagine deve essere `nginx:1.26-alpine`.
 
 ---
 
@@ -873,29 +1508,29 @@ Successivamente eseguire il rollback alla revisione precedente.
 
 Upgrade:
 
-```sh
-helm upgrade webapp \
-  /opt/webapp \
-  -n frontend \
-  --set image.tag=1.27
+```bash
+helm upgrade webapp   /opt/webapp   -n frontend   --set image.tag=1.27-alpine
 ```
 
-Controllare la cronologia:
+Cronologia:
 
-```sh
+```bash
 helm history webapp -n frontend
 ```
 
-Rollback:
+Rollback alla revisione 1:
 
-```sh
+```bash
 helm rollback webapp 1 -n frontend
 ```
 
 Verifica:
 
-```sh
+```bash
 helm status webapp -n frontend
+
+kubectl get deployment webapp   -n frontend   -o jsonpath='{.spec.template.spec.containers[0].image}{"
+"}'
 ```
 
 </details>
@@ -904,75 +1539,120 @@ helm status webapp -n frontend
 
 ## Helm-5 — Debug chart non installabile
 
-L’installazione restituisce:
+### Preparazione ambiente
+
+Creare un chart intenzionalmente errato:
+
+```bash
+rm -rf /opt/webapp-broken
+mkdir -p /opt/webapp-broken/templates
+
+cat > /opt/webapp-broken/Chart.yaml <<'EOF'
+apiVersion: v2
+name: webapp-broken
+description: Broken chart for troubleshooting
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+
+cat > /opt/webapp-broken/values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+EOF
+
+cat > /opt/webapp-broken/templates/deployment.yaml <<'EOF'
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: webapp-broken
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: webapp-broken
+  template:
+    metadata:
+      labels:
+        app: webapp-broken
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+EOF
+```
+
+Riprodurre l’errore:
+
+```bash
+helm install webapp-broken \
+  /opt/webapp-broken \
+  -n frontend \
+  --create-namespace
+```
+
+L’installazione deve restituire un errore simile a:
 
 ```text
 no matches for kind "Deployment" in version "v1"
 ```
 
-Individuare e correggere il problema.
+### Task
+
+1. Individuare il file errato.
+2. Correggere l’API version del Deployment.
+3. Validare il chart.
+4. Installare la release.
+
+### Validazione
+
+```bash
+helm lint /opt/webapp-broken
+helm status webapp-broken -n frontend
+kubectl get deployment webapp-broken -n frontend
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-Cercare il Deployment:
+Cercare il problema:
 
-```sh
+```bash
 grep -R -n \
   'kind: Deployment\|apiVersion:' \
-  /opt/webapp/templates
+  /opt/webapp-broken/templates
 ```
 
-Aprire il file interessato:
+Correggere con `sed`:
 
-```sh
-vi /opt/webapp/templates/deployment.yaml
-```
-
-Correggere:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-```
-
-Verificare che il selector corrisponda alle label del Pod:
-
-```yaml
-spec:
-  selector:
-    matchLabels:
-      app: webapp
-  template:
-    metadata:
-      labels:
-        app: webapp
+```bash
+sed -i \
+  's/^apiVersion: v1$/apiVersion: apps\/v1/' \
+  /opt/webapp-broken/templates/deployment.yaml
 ```
 
 Validare:
 
-```sh
-helm lint /opt/webapp
-
-helm template webapp /opt/webapp
+```bash
+helm lint /opt/webapp-broken
+helm template webapp-broken /opt/webapp-broken
 ```
 
 Installare:
 
-```sh
-helm install webapp \
-  /opt/webapp \
+```bash
+helm install webapp-broken \
+  /opt/webapp-broken \
   -n frontend \
   --create-namespace
 ```
 
 </details>
-
----
-
-### Simulazione finale — Tool misti
 
 ---
 
