@@ -4,7 +4,7 @@
 
 ---
 
-# Docker — 5 esercizi
+### Docker — 5 esercizi
 
 ---
 
@@ -213,7 +213,7 @@ docker system prune -a --volumes -f
 
 ---
 
-# Podman — 5 esercizi
+### Podman — 5 esercizi
 
 ---
 
@@ -386,7 +386,7 @@ podman system prune -a -f
 
 ---
 
-# yq — 5 esercizi
+### yq — 5 esercizi
 
 ---
 
@@ -545,7 +545,7 @@ yq pod-export.yaml
 
 ---
 
-# curl — 5 esercizi
+### curl — 5 esercizi
 
 ---
 
@@ -726,7 +726,7 @@ Dove:
 
 ---
 
-# Helm — 5 esercizi
+### Helm — 5 esercizi
 
 ---
 
@@ -972,144 +972,797 @@ helm install webapp \
 
 ---
 
-# Simulazione finale — Tool misti
+### Simulazione finale — Tool misti
 
 ---
 
 ## MOCK-1 — Build, save e deploy
 
-Nella directory `/opt/mock-app` è presente un Dockerfile.
+### Preparazione ambiente
+
+Creare la directory di lavoro:
+
+```bash
+mkdir -p /opt/mock-app
+cd /opt/mock-app
+```
+
+Creare il file `Dockerfile`:
+
+```bash
+cat > Dockerfile <<'EOF'
+FROM nginx:1.27-alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+EOF
+```
+
+Creare il file `index.html`:
+
+```bash
+cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>CKAD Mock App</title>
+</head>
+<body>
+  <h1>Welcome to the CKAD mixed tools mock!</h1>
+  <p>The OCI image was built successfully.</p>
+</body>
+</html>
+EOF
+```
+
+Creare il file `deployment.yaml`:
+
+```bash
+cat > deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mock-app
+  template:
+    metadata:
+      labels:
+        app: mock-app
+    spec:
+      containers:
+      - name: mock-app
+        image: IMAGE_TO_REPLACE
+        imagePullPolicy: Never
+        ports:
+        - name: http
+          containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mock-app
+spec:
+  selector:
+    app: mock-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+EOF
+```
+
+Verificare i file creati:
+
+```bash
+ls -l /opt/mock-app
+```
+
+Output atteso:
+
+```text
+Dockerfile
+deployment.yaml
+index.html
+```
+
+---
+
+### Task
 
 Eseguire le seguenti operazioni:
 
-1. costruire l’immagine `mock-app:v1`;
-2. salvarla in `/tmp/mock-app.tar`;
-3. verificare il file creato;
-4. modificare `deployment.yaml` impostando l’immagine a `mock-app:v1`;
-5. impostare le repliche a `2`;
-6. applicare il Deployment;
-7. verificare lo stato del rollout.
+1. Costruire l’immagine:
+
+```text
+mock-app:v1
+```
+
+2. Salvare l’immagine nel file:
+
+```text
+/tmp/mock-app.tar
+```
+
+3. Verificare che il file sia stato creato.
+
+4. Modificare `deployment.yaml` usando `yq`:
+
+   * impostare l’immagine del container a `mock-app:v1`;
+   * impostare il numero di repliche a `2`.
+
+5. Rendere l’immagine disponibile al cluster Kubernetes locale.
+
+6. Applicare il manifest.
+
+7. Verificare lo stato del rollout.
+
+8. Verificare la pagina web usando `curl`.
+
+---
+
+### Validazione
+
+Verificare l’immagine:
+
+```bash
+docker images mock-app:v1
+```
+
+Oppure, con Podman:
+
+```bash
+podman images mock-app:v1
+```
+
+Verificare l’archivio:
+
+```bash
+ls -lh /tmp/mock-app.tar
+```
+
+Verificare le modifiche YAML:
+
+```bash
+yq '.spec.template.spec.containers[0].image' deployment.yaml
+```
+
+Output atteso:
+
+```text
+mock-app:v1
+```
+
+```bash
+yq '.spec.replicas' deployment.yaml
+```
+
+Output atteso:
+
+```text
+2
+```
+
+Verificare Kubernetes:
+
+```bash
+kubectl get deployment,pod,service
+```
+
+```bash
+kubectl rollout status deployment/mock-app
+```
+
+Testare il Service:
+
+```bash
+kubectl port-forward service/mock-app 8080:80
+```
+
+In un secondo terminale:
+
+```bash
+curl http://localhost:8080
+```
+
+L’output deve contenere:
+
+```text
+Welcome to the CKAD mixed tools mock!
+```
 
 ---
 
 <details>
 <summary>Soluzione Docker</summary>
 
-```sh
+Spostarsi nella directory:
+
+```bash
 cd /opt/mock-app
-
-docker build -t mock-app:v1 .
-
-docker save -o /tmp/mock-app.tar mock-app:v1
-
-ls -lh /tmp/mock-app.tar
-
-yq -i \
-  '.spec.template.spec.containers[0].image = "mock-app:v1"' \
-  deployment.yaml
-
-yq -i \
-  '.spec.replicas = 2' \
-  deployment.yaml
-
-k apply -f deployment.yaml
-
-k rollout status deploy/mock-app
 ```
 
-</details>
+Costruire l’immagine:
 
-<details>
-<summary>Soluzione Podman</summary>
+```bash
+docker build -t mock-app:v1 .
+```
 
-```sh
-cd /opt/mock-app
+Verificare:
 
-podman build -t mock-app:v1 .
+```bash
+docker images mock-app:v1
+```
 
-podman save \
-  --format oci-archive \
-  -o /tmp/mock-app.tar \
-  mock-app:v1
+Salvare l’immagine:
 
+```bash
+docker save -o /tmp/mock-app.tar mock-app:v1
+```
+
+Verificare l’archivio:
+
+```bash
 ls -lh /tmp/mock-app.tar
+```
 
+Modificare l’immagine nel Deployment:
+
+```bash
 yq -i \
   '.spec.template.spec.containers[0].image = "mock-app:v1"' \
   deployment.yaml
+```
 
-yq -i \
-  '.spec.replicas = 2' \
-  deployment.yaml
+Impostare due repliche:
 
-k apply -f deployment.yaml
+```bash
+yq -i '.spec.replicas = 2' deployment.yaml
+```
 
-k rollout status deploy/mock-app
+Verificare le modifiche:
+
+```bash
+yq '.spec.template.spec.containers[0].image' deployment.yaml
+```
+
+```bash
+yq '.spec.replicas' deployment.yaml
+```
+
+Se il cluster è Kind, caricare l’immagine nel cluster:
+
+```bash
+kind load docker-image mock-app:v1
+```
+
+Se il cluster è Minikube:
+
+```bash
+minikube image load mock-app:v1
+```
+
+Applicare il manifest:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Verificare il rollout:
+
+```bash
+kubectl rollout status deployment/mock-app
+```
+
+Verificare le risorse:
+
+```bash
+kubectl get deployment,pod,service
+```
+
+Avviare il port-forward:
+
+```bash
+kubectl port-forward service/mock-app 8080:80
+```
+
+In un secondo terminale:
+
+```bash
+curl http://localhost:8080
 ```
 
 </details>
 
 ---
 
+<details>
+<summary>Soluzione Podman</summary>
+
+Spostarsi nella directory:
+
+```bash
+cd /opt/mock-app
+```
+
+Costruire l’immagine:
+
+```bash
+podman build -t mock-app:v1 .
+```
+
+Verificare:
+
+```bash
+podman images mock-app:v1
+```
+
+Salvare l’immagine in formato OCI:
+
+```bash
+podman save \
+  --format oci-archive \
+  -o /tmp/mock-app.tar \
+  mock-app:v1
+```
+
+Verificare l’archivio:
+
+```bash
+ls -lh /tmp/mock-app.tar
+```
+
+Modificare l’immagine nel Deployment:
+
+```bash
+yq -i \
+  '.spec.template.spec.containers[0].image = "mock-app:v1"' \
+  deployment.yaml
+```
+
+Impostare due repliche:
+
+```bash
+yq -i '.spec.replicas = 2' deployment.yaml
+```
+
+Verificare:
+
+```bash
+yq '.spec.template.spec.containers[0].image' deployment.yaml
+```
+
+```bash
+yq '.spec.replicas' deployment.yaml
+```
+
+Applicare il manifest se l’immagine è disponibile nel runtime Kubernetes:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Verificare:
+
+```bash
+kubectl rollout status deployment/mock-app
+```
+
+```bash
+kubectl get deployment,pod,service
+```
+
+Testare tramite port-forward:
+
+```bash
+kubectl port-forward service/mock-app 8080:80
+```
+
+In un secondo terminale:
+
+```bash
+curl http://localhost:8080
+```
+
+> Se Kubernetes non riesce a trovare `mock-app:v1`, l’immagine deve essere importata nel runtime del nodo oppure pubblicata in un registry accessibile dal cluster.
+
+</details>
+
+---
+
+### Cleanup
+
+```bash
+kubectl delete -f /opt/mock-app/deployment.yaml
+```
+
+Con Docker:
+
+```bash
+docker rmi -f mock-app:v1
+```
+
+Con Podman:
+
+```bash
+podman rmi -f mock-app:v1
+```
+
+Rimuovere i file:
+
+```bash
+rm -rf /opt/mock-app
+rm -f /tmp/mock-app.tar
+```
+
+---
+
 ## MOCK-2 — Helm e curl
 
-Nella directory `/opt/frontend-chart` è presente un chart Helm.
+### Preparazione ambiente
+
+Creare la struttura del chart:
+
+```bash
+mkdir -p /opt/frontend-chart/templates
+cd /opt/frontend-chart
+```
+
+Creare il file `Chart.yaml`:
+
+```bash
+cat > Chart.yaml <<'EOF'
+apiVersion: v2
+name: frontend-chart
+description: Chart Helm per simulazione CKAD
+type: application
+version: 0.1.0
+appVersion: "1.27"
+EOF
+```
+
+Creare il file `values.yaml`:
+
+```bash
+cat > values.yaml <<'EOF'
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+EOF
+```
+
+Creare il file `templates/_helpers.tpl`:
+
+```bash
+cat > templates/_helpers.tpl <<'EOF'
+{{- define "frontend-chart.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "frontend-chart.fullname" -}}
+{{- printf "%s-%s" .Release.Name (include "frontend-chart.name" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "frontend-chart.labels" -}}
+app.kubernetes.io/name: {{ include "frontend-chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{- define "frontend-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "frontend-chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+EOF
+```
+
+Creare il file `templates/deployment.yaml`:
+
+```bash
+cat > templates/deployment.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "frontend-chart.fullname" . }}
+  labels:
+    {{- include "frontend-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frontend-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "frontend-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+EOF
+```
+
+Creare il file `templates/service.yaml`:
+
+```bash
+cat > templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "frontend-chart.fullname" . }}
+  labels:
+    {{- include "frontend-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "frontend-chart.selectorLabels" . | nindent 4 }}
+  ports:
+  - name: http
+    port: {{ .Values.service.port }}
+    targetPort: http
+    protocol: TCP
+EOF
+```
+
+Verificare la struttura:
+
+```bash
+find /opt/frontend-chart -type f
+```
+
+Output atteso:
+
+```text
+/opt/frontend-chart/Chart.yaml
+/opt/frontend-chart/values.yaml
+/opt/frontend-chart/templates/_helpers.tpl
+/opt/frontend-chart/templates/deployment.yaml
+/opt/frontend-chart/templates/service.yaml
+```
+
+---
+
+### Task
 
 Eseguire le seguenti operazioni:
 
-1. validare il chart;
-2. installarlo come release `frontend`;
-3. usare il namespace `ckad-tools`;
-4. creare automaticamente il namespace;
-5. impostare `service.type=NodePort`;
-6. verificare le risorse create;
-7. recuperare il NodePort;
-8. testare l’applicazione con `curl`.
+1. Validare il chart.
+
+2. Eseguire il rendering locale dei manifest.
+
+3. Installare il chart con:
+
+   * release: `frontend`;
+   * namespace: `ckad-tools`;
+   * creazione automatica del namespace;
+   * `service.type=NodePort`.
+
+4. Verificare le risorse create.
+
+5. Recuperare dinamicamente il nome del Service.
+
+6. Recuperare dinamicamente il NodePort.
+
+7. Testare l’applicazione usando `curl`.
+
+8. Mostrare stato e cronologia della release.
+
+---
+
+### Validazione
+
+Validare il chart:
+
+```bash
+helm lint /opt/frontend-chart
+```
+
+Elencare la release:
+
+```bash
+helm list -n ckad-tools
+```
+
+Verificare lo stato:
+
+```bash
+helm status frontend -n ckad-tools
+```
+
+Verificare la cronologia:
+
+```bash
+helm history frontend -n ckad-tools
+```
+
+Verificare le risorse:
+
+```bash
+kubectl get all -n ckad-tools
+```
+
+Verificare che il Service sia di tipo `NodePort`:
+
+```bash
+kubectl get service -n ckad-tools
+```
 
 ---
 
 <details>
 <summary>Soluzione</summary>
 
-```sh
-helm lint /opt/frontend-chart
+Spostarsi nella directory:
 
-helm template frontend \
-  /opt/frontend-chart \
+```bash
+cd /opt
+```
+
+Validare il chart:
+
+```bash
+helm lint frontend-chart
+```
+
+Eseguire il rendering locale:
+
+```bash
+helm template frontend frontend-chart \
   -n ckad-tools \
   --set service.type=NodePort
+```
 
-helm install frontend \
-  /opt/frontend-chart \
+Installare il chart:
+
+```bash
+helm install frontend frontend-chart \
   -n ckad-tools \
   --create-namespace \
   --set service.type=NodePort
+```
 
-k get all -n ckad-tools
+Verificare la release:
 
-k get svc -n ckad-tools
+```bash
+helm list -n ckad-tools
+```
 
-NODE_PORT=$(k get svc \
+Verificare lo stato:
+
+```bash
+helm status frontend -n ckad-tools
+```
+
+Verificare la cronologia:
+
+```bash
+helm history frontend -n ckad-tools
+```
+
+Verificare le risorse Kubernetes:
+
+```bash
+kubectl get all -n ckad-tools
+```
+
+Recuperare dinamicamente il nome del Service:
+
+```bash
+SERVICE_NAME=$(kubectl get service \
   -n ckad-tools \
-  -o jsonpath='{.items[0].spec.ports[0].nodePort}')
+  -l app.kubernetes.io/instance=frontend \
+  -o jsonpath='{.items[0].metadata.name}')
+```
 
+Visualizzare il nome:
+
+```bash
+echo "$SERVICE_NAME"
+```
+
+Recuperare il NodePort:
+
+```bash
+NODE_PORT=$(kubectl get service "$SERVICE_NAME" \
+  -n ckad-tools \
+  -o jsonpath='{.spec.ports[0].nodePort}')
+```
+
+Visualizzare il NodePort:
+
+```bash
 echo "$NODE_PORT"
-
-curl http://localhost:$NODE_PORT
 ```
 
-In alcuni ambienti il NodePort non è raggiungibile tramite `localhost`. In quel caso recuperare l’indirizzo del nodo:
+Provare tramite `localhost`:
 
-```sh
-k get nodes -o wide
+```bash
+curl "http://localhost:${NODE_PORT}"
 ```
 
-e usare:
+Se il NodePort non è raggiungibile tramite `localhost`, recuperare l’IP interno del nodo:
 
-```sh
-curl http://NODE_IP:$NODE_PORT
+```bash
+NODE_IP=$(kubectl get nodes \
+  -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+```
+
+Visualizzare l’IP:
+
+```bash
+echo "$NODE_IP"
+```
+
+Testare:
+
+```bash
+curl "http://${NODE_IP}:${NODE_PORT}"
+```
+
+Alternativa con port-forward:
+
+```bash
+kubectl port-forward \
+  -n ckad-tools \
+  service/"$SERVICE_NAME" \
+  8080:80
+```
+
+In un secondo terminale:
+
+```bash
+curl http://localhost:8080
 ```
 
 </details>
+
+---
+
+### Cleanup
+
+Disinstallare la release:
+
+```bash
+helm uninstall frontend -n ckad-tools
+```
+
+Eliminare il namespace:
+
+```bash
+kubectl delete namespace ckad-tools
+```
+
+Rimuovere il chart:
+
+```bash
+rm -rf /opt/frontend-chart
+```
+
+---
+
 
 ---
