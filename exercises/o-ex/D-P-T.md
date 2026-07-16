@@ -11,9 +11,22 @@
 ## Docker-1 — Build e verifica immagine
 
 Nella directory corrente sono presenti:
+[index.html](https://github.com/user-attachments/files/30087454/index.html)
+
+```
+FROM nginx:1.27
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+```
+
 
 * `Dockerfile`
-* `index.html`
+* `index
+.html`
+
+
 
 Creare l’immagine:
 
