@@ -1030,15 +1030,9 @@ docker exec web ls -l /usr/share/nginx/html
 Interattiva:
 
 ```bash
-docker exec -it web sh
-ls -l /usr/share/nginx/html
-exit
-```
-
-Oppure direttamente:
-
-```bash
-docker exec web ls -l /usr/share/nginx/html
+docker exec -it web sh -c 
+"ls -l /usr/share/nginx/html
+exit"
 ```
 
 </details>
