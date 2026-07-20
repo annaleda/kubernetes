@@ -5,6 +5,15 @@
 
 ## HELM-1 — Installazione Chart
 
+### Preparazione
+
+```bash
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+helm uninstall web-release -n helm-test 2>/dev/null || true
+```
+
 Namespace: `helm-test`
 
 Installare chart nginx
@@ -28,9 +37,27 @@ helm list -n helm-test
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall web-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+```
+
+
 ---
 
 ## HELM-2 — Override Values via CLI
+
+### Preparazione
+
+```bash
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+helm uninstall custom-nginx -n helm-test 2>/dev/null || true
+```
 
 Installare release `custom-nginx`
 
@@ -53,9 +80,28 @@ k get deploy custom-nginx -n helm-test
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall custom-nginx -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+```
+
+
 ---
 
 ## HELM-3 — Override con values.yaml
+
+### Preparazione
+
+```bash
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+helm uninstall file-nginx -n helm-test 2>/dev/null || true
+rm -f custom-values.yaml
+```
 
 Creare file `custom-values.yaml`
 
@@ -88,9 +134,29 @@ file-nginx   NodePort   10.96.83.236   <none>        80:31976/TCP,443:30153/TCP 
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall file-nginx -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -f custom-values.yaml
+```
+
+
 ---
 
 ### HELM-4 — Upgrade Release
+
+### Preparazione
+
+```bash
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+helm uninstall web-release -n helm-test 2>/dev/null || true
+helm install web-release bitnami/nginx -n helm-test --set replicaCount=1
+```
 
 Aggiornare release `web-release`
 
@@ -125,9 +191,29 @@ REVISION        UPDATED                         STATUS          CHART           
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall web-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+```
+
+
 ---
 
 ### HELM-5 — Rollback Release
+
+### Preparazione
+
+```bash
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+helm uninstall web-release -n helm-test 2>/dev/null || true
+helm install web-release bitnami/nginx -n helm-test --set replicaCount=1
+helm upgrade web-release bitnami/nginx -n helm-test --set replicaCount=4
+```
 
 Eseguire rollback della release `web-release`
 
@@ -147,21 +233,38 @@ REVISION        UPDATED                         STATUS          CHART           
 2               Wed Mar  4 11:16:47 2026        deployed        nginx-22.5.4    1.29.5          Upgrade complete
 
 
-helm rollback web-release 2 -n helm-test
+helm rollback web-release 1 -n helm-test
 
 helm history web-release -n helm-test
 
 REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION
 1               Wed Mar  4 11:15:35 2026        superseded      nginx-22.5.4    1.29.5          Install complete
 2               Wed Mar  4 11:16:47 2026        superseded      nginx-22.5.4    1.29.5          Upgrade complete
-3               Wed Mar  4 11:19:15 2026        deployed        nginx-22.5.4    1.29.5          Rollback to 2
+3               Wed Mar  4 11:19:15 2026        deployed        nginx-22.5.4    1.29.5          Rollback to 1
 
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall web-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+```
+
+
 ---
 
 ### HELM-6 — Template Rendering
+
+### Preparazione
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
+helm repo update
+rm -f nginx-rendered.yaml
+```
 
 Eseguire render locale del chart `nginx`
 
@@ -189,9 +292,23 @@ kind: Service
 ```
 </details>
 
+
+### Cleanup
+
+```bash
+rm -f nginx-rendered.yaml
+```
+
+
 ---
 
 ### HELM-7
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -212,9 +329,26 @@ tree webapp-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-8
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -241,9 +375,32 @@ helm ls -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-9
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-one --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace helm-two --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall release-one -n helm-one 2>/dev/null || true
+helm uninstall release-two -n helm-two 2>/dev/null || true
+helm install release-one ./webapp-chart -n helm-one
+helm install release-two ./webapp-chart -n helm-two
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -262,9 +419,30 @@ helm ls -A
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall release-one -n helm-one 2>/dev/null || true
+helm uninstall release-two -n helm-two 2>/dev/null || true
+kubectl delete namespace helm-one helm-two --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-10
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+helm install webapp-release ./webapp-chart -n helm-test
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -292,9 +470,30 @@ helm get values webapp-release -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-11
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+helm install webapp-release ./webapp-chart -n helm-test --set replicaCount=1
+helm upgrade webapp-release ./webapp-chart -n helm-test --set replicaCount=3
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -315,9 +514,29 @@ helm history webapp-release -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-12
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-release -n helm-test 2>/dev/null || true
+helm install webapp-release ./webapp-chart -n helm-test
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -337,9 +556,25 @@ helm ls -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
-HELM-13
+### HELM-13
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -358,9 +593,24 @@ helm lint ./webapp-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-14
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -379,9 +629,25 @@ helm template webapp-release ./webapp-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-15
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl delete namespace frontend-apd --ignore-not-found
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -415,9 +681,26 @@ helm get values custom-webapp -n frontend-apd
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall custom-webapp -n frontend-apd 2>/dev/null || true
+kubectl delete namespace frontend-apd --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-16
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -438,9 +721,26 @@ helm show values ./webapp-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-17
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart custom-values.yaml
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -482,9 +782,29 @@ helm install webapp-custom-values ./webapp-chart \
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart custom-values.yaml
+```
+
+
 ---
 
 ### HELM-18
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart upgrade-values.yaml
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+helm install webapp-custom-values ./webapp-chart -n helm-test --set replicaCount=1 --set service.type=ClusterIP
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -518,9 +838,30 @@ helm get values webapp-custom-values -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart upgrade-values.yaml
+```
+
+
 ---
 
 ### HELM-19
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+helm install webapp-custom-values ./webapp-chart -n helm-test --set replicaCount=1
+helm upgrade webapp-custom-values ./webapp-chart -n helm-test --set replicaCount=2
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -540,9 +881,28 @@ helm history webapp-custom-values -n helm-test
 
 </details>
 
+
+### Cleanup
+
+```bash
+helm uninstall webapp-custom-values -n helm-test 2>/dev/null || true
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-20
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+kubectl create namespace helm-test --dry-run=client -o yaml | kubectl apply -f -
+helm uninstall webapp-dryrun -n helm-test 2>/dev/null || true
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -561,9 +921,25 @@ helm install webapp-dryrun ./webapp-chart -n helm-test --dry-run --debug
 
 </details>
 
+
+### Cleanup
+
+```bash
+kubectl delete namespace helm-test --ignore-not-found
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-21
+
+### Preparazione
+
+```bash
+rm -rf webapp-chart
+helm create webapp-chart
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -597,9 +973,25 @@ cat webapp-chart/Chart.yaml
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf webapp-chart
+```
+
+
 ---
 
 ### HELM-22
+
+### Preparazione
+
+```bash
+rm -rf broken-chart
+helm create broken-chart
+sed -i 's#apiVersion: apps/v1#apiVersion: apps/v1beta1#' broken-chart/templates/deployment.yaml
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -637,9 +1029,30 @@ helm lint ./broken-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf broken-chart
+```
+
+
 ---
 
 ### HELM-23
+
+### Preparazione
+
+```bash
+rm -rf broken-chart
+helm create broken-chart
+cat >> broken-chart/values.yaml <<'EOF'
+
+service:
+  name: frontend-service
+EOF
+sed -i 's#name: {{ include "broken-chart.fullname" . }}#name: {{ .Values.service.wrongName }}#' broken-chart/templates/service.yaml
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -676,9 +1089,25 @@ helm template fixed-render ./broken-chart
 
 </details>
 
+
+### Cleanup
+
+```bash
+rm -rf broken-chart
+```
+
+
 ---
 
 ### HELM-24
+
+### Preparazione
+
+```bash
+rm -rf broken-chart
+helm create broken-chart
+sed -i 's#apiVersion: apps/v1#apiVersion: apps/v1beta1#' broken-chart/templates/deployment.yaml
+```
 
 Task  
 SECTION: APPLICATION DEPLOYMENT (HELM)
@@ -709,5 +1138,13 @@ Typical issues to look for:
 
 
 </details>
+
+
+### Cleanup
+
+```bash
+rm -rf broken-chart
+```
+
 
 ---
