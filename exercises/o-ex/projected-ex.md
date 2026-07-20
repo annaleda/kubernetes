@@ -1,25 +1,4 @@
 # Kubernetes Projected Volumes — esercizi con ambiente di preparazione
-
-Questi esercizi servono ad allenarsi con i volumi `projected`, che permettono di combinare più sorgenti nello stesso punto di mount.
-
-Le sorgenti proiettabili sono:
-
-- `configMap`
-- `secret`
-- `downwardAPI`
-- `serviceAccountToken`
-- `clusterTrustBundle` *(funzionalità avanzata, dipendente dalla configurazione del cluster)*
-- `podCertificate` *(funzionalità avanzata, dipendente dalla configurazione del cluster)*
-
-> Convenzioni:
->
-> - `k` può essere usato come alias di `kubectl`;
-> - ogni esercizio è autonomo;
-> - esegui prima **Preparazione**, poi il **Task**;
-> - i volumi projected devono essere montati in sola lettura;
-> - ConfigMap, Secret e Pod devono trovarsi nello stesso namespace;
-> - per gli esercizi CKAD concentrati soprattutto su ConfigMap, Secret, Downward API e ServiceAccountToken.
-
 ---
 
 ## PROJ-1 — Projected volume con ConfigMap
