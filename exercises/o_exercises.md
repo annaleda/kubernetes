@@ -50,6 +50,8 @@
   - [Mock Exercises - serviceAccount](./o-ex/sa-ex.md) `12 esercizi`
 
   - [Mock Exercises - securityContext](./o-ex/sec-ex.md) `12 esercizi`
+
+  - [Mock Exercises - Projected](./o-ex/projected-ex.md) `12 esercizi`
   
   - [Mock Exercises - Affinity](./affinity-ex.md) `15 esercizi`
   
