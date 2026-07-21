@@ -4,6 +4,15 @@
 
 ## CONF-1 — ConfigMap
 
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
+
 - Creare ConfigMap: `app-config`
   - key: APP_MODE
   - value: production
@@ -57,9 +66,25 @@ spec:
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f config-pod.yaml
+```
+
 ---
 
 ## CONF-2 — Secret
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Creare Secret: `db-secret`
   - DB_USER=admin
@@ -102,9 +127,25 @@ spec:
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f secret-pod.yaml
+```
+
 ---
 
 ## CONF-3 — ResourceQuota
+
+### Preparazione
+
+```bash
+kubectl delete namespace quota-ns --ignore-not-found
+kubectl create namespace quota-ns
+```
+
+### Esercizio
 
 - Namespace: `quota-ns`
 - Impostare ResourceQuota
@@ -135,9 +176,25 @@ spec:
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace quota-ns --ignore-not-found
+rm -f quota1.yaml
+```
+
 ---
 
 ## CONF-4 — LimitRange
+
+### Preparazione
+
+```bash
+kubectl delete namespace limit-ns --ignore-not-found
+kubectl create namespace limit-ns
+```
+
+### Esercizio
 
 - Namespace: `limit-ns`
 - Creare LimitRange
@@ -172,9 +229,25 @@ k get po test-pod -n limit-ns -oyaml
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace limit-ns --ignore-not-found
+rm -f limit-range.yaml
+```
+
 ---
 
 ## CONF-5 — Requests vs Limits
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Deployment: `resource-test`
 - Container
@@ -214,9 +287,25 @@ spec:
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f resource-test.yaml
+```
+
 ---
 
 ## CONF-6 — ConfigMap + Secret insieme
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Pod: `env-app`
 - Usare
@@ -278,9 +367,25 @@ pass123
 ```
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f env-app.yaml
+```
+
 ---
 
 ## CONF-7 — ConfigMap come env (envFrom)
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - ConfigMap: `env-config`
   - APP_ENV=dev
@@ -326,9 +431,25 @@ k exec -it envfrom-pod -- env
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f envfrom-pod.yaml
+```
+
 ---
 
 ## CONF-8 — Secret come variabili d’ambiente
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Secret: `env-secret`
   - API_KEY=12345
@@ -368,9 +489,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f secret-env-pod.yaml
+```
+
 ---
 
 ## CONF-9 — ConfigMap singola chiave (env)
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - ConfigMap: `single-config`
   - key: MODE
@@ -410,9 +547,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f single-env-pod.yaml
+```
+
 ---
 
 ## CONF-10 — ConfigMap con subPath
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - ConfigMap: `file-config`
   - file: app.conf
@@ -453,9 +606,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f subpath-config-pod.yaml
+```
+
 ---
 
 ## CONF-11 — ResourceQuota (debug superamento)
+
+### Preparazione
+
+```bash
+kubectl delete namespace quota-test --ignore-not-found
+kubectl create namespace quota-test
+```
+
+### Esercizio
 
 - Namespace: `quota-test`
 
@@ -499,9 +668,25 @@ k describe quota -n quota-test
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace quota-test --ignore-not-found
+rm -f quota.yaml
+```
+
 ---
 
 ## CONF-12 — LimitRange (requests automatici)
+
+### Preparazione
+
+```bash
+kubectl delete namespace limit-test --ignore-not-found
+kubectl create namespace limit-test
+```
+
+### Esercizio
 
 - Namespace: `limit-test`
 
@@ -544,9 +729,25 @@ k describe pod test -n limit-test
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace limit-test --ignore-not-found
+rm -f limit.yaml
+```
+
 ---
 
 ## CONF-13 — ConfigMap da file
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Creare un file locale `app.properties`
   - contenuto: `color=blue`
@@ -597,9 +798,25 @@ k exec -it file-config-pod -- cat /etc/config/app.properties
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f app.properties file-config-pod.yaml
+```
+
 ---
 
 ## CONF-14 — Secret da file
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Creare un file locale `password.txt`
   - contenuto: `mypassword`
@@ -651,9 +868,25 @@ k exec -it file-secret-pod -- ls /etc/secret
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f password.txt file-secret-pod.yaml
+```
+
 ---
 
 ## CONF-15 — ConfigMap con env e volume insieme
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - ConfigMap: `dual-config`
   - APP_MODE=prod
@@ -708,9 +941,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f dual-config-pod.yaml
+```
+
 ---
 
 ## CONF-16 — Secret con envFrom
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Secret: `db-env-secret`
   - DB_USER=admin
@@ -757,9 +1006,25 @@ k exec -it secret-envfrom-pod -- env
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f secret-envfrom-pod.yaml
+```
+
 ---
 
 ## CONF-17 — LimitRange con default request e default memory
+
+### Preparazione
+
+```bash
+kubectl delete namespace memory-limit-ns --ignore-not-found
+kubectl create namespace memory-limit-ns
+```
+
+### Esercizio
 
 - Namespace: `memory-limit-ns`
 
@@ -802,9 +1067,25 @@ k describe pod mem-pod -n memory-limit-ns
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace memory-limit-ns --ignore-not-found
+rm -f mem-limit.yaml
+```
+
 ---
 
 ## CONF-18 — ResourceQuota su memoria
+
+### Preparazione
+
+```bash
+kubectl delete namespace mem-quota --ignore-not-found
+kubectl create namespace mem-quota
+```
+
+### Esercizio
 
 - Namespace: `mem-quota`
 
@@ -846,9 +1127,25 @@ k describe quota memory-quota -n mem-quota
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace mem-quota --ignore-not-found
+rm -f memory-quota.yaml
+```
+
 ---
 
 ## CONF-19 — Pod con requests e limits CPU+memory
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Pod: `full-resources-pod`
 
@@ -894,9 +1191,25 @@ k describe pod full-resources-pod
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f full-resources-pod.yaml
+```
+
 ---
 
 ## CONF-20 — ConfigMap con items
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - ConfigMap: `multi-file-config`
   - app.properties=mode=prod
@@ -949,9 +1262,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f items-config-pod.yaml
+```
+
 ---
 
 ## CONF-21 — Secret con chiave singola in env
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+```
+
+### Esercizio
 
 - Secret: `single-secret`
   - PASSWORD=abc123
@@ -996,9 +1325,25 @@ spec:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f single-secret-env-pod.yaml
+```
+
 ---
 
 ## CONF-22 — ResourceQuota con max servizi
+
+### Preparazione
+
+```bash
+kubectl delete namespace svc-quota --ignore-not-found
+kubectl create namespace svc-quota
+```
+
+### Esercizio
 
 - Namespace: `svc-quota`
 
@@ -1038,9 +1383,25 @@ k describe quota service-quota -n svc-quota
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace svc-quota --ignore-not-found
+rm -f service-quota.yaml
+```
+
 ---
 
 ## CONF-23 — LimitRange con min e max CPU
+
+### Preparazione
+
+```bash
+kubectl delete namespace cpu-range --ignore-not-found
+kubectl create namespace cpu-range
+```
+
+### Esercizio
 
 - Namespace: `cpu-range`
 
@@ -1085,9 +1446,53 @@ k describe limitrange cpu-range-limit -n cpu-range
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace cpu-range --ignore-not-found
+rm -f cpu-range-limit.yaml
+```
+
 ---
 
 ## CONF-24 — Debug ConfigMap / Secret mancanti
+
+### Preparazione
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+kubectl create namespace configuration
+
+cat > broken-config-pod.yaml <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: broken-config-pod
+  namespace: configuration
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh", "-c", "sleep 3600"]
+    env:
+    - name: APP_MODE
+      valueFrom:
+        configMapKeyRef:
+          name: missing-config
+          key: APP_MODE
+    volumeMounts:
+    - name: credentials
+      mountPath: /etc/credentials
+      readOnly: true
+  volumes:
+  - name: credentials
+    secret:
+      secretName: missing-secret
+EOF
+kubectl apply -f broken-config-pod.yaml
+```
+
+### Esercizio
 
 - Pod: `broken-config-pod`
 
@@ -1122,4 +1527,25 @@ Cause tipiche:
 
 </details>
 
+### Cleanup
+
+```bash
+kubectl delete namespace configuration --ignore-not-found
+rm -f broken-config-pod.yaml
+```
+
 ---
+
+# Promemoria pratici
+
+- Le variabili caricate tramite `env` o `envFrom` richiedono la ricreazione del Pod per riflettere gli aggiornamenti.
+- I volumi ConfigMap e Secret vengono aggiornati in modo eventuale.
+- I mount con `subPath` non ricevono gli aggiornamenti automatici.
+- Una ResourceQuota su CPU o memoria può richiedere requests e limits espliciti.
+
+```bash
+kubectl describe pod <pod> -n <namespace>
+kubectl get events -n <namespace> --sort-by=.metadata.creationTimestamp
+kubectl describe resourcequota -n <namespace>
+kubectl describe limitrange -n <namespace>
+```
