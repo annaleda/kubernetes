@@ -530,24 +530,545 @@ AccessMode corretto?
 
 ---
 
-# Comandi da sapere a memoria
+> Questa sezione è orientata al troubleshooting. Ogni volta che un esercizio parla di PVC, PV o StorageClass, è qui che devi ragionare.
+
+---
+
+# 14. Campi modificabili e immutabili
+
+Una delle domande più frequenti è:
+
+> Posso modificare questo PVC oppure devo ricrearlo?
+
+## Campi modificabili
+
+Se supportati dal backend:
+
+```yaml
+resources:
+  requests:
+    storage:
+```
+
+ Solo **aumentare** la dimensione.
+
+Mai diminuirla.
+
+---
+
+## Campi immutabili
+
+Non possono essere modificati dopo la creazione.
+
+```text
+storageClassName
+
+accessModes
+
+volumeMode
+
+selector
+
+volumeName
+```
+
+Se un esercizio ti chiede di cambiarli:
+
+↓
+
+Devi ricreare il PVC.
+
+---
+
+# 15. Resize del PVC
+
+Questa è la trappola più comune.
+
+Domanda da farsi immediatamente:
+
+```text
+Il backend supporta il resize?
+```
+
+---
+
+## Caso A
+
+StorageClass
+
+```yaml
+allowVolumeExpansion: true
+```
+
+e driver compatibile.
+
+↓
+
+Basta:
 
 ```bash
-kubectl get pv
+kubectl edit pvc app-pvc
+```
+
+e modificare
+
+```yaml
+resources:
+  requests:
+    storage: 10Gi
+```
+
+Fine.
+
+---
+
+## Caso B
+
+StorageClass senza expansion
+
+oppure
+
+driver che non supporta resize
+
+↓
+
+Il resize fallisce.
+
+Bisogna ricreare le risorse.
+
+---
+
+## Caso C (tipico CKAD)
+
+PV creato manualmente.
+
+Esempio
+
+```text
+PV
+capacity: 20Gi
+
+↓
+
+Bound
+
+↓
+
+PVC
+
+request: 5Gi
+```
+
+L'esercizio dice:
+
+> Increase request to 10Gi.
+
+Molti pensano:
+
+> "Il PV è già da 20Gi."
+
+↓
+
+"Mi basta modificare il PVC."
+
+Non è detto.
+
+Il semplice fatto che il PV abbia spazio sufficiente **non implica** che il claim possa essere espanso.
+
+L'espansione richiede il supporto del backend di storage.
+
+Negli esercizi CKAD con storage statico (`hostPath`, `local`, ecc.) è frequente che il resize non sia supportato.
+
+Il PVC può quindi rimanere:
+
+```text
+Pending
+```
+
+La soluzione pratica dell'esercizio è spesso:
+
+```text
+Delete Pod
+
+↓
+
+Delete PVC
+
+↓
+
+Ricreare (o aggiornare) il PV se richiesto
+
+↓
+
+Create nuovo PVC
+
+↓
+
+Bound
+
+↓
+
+Ricreare il Pod
+```
+
+ Non è il fatto che il PV abbia spazio disponibile a determinare il successo del resize.
+
+Conta il supporto del backend.
+
+---
+
+# 16. Reclaim Policy
+
+Campo del PV.
+
+```yaml
+persistentVolumeReclaimPolicy:
+```
+
+---
+
+## Delete
+
+```text
+Delete
+```
+
+Quando elimini il PVC
+
+↓
+
+viene eliminato anche il volume.
+
+Molto comune nel cloud.
+
+---
+
+## Retain
+
+```text
+Retain
+```
+
+Quando elimini il PVC
+
+↓
+
+il PV resta.
+
+Anche i dati rimangono.
+
+Molto usato negli esercizi.
+
+---
+
+## Controllo
+
+```bash
+kubectl describe pv
+```
+
+---
+
+# 17. Volume Binding Mode
+
+Campo della StorageClass.
+
+```yaml
+volumeBindingMode:
+```
+
+---
+
+## Immediate
+
+Il PV viene creato subito.
+
+---
+
+## WaitForFirstConsumer
+
+Il PV viene creato solo quando esiste un Pod.
+
+Flusso
+
+```text
+PVC
+
+↓
+
+Pending
+
+↓
+
+Pod
+
+↓
+
+Scheduler
+
+↓
+
+PV
+
+↓
+
+Bound
+```
+
+Non confondere questo comportamento con un errore.
+
+---
+
+# 18. allowVolumeExpansion
+
+StorageClass
+
+```yaml
+allowVolumeExpansion: true
+```
+
+Significa:
+
+Il backend **può** espandere il volume.
+
+Non significa automaticamente che tutti i driver lo facciano.
+
+---
+
+# 19. Pending
+
+Il PVC rimane Pending quando:
+
+```text
+Non esiste un PV compatibile
+
+oppure
+
+StorageClass errata
+
+oppure
+
+Provisioner assente
+
+oppure
+
+Capacity insufficiente
+
+oppure
+
+AccessMode incompatibile
+```
+
+---
+
+# 20. Pod Pending
+
+Molti pensano subito al scheduler.
+
+Errore.
+
+Prima controllare sempre:
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+PV
+```
+
+Se il PVC è Pending
+
+↓
+
+anche il Pod rimane Pending.
+
+---
+
+# 21. Troubleshooting
+
+Ordine corretto.
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+PV
+
+↓
+
+StorageClass
+
+↓
+
+Events
+```
+
+Mai partire dal PV.
+
+---
+
+Comandi
+
+```bash
+kubectl get pod
+
+kubectl describe pod
 
 kubectl get pvc
 
-kubectl get sc
+kubectl describe pvc
+
+kubectl get pv
 
 kubectl describe pv
 
-kubectl describe pvc
+kubectl get sc
 
-kubectl describe sc
-
-kubectl explain pv.spec
-
-kubectl explain pvc.spec
-
-kubectl explain storageclass
+kubectl get events
 ```
+
+---
+
+# 22. Errori tipici CKAD
+
+## PVC Pending
+
+Controllare:
+
+```text
+StorageClass
+
+Capacity
+
+AccessModes
+
+Events
+```
+
+---
+
+## Pod Pending
+
+Controllare:
+
+```text
+PVC
+```
+
+prima di tutto.
+
+---
+
+## Bound sbagliato
+
+Verificare
+
+```yaml
+storageClassName
+
+accessModes
+```
+
+---
+
+## Resize
+
+Domanda mentale
+
+```text
+Il backend supporta expansion?
+```
+
+Se no
+
+↓
+
+probabilmente bisogna ricreare le risorse.
+
+---
+
+# 23. Checklist da esame
+
+Quando leggi
+
+> Application cannot start
+
+fai immediatamente:
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+PV
+
+↓
+
+StorageClass
+
+↓
+
+Events
+```
+
+---
+
+Quando leggi
+
+> Increase PVC size
+
+Domandati:
+
+```text
+StorageClass?
+
+↓
+
+allowVolumeExpansion?
+
+↓
+
+Driver supporta resize?
+
+↓
+
+Campo modificabile?
+
+↓
+
+Serve ricreare il PVC?
+```
+
+---
+
+
+✅ Il Pod usa sempre un PVC.
+
+✅ Il PVC si lega a un solo PV.
+
+✅ Un PV può essere creato manualmente o dinamicamente.
+
+✅ Non puoi diminuire la dimensione di un PVC.
+
+✅ I campi come `storageClassName` e `accessModes` sono immutabili.
+
+✅ Se il backend non supporta l'espansione, modificare `requests.storage` non basta.
+
+✅ Prima di eliminare un PVC controlla sempre la `persistentVolumeReclaimPolicy`.
+
+✅ Quando un Pod è `Pending`, controlla sempre il PVC prima di cercare altri problemi.
+
