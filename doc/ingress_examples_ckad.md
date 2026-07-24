@@ -1,4 +1,4 @@
-- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md) | [ Teoria base DNS, IP + Kubernetes ](../doc/dns.md) | [ CoreDNS - CNI k8s ](./k8s_dns_cni_cilium.md)
+- [ Home ](../readme.md)   | [ Teoria ](../arguments.md)   | [ Info Exam ](../doc/ckad_exam_strategy.md) | [ Teoria base DNS, IP + Kubernetes ](../doc/dns.md) | [ CoreDNS - CNI k8s ](./k8s_dns_cni_cilium.md) | [Ingress NGINX](./ing-nginx.md)
 
 ---
 
