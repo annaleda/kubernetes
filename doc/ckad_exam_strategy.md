@@ -19,13 +19,23 @@ Caratteristiche principali:
 * ✅ Passing score: 66%
 * 📅 Validità: 2 anni
 
-L’esame si svolge su cluster Kubernetes reali.
-
+- L’esame si svolge su cluster Kubernetes reali.
+- Open book limitato: puoi consultare la documentazione ufficiale di Kubernetes (kubernetes.io/docs e le risorse consentite dalla Linux Foundation), ma non siti arbitrari.
+- Versione Kubernetes: l'ambiente d'esame viene aggiornato periodicamente; attualmente è basato su Kubernetes v1.35.
 ---
+Negli host SSH dove svolgi effettivamente i task del CKAD trovi già configurati questi strumenti:
+| Strumento                         | Disponibile |
+| --------------------------------- | ----------- |
+| `kubectl`                         | ✅           |
+| alias `k`                         | ✅           |
+| Bash autocompletion per `kubectl` | ✅           |
+| `yq`                              | ✅           |
+| `curl`                            | ✅           |
+| `wget`                            | ✅           |
+| `man` + pagine di manuale         | ✅           |
 
-## 2️⃣ Setup iniziale consigliato
+## 2️⃣ Setup locale consigliato per esercitarti
 
-Appena inizi l’esame:
 ### Linux:
 
 ```bash
