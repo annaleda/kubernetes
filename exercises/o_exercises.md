@@ -35,7 +35,7 @@
     
   - [Mock Exercises - Logs](./o-ex/logs-ex.md)
     
-  - [Mock Exercises - Cli Task](./o-ex/ckad_cli_tasks.md)  `10 esercizi`
+  - [Mock Exercises - Cli Task](./o-ex/ckad_cli_tasks.md)  `13 esercizi`
     
   - [Mock Exercises - jsonpath Task](./o-ex/jsonpath_tasks_25.md) `25 esercizi`
 
