@@ -1,4 +1,4 @@
-- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   | [Ingress Patterns](../../doc/ingress_examples_ckad.md)  
+- [ Home ](../../readme.md)   | [ Teoria ](../../arguments.md)   | [ Info Exam ](../../doc/ckad_exam_strategy.md)    | [ Home Other Exercises ](../o_exercises.md)   | [Ingress Patterns](../../doc/ingress_examples_ckad.md)  | [Ingress Controller ](../../doc/ing-ctrl.md)
 ---
   ### Ingress (13 esercizi)
 
