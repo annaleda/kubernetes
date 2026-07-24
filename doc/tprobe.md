@@ -686,3 +686,61 @@ e poi:
 ```bash
 kubectl logs
 ```
+## Relazione tra Probe, EndpointSlice e Service
+
+Le probe non hanno tutte lo stesso effetto sul traffico instradato dai Service.
+
+### Readiness Probe
+
+Quando una **Readiness Probe** fallisce:
+
+```text
+Readiness Failed
+        │
+        ▼
+Pod = NotReady
+        │
+        ▼
+EndpointSlice aggiornato
+        │
+        ▼
+L'IP del Pod viene rimosso dagli Endpoint
+        │
+        ▼
+Il Service non invia più traffico al Pod
+```
+
+Il container **continua a essere in esecuzione**, ma il Pod viene escluso dal bilanciamento del Service finché non torna nello stato `Ready`. Kubernetes aggiorna automaticamente gli `EndpointSlice` rimuovendo il Pod dai Service che lo selezionano. :contentReference[oaicite:0]{index=0}
+
+### Liveness Probe
+
+Quando una **Liveness Probe** fallisce:
+
+```text
+Liveness Failed
+        │
+        ▼
+Kubelet riavvia il container
+        │
+        ▼
+Il Pod diventa temporaneamente NotReady
+        │
+        ▼
+EndpointSlice aggiornato
+        │
+        ▼
+L'IP viene temporaneamente rimosso dagli Endpoint
+        │
+        ▼
+Quando il Pod torna Ready,
+l'IP viene reinserito
+```
+
+La **Liveness Probe non rimuove direttamente l'IP dagli Endpoint**. Il suo compito è riavviare il container. Durante il riavvio il Pod non è `Ready` e Kubernetes aggiorna gli `EndpointSlice`, escludendo temporaneamente il Pod dal traffico del Service. :contentReference[oaicite:1]{index=1}
+
+### Regole da ricordare
+
+- **Readiness Probe** → determina se un Pod può ricevere traffico da un Service.
+- **Liveness Probe** → determina se il container deve essere riavviato.
+- Un Pod `NotReady` viene escluso dagli `EndpointSlice` e quindi non riceve traffico dal Service.
+- Quando il Pod torna `Ready`, Kubernetes lo reinserisce automaticamente negli `EndpointSlice`. :contentReference[oaicite:2]{index=2}
