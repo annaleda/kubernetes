@@ -230,3 +230,83 @@ kubectl api-versions > /root/api-groups.txt
 </details>
 
 ---
+## CLI - Base 64 Preparation
+
+Create the resources needed for the following exercises.
+```sh
+kubectl create namespace secrets-lab
+```
+```sh
+kubectl create secret generic db-secret \
+  -n secrets-lab \
+  --from-literal=username=admin \
+  --from-literal=password='SuperSecret123'
+```
+```sh
+kubectl create secret generic api-secret \
+  -n secrets-lab \
+  --from-literal=token='ckad-token-2026'
+```
+These resources create Base64-encoded values automatically becauseKubernetes stores Secret data encoded.
+
+---
+## CLI-11 — Encode to Base64
+
+Without creating Kubernetes resources, encode the following string and save it to /opt/answer.txt.
+
+ckad-is-awesome
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```sh
+
+echo -n "ckad-is-awesome" | base64 > /opt/answer.txt
+```
+</details>
+
+---
+## CLI-12 — Decode a Secret Value
+
+A Secret named db-secret exists in namespace secrets-lab.
+
+Decode the value of the key password and save the plain text to:
+
+/opt/password.txt
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```sh
+
+kubectl get secret db-secret -n secrets-lab \
+-o jsonpath='{.data.password}' \
+| base64 -d > /opt/password.txt
+```
+</details>
+
+
+---
+
+## CLI-13 — Decode Another Secret
+
+Decode the value of the key token from the Secret api-secret innamespace secrets-lab and save it to:
+
+/opt/token.txt
+
+---
+<details>
+<summary>Soluzione</summary>
+
+```sh
+
+kubectl get secret api-secret -n secrets-lab \
+-o jsonpath='{.data.token}' \
+| base64 -d > /opt/token.txt
+```
+</details>
+
+
+---
